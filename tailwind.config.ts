@@ -10,8 +10,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        body: ['Inter', 'sans-serif'],
-        headline: ['Inter', 'sans-serif'],
+        body: ['Poppins', 'sans-serif'],
+        headline: ['Poppins', 'sans-serif'],
         code: ['monospace'],
       },
       colors: {
@@ -88,10 +88,25 @@ export default {
             height: '0',
           },
         },
+        'pop-in': {
+          '0%': { transform: 'scale(0.8)', opacity: '0' },
+          '100%': { transform: 'scale(1)', opacity: '1' },
+        },
+        'pop-out': {
+          '0%': { transform: 'scale(1)', opacity: '1' },
+          '100%': { transform: 'scale(1.2)', opacity: '0' },
+        },
+        'float-up': {
+          '0%': { transform: 'translateY(0)', opacity: '1' },
+          '100%': { transform: 'translateY(-20px)', opacity: '0' },
+        }
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
+        'pop-in': 'pop-in 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards',
+        'pop-out': 'pop-out 0.2s ease-in forwards',
+        'float-up': 'float-up 0.6s ease-out forwards',
       },
     },
   },
