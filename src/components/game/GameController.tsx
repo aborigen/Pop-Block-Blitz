@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
@@ -13,9 +14,19 @@ import {
 import { Block } from "./Block"
 import { GameStats } from "./GameStats"
 import { Button } from "@/components/ui/button"
-import { curateDynamicDifficulty } from "@/ai/flows/curate-dynamic-difficulty"
 import { RefreshCw, PlayCircle } from "lucide-react"
 import { useTranslation } from "@/lib/i18n/context"
+
+// AI flow is imported but we'll handle it dynamically to support static export
+let curateDynamicDifficulty: any = null;
+try {
+  // We use dynamic import to avoid build-time errors in static export if it relies on server-only modules
+  // In a real static export, this function call will likely be caught and handled by the fallback
+  const aiModule = require("@/ai/flows/curate-dynamic-difficulty");
+  curateDynamicDifficulty = aiModule.curateDynamicDifficulty;
+} catch (e) {
+  // Silent fail - will use heuristic fallback
+}
 
 export function GameController() {
   const { t, locale } = useTranslation();
@@ -46,29 +57,78 @@ export function GameController() {
     }
   }, [])
 
+  const getHeuristicDifficulty = (performance: any, current: any) => {
+    const avgScore = performance.cumulativeScore / (performance.totalGames || 1);
+    const scoreDiff = performance.lastGameScore / (avgScore || 1);
+    
+    let nextWidth = current.width;
+    let nextHeight = current.height;
+    let nextColors = current.numColors;
+    let nextLevel: 'easy' | 'medium' | 'hard' = state.difficulty;
+
+    if (scoreDiff > 1.2 || performance.lastMaxCombo > 8) {
+      // Increase difficulty
+      nextWidth = Math.min(15, nextWidth + 1);
+      nextHeight = Math.min(15, nextHeight + 1);
+      nextColors = Math.min(7, nextColors + 1);
+      nextLevel = nextLevel === 'easy' ? 'medium' : 'hard';
+    } else if (scoreDiff < 0.8 && performance.totalGames > 2) {
+      // Decrease difficulty
+      nextWidth = Math.max(8, nextWidth - 1);
+      nextHeight = Math.max(8, nextHeight - 1);
+      nextColors = Math.max(4, nextColors - 1);
+      nextLevel = nextLevel === 'hard' ? 'medium' : 'easy';
+    }
+
+    return {
+      recommendedBoardWidth: nextWidth,
+      recommendedBoardHeight: nextHeight,
+      recommendedNumColors: nextColors,
+      recommendedDifficultyLevel: nextLevel,
+      difficultyAdjustmentFeedback: locale === 'ru' 
+        ? "Система адаптировала сложность на основе вашей игры." 
+        : "Adaptive system adjusted difficulty based on your performance."
+    };
+  };
+
   const startNewGame = useCallback(async (isAiAdjustment = false) => {
     let newConfig = { ...state.config }
     let newDifficulty = state.difficulty
 
     if (isAiAdjustment && performanceHistory.totalGames > 0) {
       try {
-        const result = await curateDynamicDifficulty({
-          playerPerformance: {
-            lastGameScore: state.score,
-            averageScore: performanceHistory.cumulativeScore / performanceHistory.totalGames,
-            gamesPlayed: performanceHistory.totalGames,
-            difficultyLevelLastGame: state.difficulty,
-            averageBlocksClearedPerMove: performanceHistory.lastAvgClear,
-            maxComboCleared: performanceHistory.lastMaxCombo,
-          },
-          gameConfiguration: {
-            currentBoardWidth: state.config.width,
-            currentBoardHeight: state.config.height,
-            currentNumColors: state.config.numColors,
-          },
-          locale: locale
-        })
+        // Attempt AI adjustment if available
+        if (curateDynamicDifficulty && typeof curateDynamicDifficulty === 'function') {
+          const result = await curateDynamicDifficulty({
+            playerPerformance: {
+              lastGameScore: state.score,
+              averageScore: performanceHistory.cumulativeScore / performanceHistory.totalGames,
+              gamesPlayed: performanceHistory.totalGames,
+              difficultyLevelLastGame: state.difficulty,
+              averageBlocksClearedPerMove: performanceHistory.lastAvgClear,
+              maxComboCleared: performanceHistory.lastMaxCombo,
+            },
+            gameConfiguration: {
+              currentBoardWidth: state.config.width,
+              currentBoardHeight: state.config.height,
+              currentNumColors: state.config.numColors,
+            },
+            locale: locale
+          })
 
+          newConfig = {
+            width: result.recommendedBoardWidth,
+            height: result.recommendedBoardHeight,
+            numColors: result.recommendedNumColors
+          }
+          newDifficulty = result.recommendedDifficultyLevel
+          setAiFeedback(result.difficultyAdjustmentFeedback)
+        } else {
+          throw new Error("AI not available");
+        }
+      } catch (error) {
+        // Fallback to local heuristic for static builds
+        const result = getHeuristicDifficulty(performanceHistory, state.config);
         newConfig = {
           width: result.recommendedBoardWidth,
           height: result.recommendedBoardHeight,
@@ -76,8 +136,6 @@ export function GameController() {
         }
         newDifficulty = result.recommendedDifficultyLevel
         setAiFeedback(result.difficultyAdjustmentFeedback)
-      } catch (error) {
-        console.error("AI Difficulty adjustment failed", error)
       }
     }
 
@@ -103,11 +161,10 @@ export function GameController() {
     if (state.gameOver) return
 
     const group = getConnectedBlocks(state.grid, x, y)
-    
+    if (group.length < 2) return
+
     const groupKey = group.map(p => `${p[0]},${p[1]}`).sort().join('|')
     const targetKey = targetedGroup.map(p => `${p[0]},${p[1]}`).sort().join('|')
-
-    if (group.length < 2) return
 
     if (groupKey === targetKey) {
       const points = calculateMoveScore(group.length)
