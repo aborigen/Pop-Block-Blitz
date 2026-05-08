@@ -1,9 +1,10 @@
-
 "use client"
 
 import { Card } from "@/components/ui/card"
 import { Trophy, Target, Sparkles, Activity } from "lucide-react"
 import { useTranslation } from "@/lib/i18n/context"
+import { useEffect, useState } from "react"
+import { cn } from "@/lib/utils"
 
 interface GameStatsProps {
   score: number
@@ -15,6 +16,15 @@ interface GameStatsProps {
 
 export function GameStats({ score, highScore, moves, difficulty, aiFeedback }: GameStatsProps) {
   const { t } = useTranslation();
+  const [pulseScore, setPulseScore] = useState(false);
+
+  useEffect(() => {
+    if (score > 0) {
+      setPulseScore(true);
+      const timer = setTimeout(() => setPulseScore(false), 300);
+      return () => clearTimeout(timer);
+    }
+  }, [score]);
 
   return (
     <div className="w-full max-w-sm md:max-w-xl mx-auto space-y-3 md:space-y-4 mb-4 md:mb-6">
@@ -23,6 +33,7 @@ export function GameStats({ score, highScore, moves, difficulty, aiFeedback }: G
           label={t.score} 
           value={score.toLocaleString()} 
           icon={<Target className="text-primary" size={16} />} 
+          className={cn(pulseScore && "animate-bump border-primary/50 shadow-primary/10")}
         />
         <StatCard 
           label={t.best} 
@@ -51,9 +62,9 @@ export function GameStats({ score, highScore, moves, difficulty, aiFeedback }: G
   )
 }
 
-function StatCard({ label, value, icon }: { label: string, value: string, icon: React.ReactNode }) {
+function StatCard({ label, value, icon, className }: { label: string, value: string, icon: React.ReactNode, className?: string }) {
   return (
-    <Card className="p-2 md:p-3 flex flex-col items-center justify-center bg-white/50 backdrop-blur-sm border-white/40 shadow-sm">
+    <Card className={cn("p-2 md:p-3 flex flex-col items-center justify-center bg-white/50 backdrop-blur-sm border-white/40 shadow-sm transition-all duration-300", className)}>
       <div className="flex items-center gap-1 mb-0.5 md:mb-1">
         {icon}
         <span className="text-[8px] md:text-[10px] uppercase font-bold text-muted-foreground tracking-wider">{label}</span>

@@ -1,7 +1,6 @@
-
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 import { 
   generateGrid, 
   getConnectedBlocks, 
@@ -26,6 +25,13 @@ try {
   // Silent fail
 }
 
+interface FloatingScore {
+  id: number;
+  x: number;
+  y: number;
+  points: number;
+}
+
 export function GameController() {
   const { t, locale } = useTranslation();
   const [state, setState] = useState<GameState>({
@@ -47,6 +53,8 @@ export function GameController() {
 
   const [aiFeedback, setAiFeedback] = useState<string>("")
   const [targetedGroup, setTargetedGroup] = useState<[number, number][]>([])
+  const [floatingScores, setFloatingScores] = useState<FloatingScore[]>([])
+  const scoreCounter = useRef(0)
 
   useEffect(() => {
     const saved = localStorage.getItem('pop-block-high-score')
@@ -145,6 +153,7 @@ export function GameController() {
       config: newConfig
     }))
     setTargetedGroup([])
+    setFloatingScores([])
   }, [state.config, state.difficulty, state.score, performanceHistory, locale])
 
   useEffect(() => {
@@ -166,6 +175,20 @@ export function GameController() {
       const isGameOver = checkGameOver(newGrid)
       const newScore = state.score + points
       
+      // Add floating score at click position
+      const newFloatingScore = {
+        id: ++scoreCounter.current,
+        x,
+        y,
+        points
+      };
+      setFloatingScores(prev => [...prev, newFloatingScore]);
+      
+      // Remove floating score after animation
+      setTimeout(() => {
+        setFloatingScores(prev => prev.filter(s => s.id !== newFloatingScore.id));
+      }, 800);
+
       setState(prev => {
         const newHighScore = Math.max(prev.highScore, newScore)
         if (newHighScore > prev.highScore) {
@@ -217,7 +240,7 @@ export function GameController() {
 
       <div className="relative group w-full max-w-sm md:max-w-xl">
         <div 
-          className="grid gap-1 p-2 rounded-2xl bg-white/40 shadow-xl border border-white/60 backdrop-blur-md mx-auto"
+          className="grid gap-1 p-2 rounded-2xl bg-white/40 shadow-xl border border-white/60 backdrop-blur-md mx-auto relative"
           style={{ 
             gridTemplateColumns: `repeat(${state.config.width}, 1fr)`,
             width: '100%',
@@ -235,6 +258,22 @@ export function GameController() {
               />
             ))
           )}
+
+          {/* Floating Scores */}
+          {floatingScores.map(fs => (
+            <div 
+              key={fs.id}
+              className="absolute z-30 pointer-events-none text-primary font-black text-xl md:text-2xl animate-float-up-fade"
+              style={{
+                left: `${(fs.x / state.config.width) * 100}%`,
+                top: `${(fs.y / state.config.height) * 100}%`,
+                transform: 'translate(-50%, -50%)',
+                textShadow: '0 2px 4px rgba(0,0,0,0.2)'
+              }}
+            >
+              +{fs.points}
+            </div>
+          ))}
         </div>
 
         {state.gameOver && (
