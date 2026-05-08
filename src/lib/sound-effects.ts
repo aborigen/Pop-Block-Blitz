@@ -1,6 +1,7 @@
 /**
  * @fileOverview Web Audio API sound synthesizer for game effects.
  * Provides procedural sounds for popping, clicking, and game over states.
+ * Refactored to be safe for Server-Side Rendering (SSR).
  */
 
 class SoundManager {
@@ -8,11 +9,20 @@ class SoundManager {
   private enabled: boolean = true;
 
   private initContext() {
-    if (!this.ctx) {
-      this.ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
-    }
-    if (this.ctx.state === 'suspended') {
-      this.ctx.resume();
+    if (typeof window === 'undefined') return;
+    
+    try {
+      if (!this.ctx) {
+        const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+        if (AudioCtx) {
+          this.ctx = new AudioCtx();
+        }
+      }
+      if (this.ctx && this.ctx.state === 'suspended') {
+        this.ctx.resume();
+      }
+    } catch (e) {
+      console.warn('AudioContext failed to initialize:', e);
     }
   }
 
@@ -21,14 +31,14 @@ class SoundManager {
   }
 
   playPop(size: number = 1) {
-    if (!this.enabled) return;
+    if (!this.enabled || typeof window === 'undefined') return;
     this.initContext();
-    const ctx = this.ctx!;
+    if (!this.ctx) return;
     
+    const ctx = this.ctx;
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
 
-    // Scale frequency based on group size
     const baseFreq = 400 + (size * 20);
     osc.type = 'sine';
     osc.frequency.setValueAtTime(baseFreq, ctx.currentTime);
@@ -45,10 +55,11 @@ class SoundManager {
   }
 
   playClick() {
-    if (!this.enabled) return;
+    if (!this.enabled || typeof window === 'undefined') return;
     this.initContext();
-    const ctx = this.ctx!;
+    if (!this.ctx) return;
 
+    const ctx = this.ctx;
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
 
@@ -66,10 +77,11 @@ class SoundManager {
   }
 
   playGameOver() {
-    if (!this.enabled) return;
+    if (!this.enabled || typeof window === 'undefined') return;
     this.initContext();
-    const ctx = this.ctx!;
+    if (!this.ctx) return;
 
+    const ctx = this.ctx;
     const now = ctx.currentTime;
     const frequencies = [300, 250, 200, 150];
     

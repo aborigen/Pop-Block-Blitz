@@ -1,4 +1,3 @@
-'use server';
 /**
  * @fileOverview An AI agent for dynamically adjusting game difficulty in 'Pop Block Blitz'.
  *

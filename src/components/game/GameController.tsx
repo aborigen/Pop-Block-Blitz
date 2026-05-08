@@ -17,15 +17,6 @@ import { RefreshCw, PlayCircle, Volume2, VolumeX } from "lucide-react"
 import { useTranslation } from "@/lib/i18n/context"
 import { soundManager } from "@/lib/sound-effects"
 
-// AI flow is imported but we'll handle it dynamically to support static export
-let curateDynamicDifficulty: any = null;
-try {
-  const aiModule = require("@/ai/flows/curate-dynamic-difficulty");
-  curateDynamicDifficulty = aiModule.curateDynamicDifficulty;
-} catch (e) {
-  // Silent fail
-}
-
 interface FloatingScore {
   id: number;
   x: number;
@@ -59,7 +50,7 @@ export function GameController() {
   const [lastIncrement, setLastIncrement] = useState<number | null>(null)
   
   const scoreCounter = useRef(0)
-  const incrementTimerRef = useRef<NodeJS.Timeout | null>(null)
+  const incrementTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
     const saved = localStorage.getItem('pop-block-high-score')
@@ -72,7 +63,7 @@ export function GameController() {
     soundManager.setEnabled(soundEnabled);
   }, [soundEnabled]);
 
-  const getHeuristicDifficulty = (performance: any, current: any) => {
+  const getHeuristicDifficulty = useCallback((performance: any, current: any) => {
     const avgScore = performance.cumulativeScore / (performance.totalGames || 1);
     const scoreDiff = performance.lastGameScore / (avgScore || 1);
     
@@ -102,52 +93,21 @@ export function GameController() {
         ? "Система адаптировала сложность на основе вашей игры." 
         : "Adaptive system adjusted difficulty based on your performance."
     };
-  };
+  }, [state.difficulty, locale]);
 
   const startNewGame = useCallback(async (isAiAdjustment = false) => {
     let newConfig = { ...state.config }
     let newDifficulty = state.difficulty
 
     if (isAiAdjustment && performanceHistory.totalGames > 0) {
-      try {
-        if (curateDynamicDifficulty && typeof curateDynamicDifficulty === 'function') {
-          const result = await curateDynamicDifficulty({
-            playerPerformance: {
-              lastGameScore: state.score,
-              averageScore: performanceHistory.cumulativeScore / performanceHistory.totalGames,
-              gamesPlayed: performanceHistory.totalGames,
-              difficultyLevelLastGame: state.difficulty,
-              averageBlocksClearedPerMove: performanceHistory.lastAvgClear,
-              maxComboCleared: performanceHistory.lastMaxCombo,
-            },
-            gameConfiguration: {
-              currentBoardWidth: state.config.width,
-              currentBoardHeight: state.config.height,
-              currentNumColors: state.config.numColors,
-            },
-            locale: locale
-          })
-
-          newConfig = {
-            width: Math.min(result.recommendedBoardWidth, 12),
-            height: Math.min(result.recommendedBoardHeight, 15),
-            numColors: result.recommendedNumColors
-          }
-          newDifficulty = result.recommendedDifficultyLevel
-          setAiFeedback(result.difficultyAdjustmentFeedback)
-        } else {
-          throw new Error("AI not available");
-        }
-      } catch (error) {
-        const result = getHeuristicDifficulty(performanceHistory, state.config);
-        newConfig = {
-          width: result.recommendedBoardWidth,
-          height: result.recommendedBoardHeight,
-          numColors: result.recommendedNumColors
-        }
-        newDifficulty = result.recommendedDifficultyLevel
-        setAiFeedback(result.difficultyAdjustmentFeedback)
+      const result = getHeuristicDifficulty(performanceHistory, state.config);
+      newConfig = {
+        width: result.recommendedBoardWidth,
+        height: result.recommendedBoardHeight,
+        numColors: result.recommendedNumColors
       }
+      newDifficulty = result.recommendedDifficultyLevel
+      setAiFeedback(result.difficultyAdjustmentFeedback)
     }
 
     const newGrid = generateGrid(newConfig.width, newConfig.height, newConfig.numColors)
@@ -164,7 +124,7 @@ export function GameController() {
     setTargetedGroup([])
     setFloatingScores([])
     setLastIncrement(null)
-  }, [state.config, state.difficulty, state.score, performanceHistory, locale])
+  }, [state.config, state.difficulty, performanceHistory, getHeuristicDifficulty])
 
   useEffect(() => {
     startNewGame()
@@ -193,7 +153,6 @@ export function GameController() {
         soundManager.playGameOver();
       }
 
-      // Add floating score at click position
       const newFloatingScore = {
         id: ++scoreCounter.current,
         x,
@@ -202,14 +161,12 @@ export function GameController() {
       };
       setFloatingScores(prev => [...prev, newFloatingScore]);
       
-      // Set last increment and timer
       setLastIncrement(points);
       if (incrementTimerRef.current) clearTimeout(incrementTimerRef.current);
       incrementTimerRef.current = setTimeout(() => {
         setLastIncrement(null);
       }, 2000);
 
-      // Remove floating score after animation
       setTimeout(() => {
         setFloatingScores(prev => prev.filter(s => s.id !== newFloatingScore.id));
       }, 800);
@@ -298,7 +255,6 @@ export function GameController() {
             ))
           )}
 
-          {/* Floating Scores */}
           {floatingScores.map(fs => (
             <div 
               key={fs.id}
