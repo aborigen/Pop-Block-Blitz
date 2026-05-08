@@ -15,8 +15,10 @@ import { GameStats } from "./GameStats"
 import { Button } from "@/components/ui/button"
 import { curateDynamicDifficulty } from "@/ai/flows/curate-dynamic-difficulty"
 import { RefreshCw, PlayCircle } from "lucide-react"
+import { useTranslation } from "@/lib/i18n/context"
 
 export function GameController() {
+  const { t, locale } = useTranslation();
   const [state, setState] = useState<GameState>({
     grid: [],
     score: 0,
@@ -37,7 +39,6 @@ export function GameController() {
   const [aiFeedback, setAiFeedback] = useState<string>("")
   const [targetedGroup, setTargetedGroup] = useState<[number, number][]>([])
 
-  // Load high score
   useEffect(() => {
     const saved = localStorage.getItem('pop-block-high-score')
     if (saved) {
@@ -45,7 +46,6 @@ export function GameController() {
     }
   }, [])
 
-  // Start new game
   const startNewGame = useCallback(async (isAiAdjustment = false) => {
     let newConfig = { ...state.config }
     let newDifficulty = state.difficulty
@@ -65,7 +65,8 @@ export function GameController() {
             currentBoardWidth: state.config.width,
             currentBoardHeight: state.config.height,
             currentNumColors: state.config.numColors,
-          }
+          },
+          locale: locale
         })
 
         newConfig = {
@@ -92,9 +93,8 @@ export function GameController() {
       config: newConfig
     }))
     setTargetedGroup([])
-  }, [state.config, state.difficulty, state.score, performanceHistory])
+  }, [state.config, state.difficulty, state.score, performanceHistory, locale])
 
-  // Initialize first game
   useEffect(() => {
     startNewGame()
   }, [])
@@ -104,17 +104,12 @@ export function GameController() {
 
     const group = getConnectedBlocks(state.grid, x, y)
     
-    // If not already targeting this group, target it first (optional UX)
-    // For hypercasual, many people prefer 1-tap clear. 
-    // We'll implement 2-tap clear or visual highlight.
-    
     const groupKey = group.map(p => `${p[0]},${p[1]}`).sort().join('|')
     const targetKey = targetedGroup.map(p => `${p[0]},${p[1]}`).sort().join('|')
 
     if (group.length < 2) return
 
     if (groupKey === targetKey) {
-      // Clear it!
       const points = calculateMoveScore(group.length)
       const newGrid = processClear(state.grid, group)
       const isGameOver = checkGameOver(newGrid)
@@ -136,7 +131,6 @@ export function GameController() {
         }
       })
 
-      // Update session stats for next AI adjustment
       setPerformanceHistory(prev => ({
         ...prev,
         lastMaxCombo: Math.max(prev.lastMaxCombo, group.length),
@@ -192,12 +186,12 @@ export function GameController() {
 
         {state.gameOver && (
           <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-background/80 backdrop-blur-sm rounded-2xl animate-in fade-in zoom-in duration-300">
-            <h2 className="text-4xl font-bold text-foreground mb-2 font-headline">Game Over!</h2>
-            <p className="text-xl text-muted-foreground mb-6 font-medium">Final Score: {state.score}</p>
+            <h2 className="text-4xl font-bold text-foreground mb-2 font-headline">{t.gameOver}</h2>
+            <p className="text-xl text-muted-foreground mb-6 font-medium">{t.finalScore}: {state.score}</p>
             <div className="flex gap-4">
               <Button size="lg" onClick={finalizeGame} className="rounded-full px-8 bg-primary hover:bg-primary/90">
                 <PlayCircle className="mr-2" size={20} />
-                Play Again
+                {t.playAgain}
               </Button>
             </div>
           </div>
@@ -212,7 +206,7 @@ export function GameController() {
             className="rounded-full border-primary text-primary hover:bg-primary/10 transition-colors"
           >
             <RefreshCw className="mr-2" size={16} />
-            Reset Session
+            {t.resetSession}
           </Button>
         </div>
       )}

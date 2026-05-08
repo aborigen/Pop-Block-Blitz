@@ -30,6 +30,7 @@ const CurateDynamicDifficultyInputSchema = z.object({
     currentBoardHeight: z.number().describe('The current height of the game board.'),
     currentNumColors: z.number().describe('The current number of distinct block colors on the board.'),
   }),
+  locale: z.string().optional().describe('The preferred language for feedback (e.g., "en", "ru").'),
 });
 export type CurateDynamicDifficultyInput = z.infer<typeof CurateDynamicDifficultyInputSchema>;
 
@@ -55,6 +56,8 @@ const curateDynamicDifficultyPrompt = ai.definePrompt({
   output: { schema: CurateDynamicDifficultyOutputSchema },
   prompt: `You are an AI game master for 'Pop Block Blitz'. Your task is to analyze a player's performance and recommend adjustments to the game's difficulty to keep it engaging and balanced.
 
+CRITICAL: Provide the 'difficultyAdjustmentFeedback' in the following language: {{{locale}}}. If {{{locale}}} is "ru", use Russian. If "en", use English.
+
 Consider the player's recent and overall performance:
 - Last Game Score: {{{playerPerformance.lastGameScore}}}
 - Average Score: {{{playerPerformance.averageScore}}}
@@ -68,7 +71,7 @@ Current game configuration:
 - Board Height: {{{gameConfiguration.currentBoardHeight}}}
 - Number of Colors: {{{gameConfiguration.currentNumColors}}}
 
-Based on this data, provide recommendations for the next game's board width, board height, number of colors, and an overall difficulty level. Also, provide a brief explanation for your recommendations.
+Based on this data, provide recommendations for the next game's board width, board height, number of colors, and an overall difficulty level. Also, provide a brief explanation for your recommendations in the requested language.
 
 Guidelines:
 - If the player is consistently scoring high (e.g., significantly above average) and clearing large combos, increase difficulty.

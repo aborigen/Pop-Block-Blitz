@@ -2,37 +2,40 @@
 
 import { Card } from "@/components/ui/card"
 import { Trophy, Target, Sparkles, Activity } from "lucide-react"
+import { useTranslation } from "@/lib/i18n/context"
 
 interface GameStatsProps {
   score: number
   highScore: number
   moves: number
-  difficulty: string
+  difficulty: 'easy' | 'medium' | 'hard'
   aiFeedback?: string
 }
 
 export function GameStats({ score, highScore, moves, difficulty, aiFeedback }: GameStatsProps) {
+  const { t } = useTranslation();
+
   return (
     <div className="w-full max-w-xl mx-auto space-y-4 mb-6">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <StatCard 
-          label="Score" 
+          label={t.score} 
           value={score.toLocaleString()} 
           icon={<Target className="text-primary" size={18} />} 
         />
         <StatCard 
-          label="Best" 
+          label={t.best} 
           value={highScore.toLocaleString()} 
           icon={<Trophy className="text-accent-foreground" size={18} />} 
         />
         <StatCard 
-          label="Moves" 
+          label={t.moves} 
           value={moves.toString()} 
           icon={<Activity className="text-muted-foreground" size={18} />} 
         />
         <StatCard 
-          label="Level" 
-          value={difficulty.toUpperCase()} 
+          label={t.level} 
+          value={t.difficulty[difficulty].toUpperCase()} 
           icon={<Sparkles className="text-primary" size={18} />} 
         />
       </div>
@@ -40,7 +43,7 @@ export function GameStats({ score, highScore, moves, difficulty, aiFeedback }: G
       {aiFeedback && (
         <div className="bg-primary/10 border border-primary/20 rounded-lg p-3 text-xs text-primary font-medium flex items-start gap-2 animate-in fade-in slide-in-from-top-1">
           <Sparkles className="shrink-0" size={14} />
-          <span>AI Master: {aiFeedback}</span>
+          <span>{t.aiMaster}: {aiFeedback}</span>
         </div>
       )}
     </div>
