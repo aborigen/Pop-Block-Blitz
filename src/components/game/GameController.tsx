@@ -13,8 +13,9 @@ import {
 import { Block } from "./Block"
 import { GameStats } from "./GameStats"
 import { Button } from "@/components/ui/button"
-import { RefreshCw, PlayCircle } from "lucide-react"
+import { RefreshCw, PlayCircle, Volume2, VolumeX } from "lucide-react"
 import { useTranslation } from "@/lib/i18n/context"
+import { soundManager } from "@/lib/sound-effects"
 
 // AI flow is imported but we'll handle it dynamically to support static export
 let curateDynamicDifficulty: any = null;
@@ -34,6 +35,7 @@ interface FloatingScore {
 
 export function GameController() {
   const { t, locale } = useTranslation();
+  const [soundEnabled, setSoundEnabled] = useState(true);
   const [state, setState] = useState<GameState>({
     grid: [],
     score: 0,
@@ -65,6 +67,10 @@ export function GameController() {
       setState(prev => ({ ...prev, highScore: parseInt(saved, 10) }))
     }
   }, [])
+
+  useEffect(() => {
+    soundManager.setEnabled(soundEnabled);
+  }, [soundEnabled]);
 
   const getHeuristicDifficulty = (performance: any, current: any) => {
     const avgScore = performance.cumulativeScore / (performance.totalGames || 1);
@@ -168,17 +174,25 @@ export function GameController() {
     if (state.gameOver) return
 
     const group = getConnectedBlocks(state.grid, x, y)
-    if (group.length < 2) return
+    if (group.length < 2) {
+      soundManager.playClick();
+      return;
+    }
 
     const groupKey = group.map(p => `${p[0]},${p[1]}`).sort().join('|')
     const targetKey = targetedGroup.map(p => `${p[0]},${p[1]}`).sort().join('|')
 
     if (groupKey === targetKey) {
+      soundManager.playPop(group.length);
       const points = calculateMoveScore(group.length)
       const newGrid = processClear(state.grid, group)
       const isGameOver = checkGameOver(newGrid)
       const newScore = state.score + points
       
+      if (isGameOver) {
+        soundManager.playGameOver();
+      }
+
       // Add floating score at click position
       const newFloatingScore = {
         id: ++scoreCounter.current,
@@ -224,11 +238,13 @@ export function GameController() {
 
       setTargetedGroup([])
     } else {
+      soundManager.playClick();
       setTargetedGroup(group)
     }
   }
 
   const finalizeGame = () => {
+    soundManager.playClick();
     setPerformanceHistory(prev => ({
       ...prev,
       totalGames: prev.totalGames + 1,
@@ -241,6 +257,17 @@ export function GameController() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[calc(100vh-160px)] px-4 py-4 md:py-8">
+      <div className="w-full max-w-sm md:max-xl flex justify-end mb-2">
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          onClick={() => setSoundEnabled(!soundEnabled)}
+          className="rounded-full w-8 h-8 md:w-10 md:h-10 text-muted-foreground"
+        >
+          {soundEnabled ? <Volume2 size={18} /> : <VolumeX size={18} />}
+        </Button>
+      </div>
+
       <GameStats 
         score={state.score} 
         highScore={state.highScore} 
@@ -307,7 +334,10 @@ export function GameController() {
           <Button 
             variant="outline" 
             size="sm"
-            onClick={() => startNewGame()} 
+            onClick={() => {
+              soundManager.playClick();
+              startNewGame();
+            }} 
             className="rounded-full border-primary text-primary hover:bg-primary/10 transition-colors h-9 px-4"
           >
             <RefreshCw className="mr-2" size={14} />
