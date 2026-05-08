@@ -54,7 +54,10 @@ export function GameController() {
   const [aiFeedback, setAiFeedback] = useState<string>("")
   const [targetedGroup, setTargetedGroup] = useState<[number, number][]>([])
   const [floatingScores, setFloatingScores] = useState<FloatingScore[]>([])
+  const [lastIncrement, setLastIncrement] = useState<number | null>(null)
+  
   const scoreCounter = useRef(0)
+  const incrementTimerRef = useRef<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
     const saved = localStorage.getItem('pop-block-high-score')
@@ -154,6 +157,7 @@ export function GameController() {
     }))
     setTargetedGroup([])
     setFloatingScores([])
+    setLastIncrement(null)
   }, [state.config, state.difficulty, state.score, performanceHistory, locale])
 
   useEffect(() => {
@@ -184,6 +188,13 @@ export function GameController() {
       };
       setFloatingScores(prev => [...prev, newFloatingScore]);
       
+      // Set last increment and timer
+      setLastIncrement(points);
+      if (incrementTimerRef.current) clearTimeout(incrementTimerRef.current);
+      incrementTimerRef.current = setTimeout(() => {
+        setLastIncrement(null);
+      }, 2000);
+
       // Remove floating score after animation
       setTimeout(() => {
         setFloatingScores(prev => prev.filter(s => s.id !== newFloatingScore.id));
@@ -236,6 +247,7 @@ export function GameController() {
         moves={state.moves} 
         difficulty={state.difficulty}
         aiFeedback={aiFeedback}
+        lastIncrement={lastIncrement}
       />
 
       <div className="relative group w-full max-w-sm md:max-w-xl">

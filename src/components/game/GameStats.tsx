@@ -12,9 +12,10 @@ interface GameStatsProps {
   moves: number
   difficulty: 'easy' | 'medium' | 'hard'
   aiFeedback?: string
+  lastIncrement?: number | null
 }
 
-export function GameStats({ score, highScore, moves, difficulty, aiFeedback }: GameStatsProps) {
+export function GameStats({ score, highScore, moves, difficulty, aiFeedback, lastIncrement }: GameStatsProps) {
   const { t } = useTranslation();
   const [pulseScore, setPulseScore] = useState(false);
 
@@ -29,12 +30,19 @@ export function GameStats({ score, highScore, moves, difficulty, aiFeedback }: G
   return (
     <div className="w-full max-w-sm md:max-w-xl mx-auto space-y-3 md:space-y-4 mb-4 md:mb-6">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
-        <StatCard 
-          label={t.score} 
-          value={score.toLocaleString()} 
-          icon={<Target className="text-primary" size={16} />} 
-          className={cn(pulseScore && "animate-bump border-primary/50 shadow-primary/10")}
-        />
+        <div className="relative">
+          <StatCard 
+            label={t.score} 
+            value={score.toLocaleString()} 
+            icon={<Target className="text-primary" size={16} />} 
+            className={cn(pulseScore && "animate-bump border-primary/50 shadow-primary/10")}
+          />
+          {lastIncrement !== null && lastIncrement !== undefined && (
+            <div className="absolute -top-2 -right-1 z-10 bg-primary text-white text-[10px] md:text-xs font-black px-1.5 py-0.5 rounded-full shadow-lg animate-in fade-in zoom-in slide-in-from-bottom-2 duration-300">
+              +{lastIncrement}
+            </div>
+          )}
+        </div>
         <StatCard 
           label={t.best} 
           value={highScore.toLocaleString()} 
