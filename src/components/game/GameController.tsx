@@ -26,6 +26,7 @@ interface FloatingScore {
 
 export function GameController() {
   const { t, locale } = useTranslation();
+  const [mounted, setMounted] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [state, setState] = useState<GameState>({
     grid: [],
@@ -53,6 +54,7 @@ export function GameController() {
   const incrementTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
+    setMounted(true);
     const saved = localStorage.getItem('pop-block-high-score')
     if (saved) {
       setState(prev => ({ ...prev, highScore: parseInt(saved, 10) }))
@@ -60,8 +62,10 @@ export function GameController() {
   }, [])
 
   useEffect(() => {
-    soundManager.setEnabled(soundEnabled);
-  }, [soundEnabled]);
+    if (mounted) {
+      soundManager.setEnabled(soundEnabled);
+    }
+  }, [soundEnabled, mounted]);
 
   const getHeuristicDifficulty = useCallback((performance: any, current: any) => {
     const avgScore = performance.cumulativeScore / (performance.totalGames || 1);
@@ -127,8 +131,10 @@ export function GameController() {
   }, [state.config, state.difficulty, performanceHistory, getHeuristicDifficulty])
 
   useEffect(() => {
-    startNewGame()
-  }, [])
+    if (mounted) {
+      startNewGame()
+    }
+  }, [mounted, startNewGame])
 
   const handleBlockClick = (x: number, y: number) => {
     if (state.gameOver) return
@@ -173,7 +179,7 @@ export function GameController() {
 
       setState(prev => {
         const newHighScore = Math.max(prev.highScore, newScore)
-        if (newHighScore > prev.highScore) {
+        if (newHighScore > prev.highScore && typeof window !== 'undefined') {
           localStorage.setItem('pop-block-high-score', newHighScore.toString())
         }
         
@@ -210,7 +216,7 @@ export function GameController() {
     startNewGame(true)
   }
 
-  if (state.grid.length === 0) return null
+  if (!mounted || state.grid.length === 0) return null
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[calc(100vh-160px)] px-4 py-4 md:py-8">
