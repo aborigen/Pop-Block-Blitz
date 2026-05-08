@@ -20,12 +20,10 @@ import { useTranslation } from "@/lib/i18n/context"
 // AI flow is imported but we'll handle it dynamically to support static export
 let curateDynamicDifficulty: any = null;
 try {
-  // We use dynamic import to avoid build-time errors in static export if it relies on server-only modules
-  // In a real static export, this function call will likely be caught and handled by the fallback
   const aiModule = require("@/ai/flows/curate-dynamic-difficulty");
   curateDynamicDifficulty = aiModule.curateDynamicDifficulty;
 } catch (e) {
-  // Silent fail - will use heuristic fallback
+  // Silent fail
 }
 
 export function GameController() {
@@ -67,13 +65,11 @@ export function GameController() {
     let nextLevel: 'easy' | 'medium' | 'hard' = state.difficulty;
 
     if (scoreDiff > 1.2 || performance.lastMaxCombo > 8) {
-      // Increase difficulty
-      nextWidth = Math.min(15, nextWidth + 1);
+      nextWidth = Math.min(12, nextWidth + 1);
       nextHeight = Math.min(15, nextHeight + 1);
-      nextColors = Math.min(7, nextColors + 1);
+      nextColors = Math.min(6, nextColors + 1);
       nextLevel = nextLevel === 'easy' ? 'medium' : 'hard';
     } else if (scoreDiff < 0.8 && performance.totalGames > 2) {
-      // Decrease difficulty
       nextWidth = Math.max(8, nextWidth - 1);
       nextHeight = Math.max(8, nextHeight - 1);
       nextColors = Math.max(4, nextColors - 1);
@@ -97,7 +93,6 @@ export function GameController() {
 
     if (isAiAdjustment && performanceHistory.totalGames > 0) {
       try {
-        // Attempt AI adjustment if available
         if (curateDynamicDifficulty && typeof curateDynamicDifficulty === 'function') {
           const result = await curateDynamicDifficulty({
             playerPerformance: {
@@ -117,8 +112,8 @@ export function GameController() {
           })
 
           newConfig = {
-            width: result.recommendedBoardWidth,
-            height: result.recommendedBoardHeight,
+            width: Math.min(result.recommendedBoardWidth, 12),
+            height: Math.min(result.recommendedBoardHeight, 15),
             numColors: result.recommendedNumColors
           }
           newDifficulty = result.recommendedDifficultyLevel
@@ -127,7 +122,6 @@ export function GameController() {
           throw new Error("AI not available");
         }
       } catch (error) {
-        // Fallback to local heuristic for static builds
         const result = getHeuristicDifficulty(performanceHistory, state.config);
         newConfig = {
           width: result.recommendedBoardWidth,
@@ -212,7 +206,7 @@ export function GameController() {
   if (state.grid.length === 0) return null
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-100px)] px-4 py-8">
+    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-160px)] px-4 py-4 md:py-8">
       <GameStats 
         score={state.score} 
         highScore={state.highScore} 
@@ -221,12 +215,14 @@ export function GameController() {
         aiFeedback={aiFeedback}
       />
 
-      <div className="relative group">
+      <div className="relative group w-full max-w-sm md:max-w-xl">
         <div 
-          className="grid gap-1.5 p-3 rounded-2xl bg-white/40 shadow-xl border border-white/60 backdrop-blur-md"
+          className="grid gap-1 p-2 rounded-2xl bg-white/40 shadow-xl border border-white/60 backdrop-blur-md mx-auto"
           style={{ 
-            gridTemplateColumns: `repeat(${state.config.width}, minmax(25px, 45px))`,
-            gridTemplateRows: `repeat(${state.config.height}, minmax(25px, 45px))`
+            gridTemplateColumns: `repeat(${state.config.width}, 1fr)`,
+            width: '100%',
+            maxWidth: '100%',
+            aspectRatio: `${state.config.width} / ${state.config.height}`
           }}
         >
           {state.grid.map((row, y) => 
@@ -242,9 +238,9 @@ export function GameController() {
         </div>
 
         {state.gameOver && (
-          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-background/80 backdrop-blur-sm rounded-2xl animate-in fade-in zoom-in duration-300">
-            <h2 className="text-4xl font-bold text-foreground mb-2 font-headline">{t.gameOver}</h2>
-            <p className="text-xl text-muted-foreground mb-6 font-medium">{t.finalScore}: {state.score}</p>
+          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-background/80 backdrop-blur-sm rounded-2xl animate-in fade-in zoom-in duration-300 px-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-2 font-headline text-center">{t.gameOver}</h2>
+            <p className="text-lg md:text-xl text-muted-foreground mb-6 font-medium text-center">{t.finalScore}: {state.score}</p>
             <div className="flex gap-4">
               <Button size="lg" onClick={finalizeGame} className="rounded-full px-8 bg-primary hover:bg-primary/90">
                 <PlayCircle className="mr-2" size={20} />
@@ -256,13 +252,14 @@ export function GameController() {
       </div>
 
       {!state.gameOver && (
-        <div className="mt-8">
+        <div className="mt-6 md:mt-8">
           <Button 
             variant="outline" 
+            size="sm"
             onClick={() => startNewGame()} 
-            className="rounded-full border-primary text-primary hover:bg-primary/10 transition-colors"
+            className="rounded-full border-primary text-primary hover:bg-primary/10 transition-colors h-9 px-4"
           >
-            <RefreshCw className="mr-2" size={16} />
+            <RefreshCw className="mr-2" size={14} />
             {t.resetSession}
           </Button>
         </div>

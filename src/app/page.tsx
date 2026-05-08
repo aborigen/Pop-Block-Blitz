@@ -1,3 +1,4 @@
+
 "use client"
 
 import { GameController } from "@/components/game/GameController"
@@ -15,26 +16,26 @@ export default function Home() {
   const { t, locale, setLocale } = useTranslation();
 
   return (
-    <main className="min-h-screen flex flex-col">
-      <header className="py-6 px-8 flex items-center justify-between border-b border-white/20 bg-white/10 backdrop-blur-sm">
+    <main className="min-h-screen flex flex-col bg-background">
+      <header className="py-4 px-4 md:py-6 md:px-8 flex items-center justify-between border-b border-white/20 bg-white/10 backdrop-blur-sm sticky top-0 z-50">
         <div className="flex items-center gap-2">
-          <div className="bg-primary p-2 rounded-xl shadow-lg shadow-primary/20 rotate-12">
-            <Sparkles className="text-white" size={24} />
+          <div className="bg-primary p-1.5 md:p-2 rounded-lg md:rounded-xl shadow-lg shadow-primary/20 rotate-12">
+            <Sparkles className="text-white w-4 h-4 md:w-6 md:h-6" />
           </div>
-          <h1 className="text-2xl font-black text-foreground font-headline tracking-tight">
+          <h1 className="text-lg md:text-2xl font-black text-foreground font-headline tracking-tight">
             {t.title} <span className="text-primary">{t.subtitle}</span>
           </h1>
         </div>
         
-        <div className="flex items-center gap-4">
-          <div className="hidden md:block text-xs font-semibold text-muted-foreground tracking-widest uppercase bg-white/40 px-3 py-1.5 rounded-full">
+        <div className="flex items-center gap-2 md:gap-4">
+          <div className="hidden sm:block text-[10px] font-semibold text-muted-foreground tracking-widest uppercase bg-white/40 px-3 py-1.5 rounded-full">
             {t.aiPowered}
           </div>
           
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="rounded-full">
-                <Languages size={20} />
+              <Button variant="ghost" size="icon" className="rounded-full w-9 h-9">
+                <Languages size={18} />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -49,11 +50,11 @@ export default function Home() {
         </div>
       </header>
 
-      <section className="flex-grow">
+      <section className="flex-grow flex items-center justify-center">
         <GameController />
       </section>
 
-      <footer className="py-6 text-center text-muted-foreground text-sm border-t border-white/10">
+      <footer className="py-4 md:py-6 text-center text-muted-foreground text-[10px] md:text-sm border-t border-white/10">
         <p className="font-medium px-4">{t.instruction}</p>
         <p className="opacity-50 mt-1">{t.copyright}</p>
       </footer>

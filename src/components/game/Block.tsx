@@ -1,3 +1,4 @@
+
 "use client"
 
 import { COLORS, SHAPES } from "@/lib/game-logic"
@@ -22,12 +23,12 @@ export function Block({ colorIndex, onClick, isTargeted }: BlockProps) {
     <button
       onClick={onClick}
       className={cn(
-        "w-full h-full rounded-md flex items-center justify-center transition-all duration-200 animate-pop-in game-block-shadow game-block-active",
+        "w-full h-full rounded-[4px] md:rounded-md flex items-center justify-center transition-all duration-200 animate-pop-in game-block-shadow game-block-active",
         isTargeted ? "brightness-110 scale-105" : "hover:brightness-105"
       )}
       style={{ backgroundColor: color }}
     >
-      <div className="text-white/40 w-1/2 h-1/2">
+      <div className="text-white/30 w-1/2 h-1/2">
         <ShapeIcon className="w-full h-full" strokeWidth={3} />
       </div>
     </button>
