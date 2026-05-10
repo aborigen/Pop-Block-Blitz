@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useEffect, useCallback, useRef } from "react"
@@ -67,14 +68,14 @@ export function GameController() {
     }
   }, [soundEnabled, mounted]);
 
-  const getHeuristicDifficulty = useCallback((performance: any, current: any) => {
+  const getHeuristicDifficulty = useCallback((performance: any, currentConfig: any, currentDifficulty: string) => {
     const avgScore = performance.cumulativeScore / (performance.totalGames || 1);
     const scoreDiff = performance.lastGameScore / (avgScore || 1);
     
-    let nextWidth = current.width;
-    let nextHeight = current.height;
-    let nextColors = current.numColors;
-    let nextLevel: 'easy' | 'medium' | 'hard' = state.difficulty;
+    let nextWidth = currentConfig.width;
+    let nextHeight = currentConfig.height;
+    let nextColors = currentConfig.numColors;
+    let nextLevel: 'easy' | 'medium' | 'hard' = currentDifficulty as any;
 
     if (scoreDiff > 1.2 || performance.lastMaxCombo > 8) {
       nextWidth = Math.min(12, nextWidth + 1);
@@ -97,44 +98,48 @@ export function GameController() {
         ? "Система адаптировала сложность на основе вашей игры." 
         : "Adaptive system adjusted difficulty based on your performance."
     };
-  }, [state.difficulty, locale]);
+  }, [locale]);
 
-  const startNewGame = useCallback(async (isAiAdjustment = false) => {
-    let newConfig = { ...state.config }
-    let newDifficulty = state.difficulty
+  const startNewGame = useCallback((isAiAdjustment = false) => {
+    setState(prev => {
+      let newConfig = { ...prev.config };
+      let newDifficulty = prev.difficulty;
 
-    if (isAiAdjustment && performanceHistory.totalGames > 0) {
-      const result = getHeuristicDifficulty(performanceHistory, state.config);
-      newConfig = {
-        width: result.recommendedBoardWidth,
-        height: result.recommendedBoardHeight,
-        numColors: result.recommendedNumColors
+      if (isAiAdjustment && performanceHistory.totalGames > 0) {
+        const result = getHeuristicDifficulty(performanceHistory, prev.config, prev.difficulty);
+        newConfig = {
+          width: result.recommendedBoardWidth,
+          height: result.recommendedBoardHeight,
+          numColors: result.recommendedNumColors
+        };
+        newDifficulty = result.recommendedDifficultyLevel;
+        setAiFeedback(result.difficultyAdjustmentFeedback);
       }
-      newDifficulty = result.recommendedDifficultyLevel
-      setAiFeedback(result.difficultyAdjustmentFeedback)
-    }
 
-    const newGrid = generateGrid(newConfig.width, newConfig.height, newConfig.numColors)
-    
-    setState(prev => ({
-      ...prev,
-      grid: newGrid,
-      score: 0,
-      gameOver: false,
-      moves: 0,
-      difficulty: newDifficulty,
-      config: newConfig
-    }))
-    setTargetedGroup([])
-    setFloatingScores([])
-    setLastIncrement(null)
-  }, [state.config, state.difficulty, performanceHistory, getHeuristicDifficulty])
+      const newGrid = generateGrid(newConfig.width, newConfig.height, newConfig.numColors);
+      
+      return {
+        ...prev,
+        grid: newGrid,
+        score: 0,
+        gameOver: false,
+        moves: 0,
+        difficulty: newDifficulty,
+        config: newConfig
+      };
+    });
 
+    setTargetedGroup([]);
+    setFloatingScores([]);
+    setLastIncrement(null);
+  }, [performanceHistory, getHeuristicDifficulty]);
+
+  // Use state.grid.length as a gate to prevent the infinite loop on mount
   useEffect(() => {
-    if (mounted) {
-      startNewGame()
+    if (mounted && state.grid.length === 0) {
+      startNewGame();
     }
-  }, [mounted, startNewGame])
+  }, [mounted, state.grid.length, startNewGame]);
 
   const handleBlockClick = (x: number, y: number) => {
     if (state.gameOver) return
