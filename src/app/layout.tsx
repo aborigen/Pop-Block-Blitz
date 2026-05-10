@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Poppins } from 'next/font/google';
 import './globals.css';
 import { LanguageProvider } from '@/lib/i18n/context';
+import Script from 'next/script';
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -22,6 +23,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={poppins.variable}>
+      <head>
+        <Script 
+          src="https://yandex.ru/games/sdk/v2" 
+          strategy="beforeInteractive"
+        />
+      </head>
       <body className="font-body antialiased">
         <LanguageProvider>
           {children}

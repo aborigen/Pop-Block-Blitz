@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState, useEffect, useCallback, useRef } from "react"
@@ -17,6 +16,7 @@ import { Button } from "@/components/ui/button"
 import { RefreshCw, PlayCircle, Volume2, VolumeX } from "lucide-react"
 import { useTranslation } from "@/lib/i18n/context"
 import { soundManager } from "@/lib/sound-effects"
+import { initYandexSDK, showInterstitialAd, reportScore } from "@/lib/yandex-games"
 
 interface FloatingScore {
   id: number;
@@ -54,12 +54,16 @@ export function GameController() {
   const scoreCounter = useRef(0)
   const incrementTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
+  // Initialization
   useEffect(() => {
     setMounted(true);
     const saved = localStorage.getItem('pop-block-high-score')
     if (saved) {
       setState(prev => ({ ...prev, highScore: parseInt(saved, 10) }))
     }
+
+    // Initialize Yandex Games SDK
+    initYandexSDK();
   }, [])
 
   useEffect(() => {
@@ -134,7 +138,6 @@ export function GameController() {
     setLastIncrement(null);
   }, [performanceHistory, getHeuristicDifficulty]);
 
-  // Use state.grid.length as a gate to prevent the infinite loop on mount
   useEffect(() => {
     if (mounted && state.grid.length === 0) {
       startNewGame();
@@ -162,6 +165,10 @@ export function GameController() {
       
       if (isGameOver) {
         soundManager.playGameOver();
+        // Trigger Yandex Interstitial Ad on Game Over
+        showInterstitialAd();
+        // Report score to Yandex (using 'top' as a placeholder leaderboard name)
+        reportScore('top', newScore);
       }
 
       const newFloatingScore = {
