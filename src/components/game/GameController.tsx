@@ -16,7 +16,7 @@ import { Button } from "@/components/ui/button"
 import { RefreshCw, PlayCircle, Volume2, VolumeX } from "lucide-react"
 import { useTranslation } from "@/lib/i18n/context"
 import { soundManager } from "@/lib/sound-effects"
-import { initYandexSDK, showInterstitialAd, reportScore } from "@/lib/yandex-games"
+import { initYandexSDK, showInterstitialAd, reportScore, reportReady } from "@/lib/yandex-games"
 
 interface FloatingScore {
   id: number;
@@ -53,6 +53,7 @@ export function GameController() {
   
   const scoreCounter = useRef(0)
   const incrementTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const isReadyReported = useRef(false)
 
   // Initialization
   useEffect(() => {
@@ -62,9 +63,15 @@ export function GameController() {
       setState(prev => ({ ...prev, highScore: parseInt(saved, 10) }))
     }
 
-    // Initialize Yandex Games SDK
-    initYandexSDK();
-  }, [])
+    // Initialize Yandex Games SDK and report ready when done
+    initYandexSDK().then(() => {
+      // If the grid is already generated, report ready immediately
+      if (state.grid.length > 0 && !isReadyReported.current) {
+        reportReady();
+        isReadyReported.current = true;
+      }
+    });
+  }, [state.grid.length])
 
   useEffect(() => {
     if (mounted) {
@@ -141,6 +148,12 @@ export function GameController() {
   useEffect(() => {
     if (mounted && state.grid.length === 0) {
       startNewGame();
+    }
+    
+    // Once the first grid is ready and SDK is initialized, report ready
+    if (mounted && state.grid.length > 0 && !isReadyReported.current) {
+      reportReady();
+      isReadyReported.current = true;
     }
   }, [mounted, state.grid.length, startNewGame]);
 
@@ -243,14 +256,16 @@ export function GameController() {
           <RefreshCw className="mr-1.5 w-3 h-3" />
           {t.resetSession}
         </Button>
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          onClick={() => setSoundEnabled(!soundEnabled)}
-          className="rounded-full w-7 h-7 text-muted-foreground"
-        >
-          {soundEnabled ? <Volume2 size={14} /> : <VolumeX size={14} />}
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={() => setSoundEnabled(!soundEnabled)}
+            className="rounded-full w-7 h-7 text-muted-foreground"
+          >
+            {soundEnabled ? <Volume2 size={14} /> : <VolumeX size={14} />}
+          </Button>
+        </div>
       </div>
 
       <GameStats 

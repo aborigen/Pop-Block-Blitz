@@ -31,6 +31,25 @@ export async function initYandexSDK(): Promise<YSDK | null> {
 }
 
 /**
+ * Reports that the game is ready to be played.
+ * This hides the loading screen in Yandex Games.
+ */
+export function reportReady(): void {
+  if (!sdkInstance) {
+    console.warn('SDK not initialized. Cannot report ready.');
+    return;
+  }
+
+  try {
+    // @ts-ignore - The types might be slightly out of date for the latest features
+    sdkInstance.features.LoadingAPI?.ready();
+    console.log('Yandex Games: reported ready');
+  } catch (e) {
+    console.warn('Failed to report ready:', e);
+  }
+}
+
+/**
  * Shows a full-screen interstitial ad.
  */
 export function showInterstitialAd(): void {
