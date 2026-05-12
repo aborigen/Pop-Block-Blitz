@@ -1,15 +1,7 @@
 import type { Metadata } from 'next';
-import { Poppins } from 'next/font/google';
 import './globals.css';
 import { LanguageProvider } from '@/lib/i18n/context';
 import Script from 'next/script';
-
-const poppins = Poppins({
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700', '900'],
-  variable: '--font-poppins',
-  display: 'swap',
-});
 
 export const metadata: Metadata = {
   title: 'Pop Block Blitz',
@@ -22,7 +14,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={poppins.variable}>
+    <html lang="en">
       <head>
         <Script 
           src="https://yandex.ru/games/sdk/v2" 
