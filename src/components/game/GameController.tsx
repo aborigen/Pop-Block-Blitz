@@ -99,8 +99,8 @@ export function GameController() {
       recommendedNumColors: nextColors,
       recommendedDifficultyLevel: nextLevel,
       difficultyAdjustmentFeedback: locale === 'ru' 
-        ? "Система адаптировала сложность на основе вашей игры." 
-        : "Adaptive system adjusted difficulty based on your performance."
+        ? "Система адаптировала сложность." 
+        : "System adapted difficulty."
     };
   }, [locale]);
 
@@ -229,15 +229,27 @@ export function GameController() {
   if (!mounted || state.grid.length === 0) return null
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-120px)] px-2 py-2 md:py-8">
-      <div className="w-full max-w-sm md:max-w-xl flex justify-end mb-1 md:mb-2">
+    <div className="flex flex-col items-center w-full h-full max-w-2xl mx-auto px-1">
+      <div className="w-full flex justify-between items-center px-1 mb-1">
+        <Button 
+          variant="ghost" 
+          size="sm"
+          onClick={() => {
+            soundManager.playClick();
+            startNewGame();
+          }} 
+          className="rounded-full h-7 px-2 text-[10px] text-muted-foreground"
+        >
+          <RefreshCw className="mr-1.5 w-3 h-3" />
+          {t.resetSession}
+        </Button>
         <Button 
           variant="ghost" 
           size="icon" 
           onClick={() => setSoundEnabled(!soundEnabled)}
-          className="rounded-full w-8 h-8 md:w-10 md:h-10 text-muted-foreground"
+          className="rounded-full w-7 h-7 text-muted-foreground"
         >
-          {soundEnabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
+          {soundEnabled ? <Volume2 size={14} /> : <VolumeX size={14} />}
         </Button>
       </div>
 
@@ -250,14 +262,15 @@ export function GameController() {
         lastIncrement={lastIncrement}
       />
 
-      <div className="relative group w-full max-w-sm md:max-w-xl">
+      <div className="relative flex-grow w-full flex items-center justify-center overflow-hidden">
         <div 
-          className="grid gap-0.5 md:gap-1 p-1 md:p-2 rounded-xl md:rounded-2xl bg-white/40 shadow-xl border border-white/60 backdrop-blur-md mx-auto relative"
+          className="grid gap-0.5 p-1 rounded-xl bg-white/40 shadow-xl border border-white/60 backdrop-blur-md mx-auto relative h-full max-h-[75vh]"
           style={{ 
             gridTemplateColumns: `repeat(${state.config.width}, 1fr)`,
+            gridTemplateRows: `repeat(${state.config.height}, 1fr)`,
             width: '100%',
-            maxWidth: '100%',
-            aspectRatio: `${state.config.width} / ${state.config.height}`
+            aspectRatio: `${state.config.width} / ${state.config.height}`,
+            maxHeight: '100%'
           }}
         >
           {state.grid.map((row, y) => 
@@ -274,49 +287,30 @@ export function GameController() {
           {floatingScores.map(fs => (
             <div 
               key={fs.id}
-              className="absolute z-30 pointer-events-none text-primary font-black text-lg md:text-2xl animate-float-up-fade"
+              className="absolute z-30 pointer-events-none text-primary font-black text-sm md:text-2xl animate-float-up-fade"
               style={{
                 left: `${(fs.x / state.config.width) * 100}%`,
                 top: `${(fs.y / state.config.height) * 100}%`,
                 transform: 'translate(-50%, -50%)',
-                textShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                textShadow: '0 1px 2px rgba(0,0,0,0.2)'
               }}
             >
               +{fs.points}
             </div>
           ))}
-        </div>
 
-        {state.gameOver && (
-          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-background/80 backdrop-blur-sm rounded-xl md:rounded-2xl animate-in fade-in zoom-in duration-300 px-4">
-            <h2 className="text-2xl md:text-4xl font-bold text-foreground mb-1 font-headline text-center">{t.gameOver}</h2>
-            <p className="text-base md:text-xl text-muted-foreground mb-4 md:mb-6 font-medium text-center">{t.finalScore}: {state.score}</p>
-            <div className="flex gap-4">
-              <Button size="lg" onClick={finalizeGame} className="rounded-full px-6 md:px-8 bg-primary hover:bg-primary/90">
-                <PlayCircle className="mr-2 w-5 h-5 md:w-6 md:h-6" />
+          {state.gameOver && (
+            <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-background/80 backdrop-blur-sm rounded-xl animate-in fade-in zoom-in duration-300 px-4 text-center">
+              <h2 className="text-xl md:text-4xl font-bold text-foreground mb-1 font-headline">{t.gameOver}</h2>
+              <p className="text-sm md:text-xl text-muted-foreground mb-4 font-medium">{t.finalScore}: {state.score}</p>
+              <Button size="lg" onClick={finalizeGame} className="rounded-full px-6 bg-primary hover:bg-primary/90 h-9 md:h-11">
+                <PlayCircle className="mr-2 w-4 h-4 md:w-6 md:h-6" />
                 {t.playAgain}
               </Button>
             </div>
-          </div>
-        )}
-      </div>
-
-      {!state.gameOver && (
-        <div className="mt-4 md:mt-8">
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={() => {
-              soundManager.playClick();
-              startNewGame();
-            }} 
-            className="rounded-full border-primary text-primary hover:bg-primary/10 transition-colors h-8 md:h-9 px-3 md:px-4 text-[10px] md:text-sm"
-          >
-            <RefreshCw className="mr-2 w-3 h-3 md:w-4 md:h-4" />
-            {t.resetSession}
-          </Button>
+          )}
         </div>
-      )}
+      </div>
     </div>
   )
 }
