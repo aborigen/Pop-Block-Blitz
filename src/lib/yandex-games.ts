@@ -23,11 +23,19 @@ export async function initYandexSDK(): Promise<YSDK | null> {
     const sdk = await YaGames.init();
     sdkInstance = sdk;
     console.log('Yandex Games SDK initialized');
+    console.log('Environment:', sdk.environment);
     return sdkInstance;
   } catch (e) {
     console.error('Yandex Games SDK failed to initialize:', e);
     return null;
   }
+}
+
+/**
+ * Returns the environment object from the Yandex Games SDK.
+ */
+export function getEnvironment(): any | null {
+  return sdkInstance ? sdkInstance.environment : null;
 }
 
 /**
@@ -41,9 +49,14 @@ export function reportReady(): void {
   }
 
   try {
-    // @ts-ignore - The types might be slightly out of date for the latest features
-    sdkInstance.features.LoadingAPI?.ready();
-    console.log('Yandex Games: reported ready');
+    // @ts-ignore - LoadingAPI might be under features or directly on sdk depending on version
+    const loadingApi = sdkInstance.features?.LoadingAPI || (sdkInstance as any).LoadingAPI;
+    if (loadingApi) {
+      loadingApi.ready();
+      console.log('Yandex Games: reported ready');
+    } else {
+      console.warn('LoadingAPI not found in SDK features');
+    }
   } catch (e) {
     console.warn('Failed to report ready:', e);
   }

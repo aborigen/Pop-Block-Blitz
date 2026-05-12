@@ -16,7 +16,7 @@ import { Button } from "@/components/ui/button"
 import { RefreshCw, PlayCircle, Volume2, VolumeX } from "lucide-react"
 import { useTranslation } from "@/lib/i18n/context"
 import { soundManager } from "@/lib/sound-effects"
-import { initYandexSDK, showInterstitialAd, reportScore, reportReady } from "@/lib/yandex-games"
+import { initYandexSDK, showInterstitialAd, reportScore, reportReady, getEnvironment } from "@/lib/yandex-games"
 
 interface FloatingScore {
   id: number;
@@ -26,7 +26,7 @@ interface FloatingScore {
 }
 
 export function GameController() {
-  const { t, locale } = useTranslation();
+  const { t, locale, setLocale } = useTranslation();
   const [mounted, setMounted] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [state, setState] = useState<GameState>({
@@ -64,14 +64,27 @@ export function GameController() {
     }
 
     // Initialize Yandex Games SDK and report ready when done
-    initYandexSDK().then(() => {
+    initYandexSDK().then((sdk) => {
+      if (sdk) {
+        const env = sdk.environment;
+        console.log('Yandex Games Environment:', env);
+        
+        // Use environment language if no locale is saved in localStorage
+        const savedLocale = localStorage.getItem('app-locale');
+        if (!savedLocale && env.i18n?.lang) {
+          const yandexLang = env.i18n.lang.split('-')[0]; // Handle 'en-US' etc.
+          if (yandexLang === 'ru') setLocale('ru');
+          else if (yandexLang === 'en') setLocale('en');
+        }
+      }
+
       // If the grid is already generated, report ready immediately
       if (state.grid.length > 0 && !isReadyReported.current) {
         reportReady();
         isReadyReported.current = true;
       }
     });
-  }, [state.grid.length])
+  }, [state.grid.length, setLocale])
 
   useEffect(() => {
     if (mounted) {
