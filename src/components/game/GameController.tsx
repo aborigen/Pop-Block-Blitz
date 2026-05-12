@@ -165,9 +165,7 @@ export function GameController() {
       
       if (isGameOver) {
         soundManager.playGameOver();
-        // Trigger Yandex Interstitial Ad on Game Over
         showInterstitialAd();
-        // Report score to Yandex (using 'top' as a placeholder leaderboard name)
         reportScore('top', newScore);
       }
 
@@ -231,15 +229,15 @@ export function GameController() {
   if (!mounted || state.grid.length === 0) return null
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-160px)] px-4 py-4 md:py-8">
-      <div className="w-full max-w-sm md:max-xl flex justify-end mb-2">
+    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-120px)] px-2 py-2 md:py-8">
+      <div className="w-full max-w-sm md:max-w-xl flex justify-end mb-1 md:mb-2">
         <Button 
           variant="ghost" 
           size="icon" 
           onClick={() => setSoundEnabled(!soundEnabled)}
           className="rounded-full w-8 h-8 md:w-10 md:h-10 text-muted-foreground"
         >
-          {soundEnabled ? <Volume2 size={18} /> : <VolumeX size={18} />}
+          {soundEnabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
         </Button>
       </div>
 
@@ -254,7 +252,7 @@ export function GameController() {
 
       <div className="relative group w-full max-w-sm md:max-w-xl">
         <div 
-          className="grid gap-1 p-2 rounded-2xl bg-white/40 shadow-xl border border-white/60 backdrop-blur-md mx-auto relative"
+          className="grid gap-0.5 md:gap-1 p-1 md:p-2 rounded-xl md:rounded-2xl bg-white/40 shadow-xl border border-white/60 backdrop-blur-md mx-auto relative"
           style={{ 
             gridTemplateColumns: `repeat(${state.config.width}, 1fr)`,
             width: '100%',
@@ -276,7 +274,7 @@ export function GameController() {
           {floatingScores.map(fs => (
             <div 
               key={fs.id}
-              className="absolute z-30 pointer-events-none text-primary font-black text-xl md:text-2xl animate-float-up-fade"
+              className="absolute z-30 pointer-events-none text-primary font-black text-lg md:text-2xl animate-float-up-fade"
               style={{
                 left: `${(fs.x / state.config.width) * 100}%`,
                 top: `${(fs.y / state.config.height) * 100}%`,
@@ -290,12 +288,12 @@ export function GameController() {
         </div>
 
         {state.gameOver && (
-          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-background/80 backdrop-blur-sm rounded-2xl animate-in fade-in zoom-in duration-300 px-4">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-2 font-headline text-center">{t.gameOver}</h2>
-            <p className="text-lg md:text-xl text-muted-foreground mb-6 font-medium text-center">{t.finalScore}: {state.score}</p>
+          <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-background/80 backdrop-blur-sm rounded-xl md:rounded-2xl animate-in fade-in zoom-in duration-300 px-4">
+            <h2 className="text-2xl md:text-4xl font-bold text-foreground mb-1 font-headline text-center">{t.gameOver}</h2>
+            <p className="text-base md:text-xl text-muted-foreground mb-4 md:mb-6 font-medium text-center">{t.finalScore}: {state.score}</p>
             <div className="flex gap-4">
-              <Button size="lg" onClick={finalizeGame} className="rounded-full px-8 bg-primary hover:bg-primary/90">
-                <PlayCircle className="mr-2" size={20} />
+              <Button size="lg" onClick={finalizeGame} className="rounded-full px-6 md:px-8 bg-primary hover:bg-primary/90">
+                <PlayCircle className="mr-2 w-5 h-5 md:w-6 md:h-6" />
                 {t.playAgain}
               </Button>
             </div>
@@ -304,7 +302,7 @@ export function GameController() {
       </div>
 
       {!state.gameOver && (
-        <div className="mt-6 md:mt-8">
+        <div className="mt-4 md:mt-8">
           <Button 
             variant="outline" 
             size="sm"
@@ -312,9 +310,9 @@ export function GameController() {
               soundManager.playClick();
               startNewGame();
             }} 
-            className="rounded-full border-primary text-primary hover:bg-primary/10 transition-colors h-9 px-4"
+            className="rounded-full border-primary text-primary hover:bg-primary/10 transition-colors h-8 md:h-9 px-3 md:px-4 text-[10px] md:text-sm"
           >
-            <RefreshCw className="mr-2" size={14} />
+            <RefreshCw className="mr-2 w-3 h-3 md:w-4 md:h-4" />
             {t.resetSession}
           </Button>
         </div>
