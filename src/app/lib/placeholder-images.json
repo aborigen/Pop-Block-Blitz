@@ -3,7 +3,7 @@
     {
       "id": "game-cover",
       "description": "Main cover image for Pop Block Blitz store listings",
-      "imageUrl": "https://picsum.photos/seed/42/800/470",
+      "imageUrl": "/assets/game-cover.svg",
       "imageHint": "puzzle game"
     }
   ]

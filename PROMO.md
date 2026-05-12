@@ -33,7 +33,7 @@ What makes Pop Block Blitz unique is its **Adaptive AI Game Master**. The game a
 
 ## 🖼️ Brand Assets
 - **Main Icon:** Located at `public/assets/icon.svg`. Use this for app icons and store listings.
-- **Cover Image:** A vibrant 800x470 image representing the block-popping mechanics. See `src/app/lib/placeholder-images.json` (ID: `game-cover`) for the reference URL.
+- **Cover Image:** Located at `public/assets/game-cover.svg`. This is a vibrant 800x470 SVG asset.
 
 ## 🏷️ Categories & Tags
 - **Primary:** Puzzle, Hypercasual
