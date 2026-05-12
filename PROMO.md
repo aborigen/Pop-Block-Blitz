@@ -31,6 +31,9 @@ What makes Pop Block Blitz unique is its **Adaptive AI Game Master**. The game a
 - **Mobile First:** Perfected for portrait orientation and touch controls.
 - **Leaderboards:** Compete for the top spot (Yandex Games integration).
 
+## 🖼️ Brand Assets
+- **Main Icon:** Located at `public/assets/icon.svg`. Use this for app icons and store listings. It features the signature aqua background and lime star block.
+
 ## 🏷️ Categories & Tags
 - **Primary:** Puzzle, Hypercasual
 - **Secondary:** Match 3, Logic, Single Player

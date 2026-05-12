@@ -1,0 +1,19 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Main rounded background using the primary aqua color -->
+  <rect width="512" height="512" rx="120" fill="#4DCCE6"/>
+  
+  <!-- Subtle glass-morphism overlay for depth -->
+  <rect x="80" y="80" width="352" height="352" rx="80" fill="white" fill-opacity="0.15"/>
+  
+  <!-- Central Pop-Block Shape (Star) using the accent lime color -->
+  <path d="M256 140L288 238H392L308 298L340 396L256 336L172 396L204 298L120 238H224L256 140Z" fill="#C8F471" />
+  
+  <!-- Satisfying "Pop" particles -->
+  <circle cx="120" cy="120" r="24" fill="white" fill-opacity="0.5" />
+  <circle cx="400" cy="150" r="16" fill="white" fill-opacity="0.3" />
+  <circle cx="380" cy="400" r="20" fill="white" fill-opacity="0.4" />
+  <circle cx="150" cy="380" r="12" fill="white" fill-opacity="0.2" />
+  
+  <!-- Glossy shine highlight -->
+  <path d="M120 60C120 60 60 120 60 200" stroke="white" stroke-width="20" stroke-linecap="round" stroke-opacity="0.2"/>
+</svg>
