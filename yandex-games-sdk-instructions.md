@@ -11,11 +11,11 @@ The SDK script is loaded in `src/app/layout.tsx` using the Next.js `Script` comp
 A dedicated utility at `src/lib/yandex-games.ts` handles:
 - **Initialization**: `initYandexSDK()` connects the app to the Yandex environment.
 - **Interstitial Ads**: `showInterstitialAd()` triggers a full-screen ad.
-- **Leaderboards**: `reportScore(leaderboardName, score)` submits player scores.
+- **Leaderboards**: `reportScore(leaderboardName, score)` submits player scores using the `ysdk.getLeaderboards().setLeaderboardScore()` pattern.
 
 ### Integration Points
 - **Initialization**: Called in `GameController.tsx` via `useEffect` on mount.
-- **Game Over**: When the game ends, `showInterstitialAd()` is called and the score is reported to a leaderboard named `'top'`.
+- **Game Over**: When the game ends, `showInterstitialAd()` is called and the score is reported to a leaderboard named `'leaders'`.
 
 ## 2. Yandex Console Configuration
 
@@ -32,7 +32,7 @@ To make these features functional in production, you must configure your game in
 ### Leaderboards
 1. In the console, navigate to the **Leaderboards** section.
 2. Create a new leaderboard.
-3. **Important**: The name in the console must match the string passed to `reportScore` in `GameController.tsx` (currently set to `'top'`).
+3. **Important**: The name in the console must match the string passed to `reportScore` in `GameController.tsx` (currently set to `'leaders'`).
 4. Set the "Score type" to "Numeric" and the "Order" to "Descending".
 
 ## 3. Local Testing

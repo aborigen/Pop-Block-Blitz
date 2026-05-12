@@ -192,7 +192,7 @@ export function GameController() {
       if (isGameOver) {
         soundManager.playGameOver();
         showInterstitialAd();
-        reportScore('top', newScore);
+        reportScore('leaders', newScore);
       }
 
       const newFloatingScore = {
