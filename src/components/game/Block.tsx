@@ -2,16 +2,17 @@
 
 import { COLORS, SHAPES } from "@/lib/game-logic"
 import { cn } from "@/lib/utils"
-import { Square, Circle, Star, Triangle, Pentagon } from "lucide-react"
+import { Square, Circle, Star, Triangle, Pentagon, Hand } from "lucide-react"
 
 interface BlockProps {
   colorIndex: number | null
   onClick: () => void
   isTargeted: boolean
   isHinted?: boolean
+  showFinger?: boolean
 }
 
-export function Block({ colorIndex, onClick, isTargeted, isHinted }: BlockProps) {
+export function Block({ colorIndex, onClick, isTargeted, isHinted, showFinger }: BlockProps) {
   if (colorIndex === null) {
     return <div className="w-full h-full" />
   }
@@ -31,8 +32,15 @@ export function Block({ colorIndex, onClick, isTargeted, isHinted }: BlockProps)
       <div className="text-white/30 w-1/2 h-1/2">
         <ShapeIcon className="w-full h-full" strokeWidth={3} />
       </div>
+      
       {isHinted && !isTargeted && (
         <div className="absolute inset-0 rounded-[4px] md:rounded-md border-2 border-white bg-white/20 animate-hint-pulse pointer-events-none z-10" />
+      )}
+
+      {showFinger && !isTargeted && (
+        <div className="absolute -bottom-2 -right-2 z-50 pointer-events-none animate-finger-tap text-white filter drop-shadow-md">
+          <Hand size={32} fill="white" className="rotate-[-20deg]" />
+        </div>
       )}
     </button>
   )

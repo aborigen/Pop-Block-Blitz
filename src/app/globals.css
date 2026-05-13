@@ -45,7 +45,6 @@
     
     --card: 210 25% 6%;
     --card-foreground: 0 0% 98%;
-    
     --popover: 210 25% 6%;
     --popover-foreground: 0 0% 98%;
     
@@ -114,4 +113,13 @@
 
 .animate-hint-pulse {
   animation: hint-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes finger-tap {
+  0%, 100% { transform: translateY(0) scale(1); opacity: 1; }
+  50% { transform: translateY(-12px) scale(1.1); opacity: 0.8; }
+}
+
+.animate-finger-tap {
+  animation: finger-tap 1.2s ease-in-out infinite;
 }

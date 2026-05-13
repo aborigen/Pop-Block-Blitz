@@ -302,15 +302,19 @@ export function GameController() {
           }}
         >
           {state.grid.map((row, y) => 
-            row.map((colorIndex, x) => (
-              <Block 
-                key={`${x}-${y}`} 
-                colorIndex={colorIndex} 
-                isTargeted={targetedGroup.some(p => p[0] === x && p[1] === y)}
-                isHinted={hintGroup.some(p => p[0] === x && p[1] === y)}
-                onClick={() => handleBlockClick(x, y)} 
-              />
-            ))
+            row.map((colorIndex, x) => {
+              const hintIndex = hintGroup.findIndex(p => p[0] === x && p[1] === y);
+              return (
+                <Block 
+                  key={`${x}-${y}`} 
+                  colorIndex={colorIndex} 
+                  isTargeted={targetedGroup.some(p => p[0] === x && p[1] === y)}
+                  isHinted={hintIndex !== -1}
+                  showFinger={hintIndex === 0}
+                  onClick={() => handleBlockClick(x, y)} 
+                />
+              );
+            })
           )}
 
           {floatingScores.map(fs => (
