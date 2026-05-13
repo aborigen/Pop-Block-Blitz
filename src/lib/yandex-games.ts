@@ -21,7 +21,7 @@ export async function initYandexSDK(): Promise<YSDK | null> {
 
     const sdk = await YaGames.init();
     sdkInstance = sdk;
-    console.log('Yandex Games SDK initialized');
+    console.log('Yandex Games SDK initialized', sdk.environment);
     return sdkInstance;
   } catch (e) {
     console.error('Yandex Games SDK failed to initialize:', e);
@@ -47,7 +47,6 @@ export function reportReady(): void {
   }
 
   try {
-    // Attempt to access LoadingAPI through features as per modern SDK structure
     const loadingApi = (sdkInstance as any).features?.LoadingAPI || (sdkInstance as any).LoadingAPI;
     if (loadingApi && typeof loadingApi.ready === 'function') {
       loadingApi.ready();
@@ -83,6 +82,7 @@ export function showInterstitialAd(): void {
 
 /**
  * Reports a score to a Yandex Leaderboard.
+ * Uses the non-deprecated direct access to leaderboards.
  */
 export async function reportScore(leaderboardName: string, score: number): Promise<void> {
   if (!sdkInstance) {
@@ -91,9 +91,13 @@ export async function reportScore(leaderboardName: string, score: number): Promi
   }
 
   try {
-    const lb = await sdkInstance.getLeaderboards();
-    await lb.setLeaderboardScore(leaderboardName, score);
-    console.log(`Score ${score} reported to ${leaderboardName}`);
+    const lb = (sdkInstance as any).leaderboards;
+    if (lb && typeof lb.setScore === 'function') {
+      await lb.setScore(leaderboardName, score);
+      console.log(`Score ${score} reported to ${leaderboardName} via setScore`);
+    } else {
+      console.warn('leaderboards.setScore not available on SDK instance');
+    }
   } catch (e) {
     console.warn('Could not report score:', e);
   }

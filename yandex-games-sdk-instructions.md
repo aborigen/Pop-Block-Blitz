@@ -10,11 +10,14 @@ The SDK script is loaded in `src/app/layout.tsx` using the Next.js `Script` comp
 ### Utility Wrapper
 A dedicated utility at `src/lib/yandex-games.ts` handles:
 - **Initialization**: `initYandexSDK()` connects the app to the Yandex environment.
+- **Environment**: Automatically detects language settings from `sdkInstance.environment`.
+- **Loading Progress**: `reportReady()` calls `ysdk.features.LoadingAPI.ready()` to dismiss the Yandex loading screen.
 - **Interstitial Ads**: `showInterstitialAd()` triggers a full-screen ad.
-- **Leaderboards**: `reportScore(leaderboardName, score)` submits player scores using the `ysdk.getLeaderboards().setLeaderboardScore()` pattern.
+- **Leaderboards**: `reportScore(leaderboardName, score)` submits player scores using the direct `ysdk.leaderboards.setScore()` method (avoiding deprecated `getLeaderboards()`).
 
 ### Integration Points
 - **Initialization**: Called in `GameController.tsx` via `useEffect` on mount.
+- **Automatic Localization**: Detects 'ru' or 'en' from the Yandex environment and switches UI language automatically.
 - **Game Over**: When the game ends, `showInterstitialAd()` is called and the score is reported to a leaderboard named `'leaders'`.
 
 ## 2. Yandex Console Configuration
