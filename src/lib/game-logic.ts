@@ -91,6 +91,32 @@ export function getConnectedBlocks(grid: Grid, x: number, y: number): [number, n
 }
 
 /**
+ * Finds the largest connected group in the grid.
+ */
+export function findBestMove(grid: Grid): [number, number][] {
+  const width = grid[0].length;
+  const height = grid.length;
+  const visited = new Set<string>();
+  let bestGroup: [number, number][] = [];
+
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const key = `${x},${y}`;
+      if (grid[y][x] === null || visited.has(key)) continue;
+
+      const group = getConnectedBlocks(grid, x, y);
+      group.forEach(([gx, gy]) => visited.add(`${gx},${gy}`));
+
+      if (group.length > bestGroup.length) {
+        bestGroup = group;
+      }
+    }
+  }
+
+  return bestGroup.length >= 2 ? bestGroup : [];
+}
+
+/**
  * Clears blocks, applies gravity, and consolidates columns.
  */
 export function processClear(grid: Grid, group: [number, number][]): Grid {

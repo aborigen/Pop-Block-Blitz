@@ -7,6 +7,7 @@ import {
   processClear, 
   calculateMoveScore, 
   checkGameOver,
+  findBestMove,
   type Grid,
   type GameState 
 } from "@/lib/game-logic"
@@ -48,6 +49,7 @@ export function GameController() {
 
   const [aiFeedback, setAiFeedback] = useState<string>("")
   const [targetedGroup, setTargetedGroup] = useState<[number, number][]>([])
+  const [hintGroup, setHintGroup] = useState<[number, number][]>([])
   const [floatingScores, setFloatingScores] = useState<FloatingScore[]>([])
   const [lastIncrement, setLastIncrement] = useState<number | null>(null)
   
@@ -117,6 +119,9 @@ export function GameController() {
   }, [locale]);
 
   const startNewGame = useCallback((isAiAdjustment = false) => {
+    let finalGrid: Grid = [];
+    let bestMove: [number, number][] = [];
+
     setState(prev => {
       let newConfig = { ...prev.config };
       let newDifficulty = prev.difficulty;
@@ -132,11 +137,12 @@ export function GameController() {
         setAiFeedback(result.difficultyAdjustmentFeedback);
       }
 
-      const newGrid = generateGrid(newConfig.width, newConfig.height, newConfig.numColors);
+      finalGrid = generateGrid(newConfig.width, newConfig.height, newConfig.numColors);
+      bestMove = findBestMove(finalGrid);
       
       return {
         ...prev,
-        grid: newGrid,
+        grid: finalGrid,
         score: 0,
         gameOver: false,
         moves: 0,
@@ -146,6 +152,7 @@ export function GameController() {
     });
 
     setTargetedGroup([]);
+    setHintGroup(bestMove);
     setFloatingScores([]);
     setLastIncrement(null);
   }, [performanceHistory, getHeuristicDifficulty]);
@@ -167,6 +174,9 @@ export function GameController() {
 
   const handleBlockClick = (x: number, y: number) => {
     if (state.gameOver) return
+
+    // Clear hint on any interaction
+    if (hintGroup.length > 0) setHintGroup([]);
 
     const group = getConnectedBlocks(state.grid, x, y)
     if (group.length < 2) {
@@ -302,6 +312,7 @@ export function GameController() {
                 key={`${x}-${y}`} 
                 colorIndex={colorIndex} 
                 isTargeted={targetedGroup.some(p => p[0] === x && p[1] === y)}
+                isHinted={hintGroup.some(p => p[0] === x && p[1] === y)}
                 onClick={() => handleBlockClick(x, y)} 
               />
             ))
