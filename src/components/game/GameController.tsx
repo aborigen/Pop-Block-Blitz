@@ -119,43 +119,38 @@ export function GameController() {
   }, [locale]);
 
   const startNewGame = useCallback((isAiAdjustment = false) => {
-    let finalGrid: Grid = [];
-    let bestMove: [number, number][] = [];
+    let nextConfig = { ...state.config };
+    let nextDifficulty = state.difficulty;
 
-    setState(prev => {
-      let newConfig = { ...prev.config };
-      let newDifficulty = prev.difficulty;
-
-      if (isAiAdjustment && performanceHistory.totalGames > 0) {
-        const result = getHeuristicDifficulty(performanceHistory, prev.config, prev.difficulty);
-        newConfig = {
-          width: result.recommendedBoardWidth,
-          height: result.recommendedBoardHeight,
-          numColors: result.recommendedNumColors
-        };
-        newDifficulty = result.recommendedDifficultyLevel;
-        setAiFeedback(result.difficultyAdjustmentFeedback);
-      }
-
-      finalGrid = generateGrid(newConfig.width, newConfig.height, newConfig.numColors);
-      bestMove = findBestMove(finalGrid);
-      
-      return {
-        ...prev,
-        grid: finalGrid,
-        score: 0,
-        gameOver: false,
-        moves: 0,
-        difficulty: newDifficulty,
-        config: newConfig
+    if (isAiAdjustment && performanceHistory.totalGames > 0) {
+      const result = getHeuristicDifficulty(performanceHistory, state.config, state.difficulty);
+      nextConfig = {
+        width: result.recommendedBoardWidth,
+        height: result.recommendedBoardHeight,
+        numColors: result.recommendedNumColors
       };
-    });
+      nextDifficulty = result.recommendedDifficultyLevel;
+      setAiFeedback(result.difficultyAdjustmentFeedback);
+    }
+
+    const finalGrid = generateGrid(nextConfig.width, nextConfig.height, nextConfig.numColors);
+    const bestMove = findBestMove(finalGrid);
+    
+    setState(prev => ({
+      ...prev,
+      grid: finalGrid,
+      score: 0,
+      gameOver: false,
+      moves: 0,
+      difficulty: nextDifficulty,
+      config: nextConfig
+    }));
 
     setTargetedGroup([]);
     setHintGroup(bestMove);
     setFloatingScores([]);
     setLastIncrement(null);
-  }, [performanceHistory, getHeuristicDifficulty]);
+  }, [performanceHistory, getHeuristicDifficulty, state.config, state.difficulty]);
 
   // Handle game start and ready reporting
   useEffect(() => {
@@ -281,7 +276,7 @@ export function GameController() {
             onClick={() => setSoundEnabled(!soundEnabled)}
             className="rounded-full w-7 h-7 text-muted-foreground"
           >
-            {soundEnabled ? <Volume2 size={14} /> : <VolumeX size={14} />}
+            {soundEnabled ? <Volume2 className="w-3.5 h-3.5" /> : <VolumeX className="w-3.5 h-3.5" />}
           </Button>
         </div>
       </div>

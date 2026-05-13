@@ -24,8 +24,7 @@ export function Block({ colorIndex, onClick, isTargeted, isHinted }: BlockProps)
       onClick={onClick}
       className={cn(
         "w-full h-full rounded-[4px] md:rounded-md flex items-center justify-center transition-all duration-200 animate-pop-in game-block-shadow game-block-active relative",
-        isTargeted ? "brightness-110 scale-105 z-10" : "hover:brightness-105",
-        isHinted && !isTargeted && "animate-pulse"
+        isTargeted ? "brightness-110 scale-105 z-10" : "hover:brightness-105"
       )}
       style={{ backgroundColor: color }}
     >
@@ -33,7 +32,7 @@ export function Block({ colorIndex, onClick, isTargeted, isHinted }: BlockProps)
         <ShapeIcon className="w-full h-full" strokeWidth={3} />
       </div>
       {isHinted && !isTargeted && (
-        <div className="absolute inset-0 rounded-[4px] md:rounded-md border-2 border-white/40 pointer-events-none" />
+        <div className="absolute inset-0 rounded-[4px] md:rounded-md border-2 border-white bg-white/20 animate-hint-pulse pointer-events-none z-10" />
       )}
     </button>
   )
