@@ -14,7 +14,6 @@ export async function initYandexSDK(): Promise<YSDK | null> {
   if (sdkInstance) return sdkInstance;
 
   try {
-    // YaGames is provided as a global by the SDK script and typed via @types/ysdk
     if (typeof YaGames === 'undefined') {
       console.warn('Yandex Games SDK script not found');
       return null;
@@ -23,7 +22,6 @@ export async function initYandexSDK(): Promise<YSDK | null> {
     const sdk = await YaGames.init();
     sdkInstance = sdk;
     console.log('Yandex Games SDK initialized');
-    console.log('Environment:', sdk.environment);
     return sdkInstance;
   } catch (e) {
     console.error('Yandex Games SDK failed to initialize:', e);
@@ -49,13 +47,13 @@ export function reportReady(): void {
   }
 
   try {
-    // @ts-ignore - LoadingAPI might be under features or directly on sdk depending on version
-    const loadingApi = sdkInstance.features?.LoadingAPI || (sdkInstance as any).LoadingAPI;
-    if (loadingApi) {
+    // Attempt to access LoadingAPI through features as per modern SDK structure
+    const loadingApi = (sdkInstance as any).features?.LoadingAPI || (sdkInstance as any).LoadingAPI;
+    if (loadingApi && typeof loadingApi.ready === 'function') {
       loadingApi.ready();
-      console.log('Yandex Games: reported ready');
+      console.log('Yandex Games: reported ready via LoadingAPI');
     } else {
-      console.warn('LoadingAPI not found in SDK features');
+      console.warn('LoadingAPI.ready not found in SDK');
     }
   } catch (e) {
     console.warn('Failed to report ready:', e);
@@ -85,7 +83,6 @@ export function showInterstitialAd(): void {
 
 /**
  * Reports a score to a Yandex Leaderboard.
- * Note: Leaderboard must be configured in the Yandex Games Console first.
  */
 export async function reportScore(leaderboardName: string, score: number): Promise<void> {
   if (!sdkInstance) {
@@ -98,6 +95,6 @@ export async function reportScore(leaderboardName: string, score: number): Promi
     await lb.setLeaderboardScore(leaderboardName, score);
     console.log(`Score ${score} reported to ${leaderboardName}`);
   } catch (e) {
-    console.warn('Could not report score (player might not be authorized or leaderboard missing):', e);
+    console.warn('Could not report score:', e);
   }
 }

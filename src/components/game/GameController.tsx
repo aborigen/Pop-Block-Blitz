@@ -16,7 +16,7 @@ import { Button } from "@/components/ui/button"
 import { RefreshCw, PlayCircle, Volume2, VolumeX } from "lucide-react"
 import { useTranslation } from "@/lib/i18n/context"
 import { soundManager } from "@/lib/sound-effects"
-import { initYandexSDK, showInterstitialAd, reportScore, reportReady, getEnvironment } from "@/lib/yandex-games"
+import { initYandexSDK, showInterstitialAd, reportScore, reportReady } from "@/lib/yandex-games"
 
 interface FloatingScore {
   id: number;
@@ -54,6 +54,7 @@ export function GameController() {
   const scoreCounter = useRef(0)
   const incrementTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const isReadyReported = useRef(false)
+  const isSdkInitialized = useRef(false)
 
   // Initialization
   useEffect(() => {
@@ -63,28 +64,19 @@ export function GameController() {
       setState(prev => ({ ...prev, highScore: parseInt(saved, 10) }))
     }
 
-    // Initialize Yandex Games SDK and report ready when done
     initYandexSDK().then((sdk) => {
       if (sdk) {
+        isSdkInitialized.current = true;
         const env = sdk.environment;
-        console.log('Yandex Games Environment:', env);
-        
-        // Use environment language if no locale is saved in localStorage
         const savedLocale = localStorage.getItem('app-locale');
         if (!savedLocale && env.i18n?.lang) {
-          const yandexLang = env.i18n.lang.split('-')[0]; // Handle 'en-US' etc.
+          const yandexLang = env.i18n.lang.split('-')[0];
           if (yandexLang === 'ru') setLocale('ru');
           else if (yandexLang === 'en') setLocale('en');
         }
       }
-
-      // If the grid is already generated, report ready immediately
-      if (state.grid.length > 0 && !isReadyReported.current) {
-        reportReady();
-        isReadyReported.current = true;
-      }
     });
-  }, [state.grid.length, setLocale])
+  }, [setLocale])
 
   useEffect(() => {
     if (mounted) {
@@ -158,17 +150,20 @@ export function GameController() {
     setLastIncrement(null);
   }, [performanceHistory, getHeuristicDifficulty]);
 
+  // Handle game start and ready reporting
   useEffect(() => {
     if (mounted && state.grid.length === 0) {
       startNewGame();
     }
-    
-    // Once the first grid is ready and SDK is initialized, report ready
-    if (mounted && state.grid.length > 0 && !isReadyReported.current) {
+  }, [mounted, state.grid.length, startNewGame]);
+
+  // Report ready when both grid and SDK are prepared
+  useEffect(() => {
+    if (mounted && state.grid.length > 0 && isSdkInitialized.current && !isReadyReported.current) {
       reportReady();
       isReadyReported.current = true;
     }
-  }, [mounted, state.grid.length, startNewGame]);
+  }, [mounted, state.grid.length]);
 
   const handleBlockClick = (x: number, y: number) => {
     if (state.gameOver) return
