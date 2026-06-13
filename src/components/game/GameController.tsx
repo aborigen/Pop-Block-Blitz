@@ -9,7 +9,8 @@ import {
   checkGameOver,
   findBestMove,
   type Grid,
-  type GameState 
+  type GameState,
+  type DifficultyLevel 
 } from "@/lib/game-logic"
 import { Block } from "./Block"
 import { GameStats } from "./GameStats"
@@ -25,6 +26,8 @@ interface FloatingScore {
   y: number;
   points: number;
 }
+
+const DIFFICULTY_ORDER: DifficultyLevel[] = ['easy', 'medium', 'hard', 'expert', 'insane'];
 
 export function GameController() {
   const { t, locale, setLocale } = useTranslation();
@@ -86,26 +89,30 @@ export function GameController() {
     }
   }, [soundEnabled, mounted]);
 
-  const getHeuristicDifficulty = useCallback((performance: any, currentConfig: any, currentDifficulty: string) => {
+  const getHeuristicDifficulty = useCallback((performance: any, currentConfig: any, currentDifficulty: DifficultyLevel) => {
     const avgScore = performance.cumulativeScore / (performance.totalGames || 1);
-    const scoreDiff = performance.lastGameScore / (avgScore || 1);
+    const scoreDiff = (performance.lastGameScore || 0) / (avgScore || 1);
     
     let nextWidth = currentConfig.width;
     let nextHeight = currentConfig.height;
     let nextColors = currentConfig.numColors;
-    let nextLevel: 'easy' | 'medium' | 'hard' = currentDifficulty as any;
+    let currentIdx = DIFFICULTY_ORDER.indexOf(currentDifficulty);
+    let nextIdx = currentIdx;
 
-    if (scoreDiff > 1.2 || performance.lastMaxCombo > 8) {
-      nextWidth = Math.min(12, nextWidth + 1);
-      nextHeight = Math.min(15, nextHeight + 1);
-      nextColors = Math.min(6, nextColors + 1);
-      nextLevel = nextLevel === 'easy' ? 'medium' : 'hard';
-    } else if (scoreDiff < 0.8 && performance.totalGames > 2) {
+    // Progression logic
+    if (scoreDiff > 1.3 || performance.lastMaxCombo > 10) {
+      nextIdx = Math.min(DIFFICULTY_ORDER.length - 1, currentIdx + 1);
+      nextWidth = Math.min(15, nextWidth + 1);
+      nextHeight = Math.min(18, nextHeight + 1);
+      nextColors = Math.min(7, nextColors + (nextIdx > currentIdx ? 1 : 0));
+    } else if (scoreDiff < 0.7 && performance.totalGames > 2) {
+      nextIdx = Math.max(0, currentIdx - 1);
       nextWidth = Math.max(8, nextWidth - 1);
       nextHeight = Math.max(8, nextHeight - 1);
-      nextColors = Math.max(4, nextColors - 1);
-      nextLevel = nextLevel === 'hard' ? 'medium' : 'easy';
+      nextColors = Math.max(4, nextColors - (nextIdx < currentIdx ? 1 : 0));
     }
+
+    const nextLevel = DIFFICULTY_ORDER[nextIdx];
 
     return {
       recommendedBoardWidth: nextWidth,
@@ -113,8 +120,8 @@ export function GameController() {
       recommendedNumColors: nextColors,
       recommendedDifficultyLevel: nextLevel,
       difficultyAdjustmentFeedback: locale === 'ru' 
-        ? "Система адаптировала сложность." 
-        : "System adapted difficulty."
+        ? "ИИ адаптировал уровень сложности." 
+        : "AI adapted the difficulty level."
     };
   }, [locale]);
 
@@ -247,7 +254,8 @@ export function GameController() {
     setPerformanceHistory(prev => ({
       ...prev,
       totalGames: prev.totalGames + 1,
-      cumulativeScore: prev.cumulativeScore + state.score
+      cumulativeScore: prev.cumulativeScore + state.score,
+      lastGameScore: state.score
     }))
     startNewGame(true)
   }

@@ -5,12 +5,13 @@ import { Trophy, Target, Sparkles, Activity } from "lucide-react"
 import { useTranslation } from "@/lib/i18n/context"
 import { useEffect, useState } from "react"
 import { cn } from "@/lib/utils"
+import { type DifficultyLevel } from "@/lib/game-logic"
 
 interface GameStatsProps {
   score: number
   highScore: number
   moves: number
-  difficulty: 'easy' | 'medium' | 'hard'
+  difficulty: DifficultyLevel
   aiFeedback?: string
   lastIncrement?: number | null
 }
@@ -55,7 +56,7 @@ export function GameStats({ score, highScore, moves, difficulty, aiFeedback, las
         />
         <StatCard 
           label={t.level} 
-          value={t.difficulty[difficulty].toUpperCase()} 
+          value={t.difficulty[difficulty]?.toUpperCase() || difficulty.toUpperCase()} 
           icon={<Sparkles className="text-primary w-2.5 h-2.5 md:w-4 md:h-4" />} 
         />
       </div>

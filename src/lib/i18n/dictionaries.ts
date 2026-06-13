@@ -17,7 +17,9 @@ export const dictionaries = {
     difficulty: {
       easy: "Easy",
       medium: "Medium",
-      hard: "Hard"
+      hard: "Hard",
+      expert: "Expert",
+      insane: "Insane"
     }
   },
   ru: {
@@ -38,7 +40,9 @@ export const dictionaries = {
     difficulty: {
       easy: "Легко",
       medium: "Средне",
-      hard: "Сложно"
+      hard: "Сложно",
+      expert: "Эксперт",
+      insane: "Безумие"
     }
   }
 };

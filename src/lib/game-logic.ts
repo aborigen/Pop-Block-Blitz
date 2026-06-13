@@ -19,13 +19,15 @@ export const SHAPES = [
   'pentagon',
 ];
 
+export type DifficultyLevel = 'easy' | 'medium' | 'hard' | 'expert' | 'insane';
+
 export interface GameState {
   grid: Grid;
   score: number;
   highScore: number;
   gameOver: boolean;
   moves: number;
-  difficulty: 'easy' | 'medium' | 'hard';
+  difficulty: DifficultyLevel;
   config: {
     width: number;
     height: number;
