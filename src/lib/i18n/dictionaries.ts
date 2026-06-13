@@ -14,6 +14,11 @@ export const dictionaries = {
     playAgain: "Play Again",
     resetSession: "Reset Session",
     aiMaster: "AI Master",
+    leaders: "Leaders",
+    rank: "Rank",
+    name: "Name",
+    loading: "Loading...",
+    noData: "No data available",
     difficulty: {
       very_easy: "Very Easy",
       easy: "Easy",
@@ -38,6 +43,11 @@ export const dictionaries = {
     playAgain: "Играть снова",
     resetSession: "Сбросить сессию",
     aiMaster: "Мастер ИИ",
+    leaders: "Лидеры",
+    rank: "Место",
+    name: "Имя",
+    loading: "Загрузка...",
+    noData: "Данных нет",
     difficulty: {
       very_easy: "Очень Легко",
       easy: "Легко",

@@ -82,7 +82,6 @@ export function showInterstitialAd(): void {
 
 /**
  * Reports a score to a Yandex Leaderboard.
- * Uses the non-deprecated direct access to leaderboards.
  */
 export async function reportScore(leaderboardName: string, score: number): Promise<void> {
   if (!sdkInstance) {
@@ -101,4 +100,30 @@ export async function reportScore(leaderboardName: string, score: number): Promi
   } catch (e) {
     console.warn('Could not report score:', e);
   }
+}
+
+/**
+ * Fetches leaderboard entries from Yandex Games.
+ */
+export async function getLeaderboardEntries(leaderboardName: string): Promise<any> {
+  if (!sdkInstance) {
+    console.warn('SDK not initialized. Cannot fetch leaderboard.');
+    return null;
+  }
+
+  try {
+    const lb = (sdkInstance as any).leaderboards;
+    if (lb && typeof lb.getEntries === 'function') {
+      const result = await lb.getEntries(leaderboardName, {
+        quantityTop: 10,
+        includeUser: true,
+        quantityAround: 3,
+      });
+      return result;
+    }
+  } catch (e) {
+    console.warn('Could not fetch leaderboard entries:', e);
+    // If not authorized, try to prompt auth (optional, platform specific)
+  }
+  return null;
 }

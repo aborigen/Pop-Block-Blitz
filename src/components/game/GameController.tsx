@@ -19,6 +19,7 @@ import { RefreshCw, PlayCircle, Volume2, VolumeX } from "lucide-react"
 import { useTranslation } from "@/lib/i18n/context"
 import { soundManager } from "@/lib/sound-effects"
 import { initYandexSDK, showInterstitialAd, reportScore, reportReady } from "@/lib/yandex-games"
+import { LeaderboardModal } from "./LeaderboardModal"
 
 interface FloatingScore {
   id: number;
@@ -265,18 +266,21 @@ export function GameController() {
   return (
     <div className="flex flex-col items-center w-full h-full max-w-2xl mx-auto px-1">
       <div className="w-full flex justify-between items-center px-1 mb-1">
-        <Button 
-          variant="ghost" 
-          size="sm"
-          onClick={() => {
-            soundManager.playClick();
-            startNewGame();
-          }} 
-          className="rounded-full h-7 px-2 text-[10px] text-muted-foreground"
-        >
-          <RefreshCw className="mr-1.5 w-3 h-3" />
-          {t.resetSession}
-        </Button>
+        <div className="flex items-center gap-1">
+          <Button 
+            variant="ghost" 
+            size="sm"
+            onClick={() => {
+              soundManager.playClick();
+              startNewGame();
+            }} 
+            className="rounded-full h-7 px-2 text-[10px] text-muted-foreground"
+          >
+            <RefreshCw className="mr-1.5 w-3 h-3" />
+            {t.resetSession}
+          </Button>
+          <LeaderboardModal />
+        </div>
         <div className="flex items-center gap-2">
           <Button 
             variant="ghost" 
