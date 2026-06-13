@@ -332,7 +332,7 @@ export function GameController() {
           {floatingScores.map(fs => (
             <div 
               key={fs.id}
-              className="absolute z-30 pointer-events-none text-primary font-black text-sm md:text-2xl animate-float-up-fade"
+              className="absolute z-30 pointer-events-none text-primary font-black text-2xl md:text-4xl animate-float-up-fade"
               style={{
                 left: `${(fs.x / state.config.width) * 100}%`,
                 top: `${(fs.y / state.config.height) * 100}%`,
