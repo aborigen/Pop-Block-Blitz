@@ -5,6 +5,12 @@
       "description": "Main cover image for Pop Block Blitz store listings",
       "imageUrl": "/assets/game-cover.svg",
       "imageHint": "puzzle game"
+    },
+    {
+      "id": "game-screenshot",
+      "description": "Landscape gameplay screenshot for Yandex Games promo",
+      "imageUrl": "/assets/game-screenshot.svg",
+      "imageHint": "puzzle gameplay"
     }
   ]
 }
