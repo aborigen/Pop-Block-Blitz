@@ -39,7 +39,7 @@ export function GameStats({ score, highScore, moves, difficulty, aiFeedback, las
             className={cn(pulseScore && "animate-bump border-primary/50 shadow-primary/10")}
           />
           {lastIncrement !== null && lastIncrement !== undefined && (
-            <div className="absolute -top-1 -right-0.5 z-10 bg-primary text-white text-[7px] md:text-xs font-black px-1 py-0 rounded-full shadow-lg animate-in fade-in zoom-in slide-in-from-bottom-1 duration-300">
+            <div className="absolute -top-2 -right-1 z-10 bg-primary text-white text-[10px] md:text-sm font-black px-2 py-0.5 rounded-full shadow-lg animate-in fade-in zoom-in slide-in-from-bottom-1 duration-300">
               +{lastIncrement}
             </div>
           )}
@@ -62,8 +62,8 @@ export function GameStats({ score, highScore, moves, difficulty, aiFeedback, las
       </div>
       
       {aiFeedback && (
-        <div className="bg-primary/5 border border-primary/10 rounded-md p-1 text-[7px] md:text-xs text-primary font-medium flex items-center gap-1.5 animate-in fade-in slide-in-from-top-1">
-          <Sparkles className="shrink-0 w-2 h-2 md:w-3 md:h-3" />
+        <div className="bg-primary/5 border border-primary/10 rounded-md p-1.5 text-[8px] md:text-xs text-primary font-medium flex items-center gap-1.5 animate-in fade-in slide-in-from-top-1">
+          <Sparkles className="shrink-0 w-2.5 h-2.5 md:w-3 md:h-3" />
           <span className="leading-none truncate">{aiFeedback}</span>
         </div>
       )}
@@ -73,12 +73,12 @@ export function GameStats({ score, highScore, moves, difficulty, aiFeedback, las
 
 function StatCard({ label, value, icon, className }: { label: string, value: string, icon: React.ReactNode, className?: string }) {
   return (
-    <Card className={cn("p-1 md:p-2 flex flex-col items-center justify-center bg-white/50 backdrop-blur-sm border-white/40 shadow-sm transition-all duration-300", className)}>
-      <div className="flex items-center gap-0.5 mb-0.5">
+    <Card className={cn("p-1.5 md:p-3 flex flex-col items-center justify-center bg-white/50 backdrop-blur-sm border-white/40 shadow-sm transition-all duration-300 min-h-[50px] md:min-h-[80px]", className)}>
+      <div className="flex items-center gap-0.5 mb-1">
         {icon}
-        <span className="text-[6px] md:text-[9px] uppercase font-bold text-muted-foreground tracking-tighter leading-none">{label}</span>
+        <span className="text-[7px] md:text-[10px] uppercase font-bold text-muted-foreground tracking-tighter leading-none">{label}</span>
       </div>
-      <div className="text-[10px] md:text-base font-bold text-foreground font-headline leading-none">{value}</div>
+      <div className="text-lg md:text-3xl font-black text-foreground font-headline leading-none">{value}</div>
     </Card>
   )
 }
