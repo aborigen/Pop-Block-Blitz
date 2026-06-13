@@ -1,52 +1,45 @@
 <svg width="800" height="470" viewBox="0 0 800 470" fill="none" xmlns="http://www.w3.org/2000/svg">
   <!-- Background -->
-  <rect width="800" height="470" fill="#F3F6F6"/>
+  <rect width="800" height="470" fill="#0F172A"/>
   
-  <!-- Abstract Block Pattern Background -->
-  <rect x="50" y="50" width="80" height="80" rx="12" fill="#4DCCE6" fill-opacity="0.1" transform="rotate(-15 50 50)"/>
-  <rect x="650" y="300" width="120" height="120" rx="18" fill="#C8F471" fill-opacity="0.1" transform="rotate(20 650 300)"/>
-  <rect x="700" y="40" width="60" height="60" rx="10" fill="#F471B3" fill-opacity="0.1" transform="rotate(10 700 40)"/>
+  <!-- Decorative Background Glows -->
+  <circle cx="400" cy="235" r="300" fill="#4DCCE6" fill-opacity="0.05"/>
+  <circle cx="100" cy="100" r="150" fill="#C8F471" fill-opacity="0.03"/>
+  <circle cx="700" cy="370" r="150" fill="#F471B3" fill-opacity="0.03"/>
+
+  <!-- Scattered Game Blocks -->
+  <rect x="60" y="80" width="70" height="70" rx="12" fill="#4DCCE6" transform="rotate(-15 95 115)">
+    <rect x="15" y="15" width="40" height="40" rx="4" fill="white" fill-opacity="0.2"/>
+  </rect>
   
-  <!-- Main Title Area -->
+  <rect x="650" y="50" width="80" height="80" rx="16" fill="#C8F471" transform="rotate(10 690 90)">
+    <circle cx="40" cy="40" r="20" fill="white" fill-opacity="0.2"/>
+  </rect>
+
+  <rect x="120" y="320" width="90" height="90" rx="18" fill="#F471B3" transform="rotate(-10 165 365)">
+    <path d="M165 345L180 385H150L165 345Z" fill="white" fill-opacity="0.2" transform="translate(-140, -320)"/>
+  </rect>
+
+  <rect x="620" y="300" width="110" height="110" rx="22" fill="#F4A261" transform="rotate(20 675 355)">
+     <rect x="30" y="30" width="50" height="50" rx="8" fill="white" fill-opacity="0.2"/>
+  </rect>
+
+  <!-- Central Branding -->
+  <g filter="url(#glow)">
+    <text x="400" y="210" text-anchor="middle" font-family="system-ui, sans-serif" font-weight="900" font-size="72" fill="#4DCCE6" letter-spacing="-2">POP BLOCK</text>
+    <text x="400" y="310" text-anchor="middle" font-family="system-ui, sans-serif" font-weight="900" font-size="110" fill="#C8F471" letter-spacing="-4">BLITZ</text>
+  </g>
+
+  <!-- Sparkle Effects -->
+  <path d="M300 120L305 135L320 140L305 145L300 160L295 145L280 140L295 135L300 120Z" fill="white" fill-opacity="0.8"/>
+  <path d="M520 340L523 349L532 352L523 355L520 364L517 355L508 352L517 349L520 340Z" fill="white" fill-opacity="0.8"/>
+  <circle cx="480" cy="140" r="4" fill="white" fill-opacity="0.6"/>
+  <circle cx="280" cy="380" r="3" fill="white" fill-opacity="0.4"/>
+
   <defs>
-    <linearGradient id="titleGradient" x1="400" y1="150" x2="400" y2="320" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#4DCCE6"/>
-      <stop offset="1" stop-color="#3AA8C1"/>
-    </linearGradient>
-    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur stdDeviation="15" result="blur"/>
+    <filter id="glow" x="0" y="0" width="800" height="470" filterUnits="userSpaceOnUse">
+      <feGaussianBlur stdDeviation="10" result="blur"/>
       <feComposite in="SourceGraphic" in2="blur" operator="over"/>
     </filter>
   </defs>
-
-  <!-- Central "Pop" Action -->
-  <circle cx="400" cy="235" r="150" fill="white" fill-opacity="0.5" filter="url(#glow)"/>
-  
-  <!-- Hero Blocks -->
-  <!-- Blue Square -->
-  <rect x="280" y="160" width="100" height="100" rx="16" fill="#4DCCE6" stroke="white" stroke-width="4"/>
-  <path d="M310 190H350V230H310V190Z" fill="white" fill-opacity="0.3"/>
-  
-  <!-- Green Circle -->
-  <circle cx="500" cy="210" r="55" fill="#C8F471" stroke="white" stroke-width="4"/>
-  <circle cx="500" cy="210" r="25" fill="white" fill-opacity="0.3"/>
-  
-  <!-- Pink Star-ish Shape (simplified) -->
-  <rect x="360" y="270" width="90" height="90" rx="14" fill="#F471B3" stroke="white" stroke-width="4" transform="rotate(45 405 315)"/>
-  <path d="M405 295L415 315H435L420 325L425 345L405 333L385 345L390 325L375 315H395L405 295Z" fill="white" fill-opacity="0.3"/>
-
-  <!-- Burst Effects -->
-  <line x1="200" y1="100" x2="160" y2="60" stroke="#4DCCE6" stroke-width="8" stroke-linecap="round"/>
-  <line x1="600" y1="380" x2="640" y2="420" stroke="#C8F471" stroke-width="8" stroke-linecap="round"/>
-  <line x1="150" y1="350" x2="110" y2="390" stroke="#F471B3" stroke-width="8" stroke-linecap="round"/>
-
-  <!-- Floating Text (Graphic Style) -->
-  <text x="400" y="140" text-anchor="middle" font-family="Arial, sans-serif" font-weight="900" font-size="64" fill="#212121" letter-spacing="-2">POP BLOCK</text>
-  <text x="400" y="410" text-anchor="middle" font-family="Arial, sans-serif" font-weight="900" font-size="82" fill="#4DCCE6" letter-spacing="4">BLITZ</text>
-  
-  <!-- "Pop" Particles -->
-  <circle cx="250" cy="280" r="8" fill="#4DCCE6"/>
-  <circle cx="580" cy="150" r="6" fill="#C8F471"/>
-  <circle cx="320" cy="380" r="10" fill="#F471B3"/>
-  <circle cx="520" cy="330" r="5" fill="#F4A261"/>
 </svg>

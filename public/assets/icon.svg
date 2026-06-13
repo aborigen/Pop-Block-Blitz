@@ -1,19 +1,8 @@
 <svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Main rounded background using the primary aqua color -->
-  <rect width="512" height="512" rx="120" fill="#4DCCE6"/>
-  
-  <!-- Subtle glass-morphism overlay for depth -->
-  <rect x="80" y="80" width="352" height="352" rx="80" fill="white" fill-opacity="0.15"/>
-  
-  <!-- Central Pop-Block Shape (Star) using the accent lime color -->
-  <path d="M256 140L288 238H392L308 298L340 396L256 336L172 396L204 298L120 238H224L256 140Z" fill="#C8F471" />
-  
-  <!-- Satisfying "Pop" particles -->
-  <circle cx="120" cy="120" r="24" fill="white" fill-opacity="0.5" />
-  <circle cx="400" cy="150" r="16" fill="white" fill-opacity="0.3" />
-  <circle cx="380" cy="400" r="20" fill="white" fill-opacity="0.4" />
-  <circle cx="150" cy="380" r="12" fill="white" fill-opacity="0.2" />
-  
-  <!-- Glossy shine highlight -->
-  <path d="M120 60C120 60 60 120 60 200" stroke="white" stroke-width="20" stroke-linecap="round" stroke-opacity="0.2"/>
+  <rect width="512" height="512" rx="128" fill="#0F172A"/>
+  <rect x="64" y="64" width="384" height="384" rx="80" fill="#4DCCE6"/>
+  <!-- A "star" block to represent the Blitz feel -->
+  <path d="M256 128L288.5 214.5H380L306 268L334.5 354.5L256 301L177.5 354.5L206 268L132 214.5H223.5L256 128Z" fill="white" fill-opacity="0.9"/>
+  <!-- Highlight shine -->
+  <path d="M128 100C128 100 200 80 384 150" stroke="white" stroke-width="20" stroke-linecap="round" stroke-opacity="0.3"/>
 </svg>
