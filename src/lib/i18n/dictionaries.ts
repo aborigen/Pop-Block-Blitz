@@ -15,6 +15,7 @@ export const dictionaries = {
     resetSession: "Reset Session",
     aiMaster: "AI Master",
     difficulty: {
+      very_easy: "Very Easy",
       easy: "Easy",
       medium: "Medium",
       hard: "Hard",
@@ -38,6 +39,7 @@ export const dictionaries = {
     resetSession: "Сбросить сессию",
     aiMaster: "Мастер ИИ",
     difficulty: {
+      very_easy: "Очень Легко",
       easy: "Легко",
       medium: "Средне",
       hard: "Сложно",

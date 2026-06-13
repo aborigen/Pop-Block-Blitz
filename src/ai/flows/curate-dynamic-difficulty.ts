@@ -17,7 +17,7 @@ const CurateDynamicDifficultyInputSchema = z.object({
       .describe('The player\u0027s average score across all games played.'),
     gamesPlayed: z.number().describe('The total number of games played by the player.'),
     difficultyLevelLastGame:
-      z.enum(['easy', 'medium', 'hard', 'expert', 'insane']).describe('The difficulty level of the last game played.'),
+      z.enum(['very_easy', 'easy', 'medium', 'hard', 'expert', 'insane']).describe('The difficulty level of the last game played.'),
     averageBlocksClearedPerMove:
       z.number().describe('The average number of blocks cleared per move in the last game.'),
     maxComboCleared: z
@@ -36,8 +36,8 @@ export type CurateDynamicDifficultyInput = z.infer<typeof CurateDynamicDifficult
 const CurateDynamicDifficultyOutputSchema = z.object({
   recommendedBoardWidth: z.number().describe('The recommended width for the next game board (e.g., 8-15).'),
   recommendedBoardHeight: z.number().describe('The recommended height for the next game board (e.g., 8-15).'),
-  recommendedNumColors: z.number().describe('The recommended number of distinct block colors for the next game (e.g., 4-7).'),
-  recommendedDifficultyLevel: z.enum(['easy', 'medium', 'hard', 'expert', 'insane']).describe('The recommended overall difficulty level for the next game.'),
+  recommendedNumColors: z.number().describe('The recommended number of distinct block colors for the next game (e.g., 3-7).'),
+  recommendedDifficultyLevel: z.enum(['very_easy', 'easy', 'medium', 'hard', 'expert', 'insane']).describe('The recommended overall difficulty level for the next game.'),
   difficultyAdjustmentFeedback:
     z.string().describe('A brief explanation of the AI\u0027s reasoning for the difficulty adjustment.'),
 });
@@ -73,14 +73,14 @@ Current game configuration:
 Based on this data, provide recommendations for the next game's board width, board height, number of colors, and an overall difficulty level. Also, provide a brief explanation for your recommendations in the requested language.
 
 Guidelines:
-- Difficulty Scale: easy < medium < hard < expert < insane.
+- Difficulty Scale: very_easy < easy < medium < hard < expert < insane.
 - If the player is consistently scoring high (e.g., significantly above average) and clearing large combos, increase difficulty.
 - To increase difficulty: increase board size (width/height), add more colors, or suggest a higher level.
 - If the player is struggling with low scores (e.g., significantly below average) and small combos, decrease difficulty.
-- To decrease difficulty: reduce board size, fewer colors, or suggest a lower level.
+- To decrease difficulty: reduce board size, fewer colors (min 3), or suggest a lower level.
 - Maintain a balanced approach; small adjustments are often better than drastic changes.
 - Board width and height should be reasonable (e.g., between 8 and 18).
-- Number of colors should be reasonable (e.g., between 4 and 7).`,
+- Number of colors should be reasonable (e.g., between 3 and 7).`,
 });
 
 const curateDynamicDifficultyFlow = ai.defineFlow(

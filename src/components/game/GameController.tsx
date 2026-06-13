@@ -27,7 +27,7 @@ interface FloatingScore {
   points: number;
 }
 
-const DIFFICULTY_ORDER: DifficultyLevel[] = ['easy', 'medium', 'hard', 'expert', 'insane'];
+const DIFFICULTY_ORDER: DifficultyLevel[] = ['very_easy', 'easy', 'medium', 'hard', 'expert', 'insane'];
 
 export function GameController() {
   const { t, locale, setLocale } = useTranslation();
@@ -109,7 +109,7 @@ export function GameController() {
       nextIdx = Math.max(0, currentIdx - 1);
       nextWidth = Math.max(8, nextWidth - 1);
       nextHeight = Math.max(8, nextHeight - 1);
-      nextColors = Math.max(4, nextColors - (nextIdx < currentIdx ? 1 : 0));
+      nextColors = Math.max(3, nextColors - (nextIdx < currentIdx ? 1 : 0));
     }
 
     const nextLevel = DIFFICULTY_ORDER[nextIdx];

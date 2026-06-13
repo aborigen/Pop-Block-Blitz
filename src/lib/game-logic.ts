@@ -19,7 +19,7 @@ export const SHAPES = [
   'pentagon',
 ];
 
-export type DifficultyLevel = 'easy' | 'medium' | 'hard' | 'expert' | 'insane';
+export type DifficultyLevel = 'very_easy' | 'easy' | 'medium' | 'hard' | 'expert' | 'insane';
 
 export interface GameState {
   grid: Grid;
