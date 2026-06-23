@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState, useEffect, useCallback, useRef } from "react"
@@ -21,6 +20,7 @@ import { useTranslation } from "@/lib/i18n/context"
 import { soundManager } from "@/lib/sound-effects"
 import { initYandexSDK, showInterstitialAd, reportScore, reportReady } from "@/lib/yandex-games"
 import { LeaderboardModal } from "./LeaderboardModal"
+import { GameOverParticles } from "./GameOverParticles"
 
 interface FloatingScore {
   id: number;
@@ -347,14 +347,17 @@ export function GameController() {
           ))}
 
           {state.gameOver && (
-            <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-background/80 backdrop-blur-sm rounded-xl animate-in fade-in zoom-in duration-300 px-4 text-center">
-              <h2 className="text-xl md:text-4xl font-bold text-foreground mb-1 font-headline">{t.gameOver}</h2>
-              <p className="text-sm md:text-xl text-muted-foreground mb-4 font-medium">{t.finalScore}: {state.score}</p>
-              <Button size="lg" onClick={finalizeGame} className="rounded-full px-6 bg-primary hover:bg-primary/90 h-9 md:h-11">
-                <PlayCircle className="mr-2 w-4 h-4 md:w-6 md:h-6" />
-                {t.playAgain}
-              </Button>
-            </div>
+            <>
+              <GameOverParticles />
+              <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-background/80 backdrop-blur-sm rounded-xl animate-in fade-in zoom-in duration-300 px-4 text-center">
+                <h2 className="text-xl md:text-4xl font-bold text-foreground mb-1 font-headline">{t.gameOver}</h2>
+                <p className="text-sm md:text-xl text-muted-foreground mb-4 font-medium">{t.finalScore}: {state.score}</p>
+                <Button size="lg" onClick={finalizeGame} className="rounded-full px-6 bg-primary hover:bg-primary/90 h-9 md:h-11">
+                  <PlayCircle className="mr-2 w-4 h-4 md:w-6 md:h-6" />
+                  {t.playAgain}
+                </Button>
+              </div>
+            </>
           )}
         </div>
       </div>

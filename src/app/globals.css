@@ -119,3 +119,12 @@
 .animate-finger-tap {
   animation: finger-tap 2s ease-in-out infinite;
 }
+
+@keyframes particle-explode {
+  0% { transform: translate(0, 0) scale(1); opacity: 1; }
+  100% { transform: translate(var(--tw-translate-x), var(--tw-translate-y)) scale(0); opacity: 0; }
+}
+
+.animate-particle {
+  animation: particle-explode var(--particle-duration) ease-out forwards;
+}
