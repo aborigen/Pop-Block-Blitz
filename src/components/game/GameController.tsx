@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useEffect, useCallback, useRef } from "react"
@@ -155,7 +156,8 @@ export function GameController() {
     }));
 
     setTargetedGroup([]);
-    setHintGroup(bestMove);
+    // Only show the hint finger for the first 2 games as a tutorial
+    setHintGroup(performanceHistory.totalGames < 2 ? bestMove : []);
     setFloatingScores([]);
     setLastIncrement(null);
   }, [performanceHistory, getHeuristicDifficulty, state.config, state.difficulty]);
