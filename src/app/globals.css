@@ -110,9 +110,12 @@
 
 @keyframes finger-tap {
   0%, 100% { transform: translateY(0) scale(1); opacity: 1; }
-  50% { transform: translateY(-12px) scale(1.1); opacity: 0.8; }
+  10% { transform: translateY(-12px) scale(0.85); opacity: 0.9; }
+  20% { transform: translateY(0) scale(1); opacity: 1; }
+  30% { transform: translateY(-12px) scale(0.85); opacity: 0.9; }
+  40%, 90% { transform: translateY(0) scale(1); opacity: 1; }
 }
 
 .animate-finger-tap {
-  animation: finger-tap 1.2s ease-in-out infinite;
+  animation: finger-tap 2s ease-in-out infinite;
 }
