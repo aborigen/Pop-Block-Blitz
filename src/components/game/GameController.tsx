@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useEffect, useCallback, useRef } from "react"
@@ -74,13 +75,9 @@ export function GameController() {
     initYandexSDK().then((sdk) => {
       if (sdk) {
         setSdkReady(true);
-        
-        // Sync UI language with Yandex Environment if the user hasn't manually picked one
         const detectedLang = getLanguage();
         const savedLocale = localStorage.getItem('app-locale');
-        
         if (!savedLocale && detectedLang) {
-          console.log(`Syncing UI language to Yandex preference: ${detectedLang}`);
           setLocale(detectedLang);
         }
       }
@@ -103,7 +100,6 @@ export function GameController() {
     let currentIdx = DIFFICULTY_ORDER.indexOf(currentDifficulty);
     let nextIdx = currentIdx;
 
-    // Progression logic
     if (scoreDiff > 1.3 || performance.lastMaxCombo > 10) {
       nextIdx = Math.min(DIFFICULTY_ORDER.length - 1, currentIdx + 1);
       nextWidth = Math.min(15, nextWidth + 1);
@@ -163,14 +159,12 @@ export function GameController() {
     setLastIncrement(null);
   }, [performanceHistory, getHeuristicDifficulty, state.config, state.difficulty]);
 
-  // Handle game start
   useEffect(() => {
     if (mounted && state.grid.length === 0) {
       startNewGame();
     }
   }, [mounted, state.grid.length, startNewGame]);
 
-  // Report ready when both grid and SDK are prepared
   useEffect(() => {
     if (mounted && state.grid.length > 0 && sdkReady && !isReadyReported.current) {
       reportReady();
@@ -180,31 +174,25 @@ export function GameController() {
 
   const handleBlockClick = (x: number, y: number) => {
     if (state.gameOver) return
-
     if (hintGroup.length > 0) setHintGroup([]);
-
     const group = getConnectedBlocks(state.grid, x, y)
     if (group.length < 2) {
       soundManager.playClick();
       return;
     }
-
     const groupKey = group.map(p => `${p[0]},${p[1]}`).sort().join('|')
     const targetKey = targetedGroup.map(p => `${p[0]},${p[1]}`).sort().join('|')
-
     if (groupKey === targetKey) {
       soundManager.playPop(group.length);
       const points = calculateMoveScore(group.length)
       const newGrid = processClear(state.grid, group)
       const isGameOver = checkGameOver(newGrid)
       const newScore = state.score + points
-      
       if (isGameOver) {
         soundManager.playGameOver();
         showInterstitialAd();
         reportScore('leaders', newScore);
       }
-
       const newFloatingScore = {
         id: ++scoreCounter.current,
         x,
@@ -212,23 +200,19 @@ export function GameController() {
         points
       };
       setFloatingScores(prev => [...prev, newFloatingScore]);
-      
       setLastIncrement(points);
       if (incrementTimerRef.current) clearTimeout(incrementTimerRef.current);
       incrementTimerRef.current = setTimeout(() => {
         setLastIncrement(null);
       }, 2000);
-
       setTimeout(() => {
         setFloatingScores(prev => prev.filter(s => s.id !== newFloatingScore.id));
       }, 800);
-
       setState(prev => {
         const newHighScore = Math.max(prev.highScore, newScore)
         if (newHighScore > prev.highScore && typeof window !== 'undefined') {
           localStorage.setItem('pop-block-high-score', newHighScore.toString())
         }
-        
         return {
           ...prev,
           grid: newGrid,
@@ -238,13 +222,11 @@ export function GameController() {
           gameOver: isGameOver
         }
       })
-
       setPerformanceHistory(prev => ({
         ...prev,
         lastMaxCombo: Math.max(prev.lastMaxCombo, group.length),
         lastAvgClear: ((prev.lastAvgClear * state.moves) + group.length) / (state.moves + 1)
       }))
-
       setTargetedGroup([])
     } else {
       soundManager.playClick();
@@ -266,53 +248,53 @@ export function GameController() {
   if (!mounted || state.grid.length === 0) return null
 
   return (
-    <div className="flex flex-col items-center w-full h-full max-w-2xl mx-auto px-1">
-      <div className="w-full flex justify-between items-center px-1 mb-1">
-        <div className="flex items-center gap-1">
-          <Button 
-            variant="ghost" 
-            size="sm"
-            onClick={() => {
-              soundManager.playClick();
-              startNewGame();
-            }} 
-            className="rounded-full h-7 px-2 text-[10px] text-muted-foreground"
-          >
-            <RefreshCw className="mr-1.5 w-3 h-3" />
-            {t.resetSession}
-          </Button>
-          <LeaderboardModal />
-        </div>
-        <div className="flex items-center gap-2">
+    <div className="flex flex-col lg:flex-row items-center lg:items-stretch w-full h-full max-w-[95vw] lg:max-w-[1400px] mx-auto p-1 lg:p-4 gap-2 lg:gap-8 overflow-hidden">
+      {/* Side Stats Section - On the left for landscape, top for portrait */}
+      <div className="w-full lg:w-[280px] xl:w-[350px] flex flex-col shrink-0 lg:justify-center">
+        <div className="w-full flex justify-between items-center px-1 mb-1 lg:mb-4">
+          <div className="flex items-center gap-1">
+            <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={() => {
+                soundManager.playClick();
+                startNewGame();
+              }} 
+              className="rounded-full h-7 lg:h-9 px-2 text-[10px] lg:text-xs text-muted-foreground"
+            >
+              <RefreshCw className="mr-1.5 w-3 h-3 lg:w-4 lg:h-4" />
+              {t.resetSession}
+            </Button>
+            <LeaderboardModal />
+          </div>
           <Button 
             variant="ghost" 
             size="icon" 
             onClick={() => setSoundEnabled(!soundEnabled)}
-            className="rounded-full w-7 h-7 text-muted-foreground"
+            className="rounded-full w-7 h-7 lg:w-9 lg:h-9 text-muted-foreground"
           >
-            {soundEnabled ? <Volume2 className="w-3.5 h-3.5" /> : <VolumeX className="w-3.5 h-3.5" />}
+            {soundEnabled ? <Volume2 className="w-3.5 h-3.5 lg:w-5 lg:h-5" /> : <VolumeX className="w-3.5 h-3.5 lg:w-5 lg:h-5" />}
           </Button>
         </div>
+
+        <GameStats 
+          score={state.score} 
+          highScore={state.highScore} 
+          moves={state.moves} 
+          difficulty={state.difficulty}
+          aiFeedback={aiFeedback}
+          lastIncrement={lastIncrement}
+        />
       </div>
 
-      <GameStats 
-        score={state.score} 
-        highScore={state.highScore} 
-        moves={state.moves} 
-        difficulty={state.difficulty}
-        aiFeedback={aiFeedback}
-        lastIncrement={lastIncrement}
-      />
-
-      <div className="relative flex-grow w-full flex items-center justify-center overflow-hidden">
+      {/* Main Game Board Area - Fills remaining space */}
+      <div className="relative flex-grow w-full flex items-center justify-center overflow-hidden h-full">
         <div 
-          className="grid gap-0.5 p-1 rounded-xl bg-white/40 shadow-xl border border-white/60 backdrop-blur-md mx-auto relative h-full max-h-[75vh]"
+          className="grid gap-0.5 p-1 lg:p-2 rounded-xl bg-white/40 shadow-xl border border-white/60 backdrop-blur-md mx-auto relative w-full h-full max-h-[70vh] lg:max-h-none"
           style={{ 
             gridTemplateColumns: `repeat(${state.config.width}, 1fr)`,
             gridTemplateRows: `repeat(${state.config.height}, 1fr)`,
-            width: '100%',
             aspectRatio: `${state.config.width} / ${state.config.height}`,
-            maxHeight: '100%'
           }}
         >
           {state.grid.map((row, y) => 
@@ -334,12 +316,12 @@ export function GameController() {
           {floatingScores.map(fs => (
             <div 
               key={fs.id}
-              className="absolute z-30 pointer-events-none text-white font-black text-2xl md:text-4xl animate-float-up-fade"
+              className="absolute z-30 pointer-events-none text-white font-black text-2xl md:text-5xl animate-float-up-fade"
               style={{
                 left: `${(fs.x / state.config.width) * 100}%`,
                 top: `${(fs.y / state.config.height) * 100}%`,
                 transform: 'translate(-50%, -50%)',
-                textShadow: '0 1px 2px rgba(0,0,0,0.2)'
+                textShadow: '0 2px 4px rgba(0,0,0,0.3)'
               }}
             >
               +{fs.points}
@@ -350,10 +332,10 @@ export function GameController() {
             <>
               <GameOverParticles />
               <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-background/80 backdrop-blur-sm rounded-xl animate-in fade-in zoom-in duration-300 px-4 text-center">
-                <h2 className="text-xl md:text-4xl font-bold text-foreground mb-1 font-headline">{t.gameOver}</h2>
-                <p className="text-sm md:text-xl text-muted-foreground mb-4 font-medium">{t.finalScore}: {state.score}</p>
-                <Button size="lg" onClick={finalizeGame} className="rounded-full px-6 bg-primary hover:bg-primary/90 h-9 md:h-11">
-                  <PlayCircle className="mr-2 w-4 h-4 md:w-6 md:h-6" />
+                <h2 className="text-xl md:text-5xl font-bold text-foreground mb-2 font-headline">{t.gameOver}</h2>
+                <p className="text-sm md:text-2xl text-muted-foreground mb-6 font-medium">{t.finalScore}: {state.score}</p>
+                <Button size="lg" onClick={finalizeGame} className="rounded-full px-8 bg-primary hover:bg-primary/90 h-10 md:h-14 md:text-xl">
+                  <PlayCircle className="mr-2 w-5 h-5 md:w-8 md:h-8" />
                   {t.playAgain}
                 </Button>
               </div>
