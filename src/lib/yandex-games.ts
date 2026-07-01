@@ -4,6 +4,7 @@
  */
 
 let sdkInstance: YSDK | null = null;
+let isReadyCalled = false;
 
 /**
  * Initializes the Yandex Games SDK.
@@ -66,10 +67,16 @@ export function reportReady(): void {
     return;
   }
 
+  if (isReadyCalled) {
+    console.log('Yandex Games: reportReady already called, skipping.');
+    return;
+  }
+
   try {
     const loadingApi = (sdkInstance as any).features?.LoadingAPI || (sdkInstance as any).LoadingAPI;
     if (loadingApi && typeof loadingApi.ready === 'function') {
       loadingApi.ready();
+      isReadyCalled = true;
       console.log('Yandex Games: reported ready via LoadingAPI');
     } else {
       console.warn('LoadingAPI.ready not found in SDK');

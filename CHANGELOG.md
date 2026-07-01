@@ -2,6 +2,11 @@
 
 All notable changes to the **Pop Block Blitz** project will be documented in this file.
 
+## [0.2.2] - 2024-05-24
+
+### Fixed
+- **SDK Lifecycle**: Implemented a singleton guard for `LoadingAPI.ready()` to ensure the "game ready" signal is sent to the Yandex Games platform exactly once per session, preventing redundant API calls.
+
 ## [0.2.1] - 2024-05-24
 
 ### Fixed
