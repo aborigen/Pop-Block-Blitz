@@ -2,6 +2,15 @@
 
 All notable changes to the **Pop Block Blitz** project will be documented in this file.
 
+## [0.2.1] - 2024-05-24
+
+### Fixed
+- **SDK Readiness**: Refined the `LoadingAPI.ready()` sequence to prevent race conditions during game initialization, ensuring a smoother loading experience on Yandex Games.
+
+### Changed
+- **Automatic Localization**: The game now automatically detects and syncs with the Yandex Games environment language, setting the UI to English or Russian based on the player's profile or browser settings.
+- **Tutorial Logic**: Optimized the hint finger animation to strictly expire after the second game session, keeping the board clean for returning players.
+
 ## [0.2.0] - 2024-05-24
 
 ### Added
