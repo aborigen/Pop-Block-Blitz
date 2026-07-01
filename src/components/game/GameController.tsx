@@ -18,7 +18,7 @@ import { Button } from "@/components/ui/button"
 import { RefreshCw, PlayCircle, Volume2, VolumeX } from "lucide-react"
 import { useTranslation } from "@/lib/i18n/context"
 import { soundManager } from "@/lib/sound-effects"
-import { initYandexSDK, showInterstitialAd, reportScore, reportReady } from "@/lib/yandex-games"
+import { initYandexSDK, showInterstitialAd, reportScore, reportReady, getLanguage } from "@/lib/yandex-games"
 import { LeaderboardModal } from "./LeaderboardModal"
 import { GameOverParticles } from "./GameOverParticles"
 
@@ -74,12 +74,14 @@ export function GameController() {
     initYandexSDK().then((sdk) => {
       if (sdk) {
         setSdkReady(true);
-        const env = sdk.environment;
+        
+        // Sync UI language with Yandex Environment if the user hasn't manually picked one
+        const detectedLang = getLanguage();
         const savedLocale = localStorage.getItem('app-locale');
-        if (!savedLocale && env.i18n?.lang) {
-          const yandexLang = env.i18n.lang.split('-')[0];
-          if (yandexLang === 'ru') setLocale('ru');
-          else if (yandexLang === 'en') setLocale('en');
+        
+        if (!savedLocale && detectedLang) {
+          console.log(`Syncing UI language to Yandex preference: ${detectedLang}`);
+          setLocale(detectedLang);
         }
       }
     });

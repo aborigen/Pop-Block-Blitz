@@ -37,6 +37,26 @@ export function getEnvironment(): any | null {
 }
 
 /**
+ * Detects the language from the Yandex environment.
+ * Prioritizes the platform's i18n settings.
+ */
+export function getLanguage(): 'en' | 'ru' | null {
+  if (!sdkInstance) return null;
+  
+  const env = sdkInstance.environment;
+  // Try platform language first (e.g., 'ru' or 'en')
+  const lang = env.i18n?.lang || env.browser?.lang;
+  
+  if (lang) {
+    const code = lang.split('-')[0].toLowerCase();
+    if (code === 'ru') return 'ru';
+    if (code === 'en') return 'en';
+  }
+  
+  return null;
+}
+
+/**
  * Reports that the game is ready to be played.
  * This hides the loading screen in Yandex Games.
  */
@@ -123,7 +143,6 @@ export async function getLeaderboardEntries(leaderboardName: string): Promise<an
     }
   } catch (e) {
     console.warn('Could not fetch leaderboard entries:', e);
-    // If not authorized, try to prompt auth (optional, platform specific)
   }
   return null;
 }
