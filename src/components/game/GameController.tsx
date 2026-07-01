@@ -35,6 +35,7 @@ export function GameController() {
   const { t, locale, setLocale } = useTranslation();
   const [mounted, setMounted] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
+  const [sdkReady, setSdkReady] = useState(false);
   const [state, setState] = useState<GameState>({
     grid: [],
     score: 0,
@@ -61,7 +62,6 @@ export function GameController() {
   const scoreCounter = useRef(0)
   const incrementTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const isReadyReported = useRef(false)
-  const isSdkInitialized = useRef(false)
 
   // Initialization
   useEffect(() => {
@@ -73,7 +73,7 @@ export function GameController() {
 
     initYandexSDK().then((sdk) => {
       if (sdk) {
-        isSdkInitialized.current = true;
+        setSdkReady(true);
         const env = sdk.environment;
         const savedLocale = localStorage.getItem('app-locale');
         if (!savedLocale && env.i18n?.lang) {
@@ -156,13 +156,12 @@ export function GameController() {
     }));
 
     setTargetedGroup([]);
-    // Only show the hint finger for the first 2 games as a tutorial
     setHintGroup(performanceHistory.totalGames < 2 ? bestMove : []);
     setFloatingScores([]);
     setLastIncrement(null);
   }, [performanceHistory, getHeuristicDifficulty, state.config, state.difficulty]);
 
-  // Handle game start and ready reporting
+  // Handle game start
   useEffect(() => {
     if (mounted && state.grid.length === 0) {
       startNewGame();
@@ -171,16 +170,15 @@ export function GameController() {
 
   // Report ready when both grid and SDK are prepared
   useEffect(() => {
-    if (mounted && state.grid.length > 0 && isSdkInitialized.current && !isReadyReported.current) {
+    if (mounted && state.grid.length > 0 && sdkReady && !isReadyReported.current) {
       reportReady();
       isReadyReported.current = true;
     }
-  }, [mounted, state.grid.length]);
+  }, [mounted, state.grid.length, sdkReady]);
 
   const handleBlockClick = (x: number, y: number) => {
     if (state.gameOver) return
 
-    // Clear hint on any interaction
     if (hintGroup.length > 0) setHintGroup([]);
 
     const group = getConnectedBlocks(state.grid, x, y)
