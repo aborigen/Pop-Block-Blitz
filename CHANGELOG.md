@@ -2,6 +2,15 @@
 
 All notable changes to the **Pop Block Blitz** project will be documented in this file.
 
+## [0.3.0] - 2024-05-24
+
+### Added
+- **Landscape Adaptation**: Redesigned the main game layout to support a responsive landscape mode. On wider screens, game stats now move to a sidebar, allowing the game board to occupy more than 70% of the screen area, fulfilling Yandex Games platform requirements.
+- **Gesture Control**: Implemented `touch-action: none` and global gesture prevention to ensure smooth, uninterrupted gameplay without accidental browser navigation.
+
+### Fixed
+- **Input Handling**: Disabled the browser context menu on long-tap and right-click to prevent UI interruptions during fast-paced play.
+
 ## [0.2.2] - 2024-05-24
 
 ### Fixed
