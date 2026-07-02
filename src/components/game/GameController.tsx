@@ -22,6 +22,7 @@ import { soundManager } from "@/lib/sound-effects"
 import { initYandexSDK, showInterstitialAd, reportScore, reportReady, getLanguage } from "@/lib/yandex-games"
 import { LeaderboardModal } from "./LeaderboardModal"
 import { GameOverParticles } from "./GameOverParticles"
+import { cn } from "@/lib/utils"
 
 interface FloatingScore {
   id: number;
@@ -59,6 +60,8 @@ export function GameController() {
   const [hintGroup, setHintGroup] = useState<[number, number][]>([])
   const [floatingScores, setFloatingScores] = useState<FloatingScore[]>([])
   const [lastIncrement, setLastIncrement] = useState<number | null>(null)
+  const [visualRotation, setVisualRotation] = useState(0)
+  const [isAnimatingRotation, setIsAnimatingRotation] = useState(false)
   
   const scoreCounter = useRef(0)
   const incrementTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -157,6 +160,8 @@ export function GameController() {
     setHintGroup(performanceHistory.totalGames < 2 ? bestMove : []);
     setFloatingScores([]);
     setLastIncrement(null);
+    setVisualRotation(0);
+    setIsAnimatingRotation(false);
   }, [performanceHistory, getHeuristicDifficulty, state.config, state.difficulty]);
 
   useEffect(() => {
@@ -173,7 +178,7 @@ export function GameController() {
   }, [mounted, state.grid.length, sdkReady]);
 
   const handleBlockClick = (x: number, y: number) => {
-    if (state.gameOver) return
+    if (state.gameOver || isAnimatingRotation) return
     if (hintGroup.length > 0) setHintGroup([]);
     const group = getConnectedBlocks(state.grid, x, y)
     if (group.length < 2) {
@@ -235,31 +240,39 @@ export function GameController() {
   }
 
   const handleRotate = (direction: 'cw' | 'ccw') => {
-    if (state.gameOver) return;
+    if (state.gameOver || isAnimatingRotation) return;
     soundManager.playClick();
     
-    const newGrid = rotateGrid(state.grid, direction);
-    const isGameOver = checkGameOver(newGrid);
+    setIsAnimatingRotation(true);
+    setVisualRotation(direction === 'cw' ? 90 : -90);
     
-    if (isGameOver) {
-      soundManager.playGameOver();
-      showInterstitialAd();
-      reportScore('leaders', state.score);
-    }
-
-    setState(prev => ({
-      ...prev,
-      grid: newGrid,
-      gameOver: isGameOver,
-      config: {
-        ...prev.config,
-        width: prev.config.height,
-        height: prev.config.width
+    // Finalize rotation after animation duration (match CSS duration)
+    setTimeout(() => {
+      const newGrid = rotateGrid(state.grid, direction);
+      const isGameOver = checkGameOver(newGrid);
+      
+      if (isGameOver) {
+        soundManager.playGameOver();
+        showInterstitialAd();
+        reportScore('leaders', state.score);
       }
-    }));
-    
-    setTargetedGroup([]);
-    setHintGroup([]);
+
+      setState(prev => ({
+        ...prev,
+        grid: newGrid,
+        gameOver: isGameOver,
+        config: {
+          ...prev.config,
+          width: prev.config.height,
+          height: prev.config.width
+        }
+      }));
+      
+      setTargetedGroup([]);
+      setHintGroup([]);
+      setVisualRotation(0);
+      setIsAnimatingRotation(false);
+    }, 400);
   }
 
   const finalizeGame = () => {
@@ -300,6 +313,7 @@ export function GameController() {
               variant="ghost" 
               size="icon" 
               onClick={() => handleRotate('ccw')}
+              disabled={isAnimatingRotation}
               title={t.rotateLeft}
               className="rounded-full w-7 h-7 lg:w-9 lg:h-9 text-muted-foreground"
             >
@@ -309,6 +323,7 @@ export function GameController() {
               variant="ghost" 
               size="icon" 
               onClick={() => handleRotate('cw')}
+              disabled={isAnimatingRotation}
               title={t.rotateRight}
               className="rounded-full w-7 h-7 lg:w-9 lg:h-9 text-muted-foreground"
             >
@@ -338,11 +353,15 @@ export function GameController() {
       {/* Main Game Board Area - Fills remaining space */}
       <div className="relative flex-grow w-full flex items-center justify-center overflow-hidden h-full">
         <div 
-          className="grid gap-0.5 p-1 lg:p-2 rounded-xl bg-white/40 shadow-xl border border-white/60 backdrop-blur-md mx-auto relative w-full h-full max-h-[70vh] lg:max-h-none"
+          className={cn(
+            "grid gap-0.5 p-1 lg:p-2 rounded-xl bg-white/40 shadow-xl border border-white/60 backdrop-blur-md mx-auto relative w-full h-full max-h-[70vh] lg:max-h-none",
+            isAnimatingRotation && "board-transition"
+          )}
           style={{ 
             gridTemplateColumns: `repeat(${state.config.width}, 1fr)`,
             gridTemplateRows: `repeat(${state.config.height}, 1fr)`,
             aspectRatio: `${state.config.width} / ${state.config.height}`,
+            transform: `rotate(${visualRotation}deg)`
           }}
         >
           {state.grid.map((row, y) => 
