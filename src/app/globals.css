@@ -38,7 +38,6 @@
     --radius: 1rem;
   }
 
-  /* Syncing dark class with the same dark theme for consistency */
   .dark {
     --background: 222 47% 11%;
     --foreground: 210 40% 98%;
@@ -65,10 +64,21 @@
 @layer base {
   * {
     @apply border-border;
+    -webkit-touch-callout: none; /* Prevent context menu on long press in iOS */
+    -webkit-user-select: none;   /* Prevent text selection */
+    user-select: none;
   }
+  
+  input, textarea {
+    -webkit-user-select: text;
+    user-select: text;
+  }
+
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
+    overflow: hidden;
+    touch-action: none; /* Disable browser gestures for smooth gameplay */
   }
 }
 
