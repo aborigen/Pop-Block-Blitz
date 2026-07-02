@@ -35,9 +35,6 @@ export interface GameState {
   };
 }
 
-/**
- * Generates a random game grid.
- */
 export function generateGrid(width: number, height: number, numColors: number): Grid {
   const grid: Grid = [];
   for (let y = 0; y < height; y++) {
@@ -50,9 +47,6 @@ export function generateGrid(width: number, height: number, numColors: number): 
   return grid;
 }
 
-/**
- * Finds all adjacent blocks of the same color.
- */
 export function getConnectedBlocks(grid: Grid, x: number, y: number): [number, number][] {
   const color = grid[y][x];
   if (color === null) return [];
@@ -73,7 +67,6 @@ export function getConnectedBlocks(grid: Grid, x: number, y: number): [number, n
     if (grid[cy][cx] === color) {
       group.push([cx, cy]);
       
-      // Check neighbors
       const neighbors = [
         [cx + 1, cy],
         [cx - 1, cy],
@@ -92,9 +85,6 @@ export function getConnectedBlocks(grid: Grid, x: number, y: number): [number, n
   return group;
 }
 
-/**
- * Finds the largest connected group in the grid.
- */
 export function findBestMove(grid: Grid): [number, number][] {
   const width = grid[0].length;
   const height = grid.length;
@@ -118,15 +108,11 @@ export function findBestMove(grid: Grid): [number, number][] {
   return bestGroup.length >= 2 ? bestGroup : [];
 }
 
-/**
- * Applies gravity and consolidation to the grid.
- */
 export function applyGravityAndConsolidate(grid: Grid): Grid {
   const newGrid = grid.map(row => [...row]);
   const width = newGrid[0].length;
   const height = newGrid.length;
 
-  // 1. Gravity (per column)
   for (let x = 0; x < width; x++) {
     const column: BlockColor[] = [];
     for (let y = height - 1; y >= 0; y--) {
@@ -134,17 +120,14 @@ export function applyGravityAndConsolidate(grid: Grid): Grid {
         column.push(newGrid[y][x]);
       }
     }
-    // Fill remaining with null
     while (column.length < height) {
       column.push(null);
     }
-    // Update grid from bottom up
     for (let y = 0; y < height; y++) {
       newGrid[height - 1 - y][x] = column[y];
     }
   }
 
-  // 2. Consolidate Columns (shift left if column is empty)
   const columns: BlockColor[][] = [];
   for (let x = 0; x < width; x++) {
     const column: BlockColor[] = [];
@@ -158,12 +141,10 @@ export function applyGravityAndConsolidate(grid: Grid): Grid {
     }
   }
 
-  // Fill remaining columns with null
   while (columns.length < width) {
     columns.push(new Array(height).fill(null));
   }
 
-  // Reconstruct grid
   for (let x = 0; x < width; x++) {
     for (let y = 0; y < height; y++) {
       newGrid[y][x] = columns[x][y];
@@ -173,13 +154,9 @@ export function applyGravityAndConsolidate(grid: Grid): Grid {
   return newGrid;
 }
 
-/**
- * Clears blocks, applies gravity, and consolidates columns.
- */
 export function processClear(grid: Grid, group: [number, number][]): Grid {
   const newGrid = grid.map(row => [...row]);
   
-  // 1. Mark as null
   for (const [x, y] of group) {
     newGrid[y][x] = null;
   }
@@ -187,9 +164,6 @@ export function processClear(grid: Grid, group: [number, number][]): Grid {
   return applyGravityAndConsolidate(newGrid);
 }
 
-/**
- * Rotates the grid and reapplies gravity.
- */
 export function rotateGrid(grid: Grid, direction: 'cw' | 'ccw'): Grid {
   const oldHeight = grid.length;
   const oldWidth = grid[0].length;
@@ -216,9 +190,6 @@ export function rotateGrid(grid: Grid, direction: 'cw' | 'ccw'): Grid {
   return applyGravityAndConsolidate(rotated);
 }
 
-/**
- * Checks if any valid moves remain.
- */
 export function checkGameOver(grid: Grid): boolean {
   const width = grid[0].length;
   const height = grid.length;
@@ -233,10 +204,6 @@ export function checkGameOver(grid: Grid): boolean {
   return true;
 }
 
-/**
- * Calculate score for a clear.
- * Formula: n * (n - 1)
- */
 export function calculateMoveScore(n: number): number {
   return n * (n - 1);
 }
