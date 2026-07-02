@@ -119,20 +119,14 @@ export function findBestMove(grid: Grid): [number, number][] {
 }
 
 /**
- * Clears blocks, applies gravity, and consolidates columns.
+ * Applies gravity and consolidation to the grid.
  */
-export function processClear(grid: Grid, group: [number, number][]): Grid {
+export function applyGravityAndConsolidate(grid: Grid): Grid {
   const newGrid = grid.map(row => [...row]);
-  
-  // 1. Mark as null
-  for (const [x, y] of group) {
-    newGrid[y][x] = null;
-  }
-
   const width = newGrid[0].length;
   const height = newGrid.length;
 
-  // 2. Gravity (per column)
+  // 1. Gravity (per column)
   for (let x = 0; x < width; x++) {
     const column: BlockColor[] = [];
     for (let y = height - 1; y >= 0; y--) {
@@ -150,7 +144,7 @@ export function processClear(grid: Grid, group: [number, number][]): Grid {
     }
   }
 
-  // 3. Consolidate Columns (shift left if column is empty)
+  // 2. Consolidate Columns (shift left if column is empty)
   const columns: BlockColor[][] = [];
   for (let x = 0; x < width; x++) {
     const column: BlockColor[] = [];
@@ -177,6 +171,49 @@ export function processClear(grid: Grid, group: [number, number][]): Grid {
   }
 
   return newGrid;
+}
+
+/**
+ * Clears blocks, applies gravity, and consolidates columns.
+ */
+export function processClear(grid: Grid, group: [number, number][]): Grid {
+  const newGrid = grid.map(row => [...row]);
+  
+  // 1. Mark as null
+  for (const [x, y] of group) {
+    newGrid[y][x] = null;
+  }
+
+  return applyGravityAndConsolidate(newGrid);
+}
+
+/**
+ * Rotates the grid and reapplies gravity.
+ */
+export function rotateGrid(grid: Grid, direction: 'cw' | 'ccw'): Grid {
+  const oldHeight = grid.length;
+  const oldWidth = grid[0].length;
+  const rotated: Grid = [];
+
+  if (direction === 'cw') {
+    for (let x = 0; x < oldWidth; x++) {
+      const newRow: BlockColor[] = [];
+      for (let y = oldHeight - 1; y >= 0; y--) {
+        newRow.push(grid[y][x]);
+      }
+      rotated.push(newRow);
+    }
+  } else {
+    for (let x = oldWidth - 1; x >= 0; x--) {
+      const newRow: BlockColor[] = [];
+      for (let y = 0; y < oldHeight; y++) {
+        newRow.push(grid[y][x]);
+      }
+      rotated.push(newRow);
+    }
+  }
+
+  return applyGravityAndConsolidate(rotated);
 }
 
 /**

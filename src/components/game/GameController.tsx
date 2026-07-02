@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState, useEffect, useCallback, useRef } from "react"
@@ -9,6 +8,7 @@ import {
   calculateMoveScore, 
   checkGameOver,
   findBestMove,
+  rotateGrid,
   type Grid,
   type GameState,
   type DifficultyLevel 
@@ -16,7 +16,7 @@ import {
 import { Block } from "./Block"
 import { GameStats } from "./GameStats"
 import { Button } from "@/components/ui/button"
-import { RefreshCw, PlayCircle, Volume2, VolumeX } from "lucide-react"
+import { RefreshCw, PlayCircle, Volume2, VolumeX, RotateCcw, RotateCw } from "lucide-react"
 import { useTranslation } from "@/lib/i18n/context"
 import { soundManager } from "@/lib/sound-effects"
 import { initYandexSDK, showInterstitialAd, reportScore, reportReady, getLanguage } from "@/lib/yandex-games"
@@ -234,6 +234,34 @@ export function GameController() {
     }
   }
 
+  const handleRotate = (direction: 'cw' | 'ccw') => {
+    if (state.gameOver) return;
+    soundManager.playClick();
+    
+    const newGrid = rotateGrid(state.grid, direction);
+    const isGameOver = checkGameOver(newGrid);
+    
+    if (isGameOver) {
+      soundManager.playGameOver();
+      showInterstitialAd();
+      reportScore('leaders', state.score);
+    }
+
+    setState(prev => ({
+      ...prev,
+      grid: newGrid,
+      gameOver: isGameOver,
+      config: {
+        ...prev.config,
+        width: prev.config.height,
+        height: prev.config.width
+      }
+    }));
+    
+    setTargetedGroup([]);
+    setHintGroup([]);
+  }
+
   const finalizeGame = () => {
     soundManager.playClick();
     setPerformanceHistory(prev => ({
@@ -267,14 +295,34 @@ export function GameController() {
             </Button>
             <LeaderboardModal />
           </div>
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            onClick={() => setSoundEnabled(!soundEnabled)}
-            className="rounded-full w-7 h-7 lg:w-9 lg:h-9 text-muted-foreground"
-          >
-            {soundEnabled ? <Volume2 className="w-3.5 h-3.5 lg:w-5 lg:h-5" /> : <VolumeX className="w-3.5 h-3.5 lg:w-5 lg:h-5" />}
-          </Button>
+          <div className="flex items-center gap-1">
+             <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={() => handleRotate('ccw')}
+              title={t.rotateLeft}
+              className="rounded-full w-7 h-7 lg:w-9 lg:h-9 text-muted-foreground"
+            >
+              <RotateCcw className="w-3.5 h-3.5 lg:w-5 lg:h-5" />
+            </Button>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={() => handleRotate('cw')}
+              title={t.rotateRight}
+              className="rounded-full w-7 h-7 lg:w-9 lg:h-9 text-muted-foreground"
+            >
+              <RotateCw className="w-3.5 h-3.5 lg:w-5 lg:h-5" />
+            </Button>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={() => setSoundEnabled(!soundEnabled)}
+              className="rounded-full w-7 h-7 lg:w-9 lg:h-9 text-muted-foreground ml-1"
+            >
+              {soundEnabled ? <Volume2 className="w-3.5 h-3.5 lg:w-5 lg:h-5" /> : <VolumeX className="w-3.5 h-3.5 lg:w-5 lg:h-5" />}
+            </Button>
+          </div>
         </div>
 
         <GameStats 
