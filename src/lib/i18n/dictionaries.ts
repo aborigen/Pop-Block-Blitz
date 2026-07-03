@@ -21,6 +21,7 @@ export const dictionaries = {
     name: "Name",
     loading: "Loading...",
     noData: "No data available",
+    remainingBlocks: "Remaining",
     difficulty: {
       very_easy: "Very Easy",
       easy: "Easy",
@@ -52,6 +53,7 @@ export const dictionaries = {
     name: "Имя",
     loading: "Загрузка...",
     noData: "Данных нет",
+    remainingBlocks: "Осталось",
     difficulty: {
       very_easy: "Очень Легко",
       easy: "Легко",

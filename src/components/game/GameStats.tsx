@@ -1,12 +1,11 @@
-
 "use client"
 
 import { Card } from "@/components/ui/card"
-import { Trophy, Target, Sparkles, Activity } from "lucide-react"
+import { Trophy, Target, Sparkles, Activity, Layers } from "lucide-react"
 import { useTranslation } from "@/lib/i18n/context"
 import { useEffect, useState } from "react"
 import { cn } from "@/lib/utils"
-import { type DifficultyLevel } from "@/lib/game-logic"
+import { type DifficultyLevel, COLORS } from "@/lib/game-logic"
 
 interface GameStatsProps {
   score: number
@@ -15,9 +14,10 @@ interface GameStatsProps {
   difficulty: DifficultyLevel
   aiFeedback?: string
   lastIncrement?: number | null
+  blockCounts: Record<number, number>
 }
 
-export function GameStats({ score, highScore, moves, difficulty, aiFeedback, lastIncrement }: GameStatsProps) {
+export function GameStats({ score, highScore, moves, difficulty, aiFeedback, lastIncrement, blockCounts }: GameStatsProps) {
   const { t } = useTranslation();
   const [pulseScore, setPulseScore] = useState(false);
 
@@ -61,6 +61,24 @@ export function GameStats({ score, highScore, moves, difficulty, aiFeedback, las
           icon={<Sparkles className="text-primary w-2.5 h-2.5 md:w-4 md:h-4" />} 
         />
       </div>
+
+      <Card className="p-1 lg:p-2 bg-white/30 backdrop-blur-sm border-white/20">
+        <div className="flex items-center gap-1.5 mb-1.5 px-1">
+          <Layers className="text-muted-foreground w-2.5 h-2.5 lg:w-3.5 lg:h-3.5" />
+          <span className="text-[7px] lg:text-[10px] uppercase font-bold text-muted-foreground tracking-tighter leading-none">{t.remainingBlocks || "Remaining"}</span>
+        </div>
+        <div className="flex flex-wrap gap-1.5 lg:gap-3 px-1">
+          {Object.entries(blockCounts).map(([index, count]) => (
+            <div key={index} className="flex items-center gap-1 lg:gap-1.5">
+              <div 
+                className="w-2 h-2 lg:w-3 lg:h-3 rounded-full shadow-sm"
+                style={{ backgroundColor: COLORS[parseInt(index)] }}
+              />
+              <span className="text-[10px] lg:text-sm font-black text-foreground font-headline leading-none">{count}</span>
+            </div>
+          ))}
+        </div>
+      </Card>
       
       {aiFeedback && (
         <div className="bg-primary/5 border border-primary/10 rounded-md p-1 lg:p-2 text-[8px] md:text-[10px] text-primary font-medium flex items-center gap-1.5 animate-in fade-in slide-in-from-top-1">

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useCallback, useRef } from "react"
+import { useState, useEffect, useCallback, useRef, useMemo } from "react"
 import { 
   generateGrid, 
   getConnectedBlocks, 
@@ -9,6 +9,7 @@ import {
   checkGameOver,
   findBestMove,
   rotateGrid,
+  getBlockCounts,
   type Grid,
   type GameState,
   type DifficultyLevel 
@@ -66,6 +67,9 @@ export function GameController() {
   const scoreCounter = useRef(0)
   const incrementTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const isReadyReported = useRef(false)
+
+  // Derived state: Block counts
+  const blockCounts = useMemo(() => getBlockCounts(state.grid), [state.grid]);
 
   // Initialization
   useEffect(() => {
@@ -347,6 +351,7 @@ export function GameController() {
           difficulty={state.difficulty}
           aiFeedback={aiFeedback}
           lastIncrement={lastIncrement}
+          blockCounts={blockCounts}
         />
       </div>
 

@@ -207,3 +207,15 @@ export function checkGameOver(grid: Grid): boolean {
 export function calculateMoveScore(n: number): number {
   return n * (n - 1);
 }
+
+export function getBlockCounts(grid: Grid): Record<number, number> {
+  const counts: Record<number, number> = {};
+  for (const row of grid) {
+    for (const colorIndex of row) {
+      if (colorIndex !== null) {
+        counts[colorIndex] = (counts[colorIndex] || 0) + 1;
+      }
+    }
+  }
+  return counts;
+}
