@@ -45,7 +45,7 @@ export function GameController() {
     gameOver: false,
     moves: 0,
     difficulty: 'easy',
-    config: { width: 10, height: 10, numColors: 4 }
+    config: { width: 8, height: 8, numColors: 4 }
   })
   
   const [performanceHistory, setPerformanceHistory] = useState({
