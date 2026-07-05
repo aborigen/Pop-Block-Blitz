@@ -300,15 +300,15 @@ export function GameController() {
           <div className="flex items-center gap-1">
             <Button 
               variant="ghost" 
-              size="sm"
+              size="icon"
               onClick={() => {
                 soundManager.playClick();
                 startNewGame();
               }} 
-              className="rounded-full h-7 lg:h-9 px-2 text-[10px] lg:text-xs text-muted-foreground"
+              title={t.resetSession}
+              className="rounded-full w-7 h-7 lg:w-9 lg:h-9 text-muted-foreground"
             >
-              <RefreshCw className="mr-1.5 w-3 h-3 lg:w-4 lg:h-4" />
-              {t.resetSession}
+              <RefreshCw className="w-3.5 h-3.5 lg:w-5 lg:h-5" />
             </Button>
             <LeaderboardModal />
           </div>

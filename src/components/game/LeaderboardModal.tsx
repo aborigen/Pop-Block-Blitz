@@ -55,11 +55,11 @@ export function LeaderboardModal() {
       <DialogTrigger asChild>
         <Button 
           variant="ghost" 
-          size="sm" 
-          className="rounded-full h-7 px-2 text-[10px] text-muted-foreground"
+          size="icon" 
+          title={t.leaders}
+          className="rounded-full w-7 h-7 lg:w-9 lg:h-9 text-muted-foreground"
         >
-          <Trophy className="mr-1.5 w-3 h-3 text-accent-foreground" />
-          {t.leaders}
+          <Trophy className="w-3.5 h-3.5 lg:w-5 lg:h-5 text-accent-foreground" />
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md bg-background/95 backdrop-blur-md border-white/20">
