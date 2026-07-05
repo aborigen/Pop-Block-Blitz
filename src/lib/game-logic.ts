@@ -1,7 +1,7 @@
 export type BlockColor = number | null;
 export type Grid = BlockColor[][];
 
-export const COLORS = [
+export let COLORS = [
   '#4DCCE6', // Aqua
   '#C8F471', // Lime
   '#F471B3', // Pink
@@ -10,6 +10,12 @@ export const COLORS = [
   '#FFD93D', // Yellow
   '#6BCB77', // Green
 ];
+
+export function setColors(newColors: string[]) {
+  if (newColors && newColors.length > 0) {
+    COLORS = [...newColors];
+  }
+}
 
 export const SHAPES = [
   'square',

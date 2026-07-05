@@ -153,3 +153,18 @@ export async function getLeaderboardEntries(leaderboardName: string): Promise<an
   }
   return null;
 }
+
+/**
+ * Fetches remote configuration from Yandex Games.
+ */
+export async function getRemoteConfig(): Promise<Record<string, any> | null> {
+  if (!sdkInstance) return null;
+
+  try {
+    const config = await sdkInstance.getRemoteConfig();
+    return config;
+  } catch (e) {
+    console.warn('Failed to fetch remote config:', e);
+    return null;
+  }
+}

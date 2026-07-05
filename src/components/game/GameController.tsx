@@ -10,6 +10,7 @@ import {
   findBestMove,
   rotateGrid,
   getBlockCounts,
+  setColors,
   type Grid,
   type GameState,
   type DifficultyLevel 
@@ -26,7 +27,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { useTranslation } from "@/lib/i18n/context"
 import { soundManager } from "@/lib/sound-effects"
-import { initYandexSDK, showInterstitialAd, reportScore, reportReady, getLanguage } from "@/lib/yandex-games"
+import { initYandexSDK, showInterstitialAd, reportScore, reportReady, getLanguage, getRemoteConfig } from "@/lib/yandex-games"
 import { LeaderboardModal } from "./LeaderboardModal"
 import { GameOverParticles } from "./GameOverParticles"
 import { cn } from "@/lib/utils"
@@ -69,6 +70,7 @@ export function GameController() {
   const [lastIncrement, setLastIncrement] = useState<number | null>(null)
   const [visualRotation, setVisualRotation] = useState(0)
   const [isAnimatingRotation, setIsAnimatingRotation] = useState(false)
+  const [paletteVersion, setPaletteVersion] = useState(0)
   
   const scoreCounter = useRef(0)
   const incrementTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -85,13 +87,27 @@ export function GameController() {
       setState(prev => ({ ...prev, highScore: parseInt(saved, 10) }))
     }
 
-    initYandexSDK().then((sdk) => {
+    initYandexSDK().then(async (sdk) => {
       if (sdk) {
         setSdkReady(true);
         const detectedLang = getLanguage();
         const savedLocale = localStorage.getItem('app-locale');
         if (!savedLocale && detectedLang) {
           setLocale(detectedLang);
+        }
+
+        // Fetch remote config for palette
+        try {
+          const config = await getRemoteConfig();
+          if (config && config.color_palette) {
+            const palette = config.color_palette.split(',').map((c: string) => c.trim()).filter((c: string) => c.startsWith('#'));
+            if (palette.length >= 3) {
+              setColors(palette);
+              setPaletteVersion(v => v + 1); // Force re-render of components using COLORS
+            }
+          }
+        } catch (e) {
+          console.error("Failed to load remote config", e);
         }
       }
     });
@@ -299,7 +315,7 @@ export function GameController() {
   if (!mounted || state.grid.length === 0) return null
 
   return (
-    <div className="flex flex-col lg:flex-row items-center lg:items-stretch w-full h-full max-w-[95vw] lg:max-w-[1400px] mx-auto p-1 lg:p-4 gap-2 lg:gap-8 overflow-hidden">
+    <div key={`palette-${paletteVersion}`} className="flex flex-col lg:flex-row items-center lg:items-stretch w-full h-full max-w-[95vw] lg:max-w-[1400px] mx-auto p-1 lg:p-4 gap-2 lg:gap-8 overflow-hidden">
       {/* Side Stats Section - On the left for landscape, top for portrait */}
       <div className="w-full lg:w-[280px] xl:w-[350px] flex flex-col shrink-0 lg:justify-center">
         <div className="w-full flex justify-between items-center px-1 mb-1 lg:mb-4">
