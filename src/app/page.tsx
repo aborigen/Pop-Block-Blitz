@@ -19,7 +19,7 @@ export default function Home() {
       onContextMenu={(e) => e.preventDefault()}
       className="h-screen flex flex-col bg-background overflow-hidden touch-none"
     >
-      <header className="py-1.5 px-3 md:py-4 md:px-8 flex items-center justify-between border-b border-white/20 bg-white/10 backdrop-blur-sm shrink-0 z-50">
+      <header className="hidden lg:flex portrait-hidden py-1.5 px-3 md:py-4 md:px-8 items-center justify-between border-b border-white/20 bg-white/10 backdrop-blur-sm shrink-0 z-50">
         <div className="flex items-center gap-2">
           <div className="bg-primary p-1 md:p-2 rounded-lg shadow-lg shadow-primary/20 rotate-12">
             <Sparkles className="text-white w-3.5 h-3.5 md:w-5 md:h-5" />
