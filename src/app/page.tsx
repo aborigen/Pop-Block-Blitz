@@ -56,7 +56,7 @@ export default function Home() {
         <GameController />
       </section>
 
-      <footer className="py-1 text-center text-muted-foreground border-t border-white/10 shrink-0">
+      <footer className="portrait-hidden py-1 text-center text-muted-foreground border-t border-white/10 shrink-0">
         <p className="text-[8px] md:text-xs opacity-50">{t.copyright}</p>
       </footer>
     </main>
