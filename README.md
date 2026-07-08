@@ -60,6 +60,11 @@ The game uses a "Match-2" or "Collapse" mechanic.
 - Empty columns are shifted left to consolidate the board.
 - The game ends when no more valid moves are possible.
 
+### Scoring
+Scores are calculated per move using a quadratic formula to reward larger combos:
+**`Score = n * (n - 1)`**
+Where `n` is the number of blocks popped in a single move.
+
 ## AI Difficulty Adjustment
 
 At the end of each game, the player's performance (score, moves, max combo) is analyzed to recommend a configuration for the next round. This ensures the game remains challenging for experts and accessible for beginners.

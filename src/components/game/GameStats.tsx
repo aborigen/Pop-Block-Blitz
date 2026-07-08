@@ -1,7 +1,7 @@
 "use client"
 
 import { Card } from "@/components/ui/card"
-import { Trophy, Target, Sparkles, Activity, Layers } from "lucide-react"
+import { Trophy, Target, Sparkles, Activity, Layers, Info } from "lucide-react"
 import { useTranslation } from "@/lib/i18n/context"
 import { useEffect, useState } from "react"
 import { cn } from "@/lib/utils"
@@ -86,6 +86,13 @@ export function GameStats({ score, highScore, moves, difficulty, aiFeedback, las
           <span className="leading-tight">{aiFeedback}</span>
         </div>
       )}
+
+      <div className="hidden lg:flex items-center justify-center gap-1.5 py-1 opacity-40 hover:opacity-100 transition-opacity">
+        <Info size={10} className="text-muted-foreground" />
+        <p className="text-[8px] xl:text-[10px] text-muted-foreground font-medium italic select-none">
+          {t.scoringRules}
+        </p>
+      </div>
     </div>
   )
 }
