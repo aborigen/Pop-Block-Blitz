@@ -62,19 +62,19 @@ export function GameStats({ score, highScore, moves, difficulty, aiFeedback, las
         />
       </div>
 
-      <Card className="p-1 lg:p-1.5 bg-white/30 backdrop-blur-sm border-white/20">
-        <div className="flex items-center gap-1 mb-1 px-0.5">
-          <Layers className="text-muted-foreground w-2 h-2 lg:w-3 lg:h-3" />
-          <span className="text-[6px] lg:text-[9px] uppercase font-bold text-muted-foreground tracking-tighter leading-none">{t.remainingBlocks || "Remaining"}</span>
+      <Card className="p-1.5 lg:p-2 bg-white/30 backdrop-blur-sm border-white/20">
+        <div className="flex items-center gap-1 mb-1.5 px-0.5">
+          <Layers className="text-muted-foreground w-2.5 h-2.5 lg:w-3.5 lg:h-3.5" />
+          <span className="text-[7px] lg:text-[10px] uppercase font-bold text-muted-foreground tracking-tighter leading-none">{t.remainingBlocks || "Remaining"}</span>
         </div>
-        <div className="flex flex-wrap gap-1 lg:gap-2 px-0.5">
+        <div className="flex flex-wrap gap-2 lg:gap-3 px-0.5">
           {Object.entries(blockCounts).map(([index, count]) => (
-            <div key={index} className="flex items-center gap-0.5 lg:gap-1">
+            <div key={index} className="flex items-center gap-1 lg:gap-1.5">
               <div 
-                className="w-1.5 h-1.5 lg:w-2 lg:h-2 rounded-full shadow-sm"
+                className="w-2.5 h-2.5 lg:w-4 lg:h-4 rounded-full shadow-sm border border-white/20"
                 style={{ backgroundColor: COLORS[parseInt(index)] }}
               />
-              <span className="text-[9px] lg:text-xs font-black text-foreground font-headline leading-none">{count}</span>
+              <span className="text-xs lg:text-base font-black text-foreground font-headline leading-none">{count}</span>
             </div>
           ))}
         </div>
