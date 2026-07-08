@@ -26,13 +26,13 @@ Rotates the entire grid clockwise or counter-clockwise and reapplies gravity.
 Checks if any valid moves (groups of 2 or more) remain on the board.
 
 ### `calculateMoveScore`
-Calculates the score for a specific move using the formula: `Score = n * (n - 1)`, where `n` is the number of blocks cleared.
+Calculates the score for a specific move using the formula: `Score = n * (n - 1) * 2`, where `n` is the number of blocks cleared.
 
 ## Scoring Rules
 The game rewards larger clusters exponentially to encourage strategic play:
-- **Formula:** `Points = n × (n - 1)`
-- **2 blocks:** 2 points
-- **3 blocks:** 6 points
-- **4 blocks:** 12 points
-- **10 blocks:** 90 points
-- **20 blocks:** 380 points
+- **Formula:** `Points = n × (n - 1) × 2`
+- **2 blocks:** 4 points
+- **3 blocks:** 12 points
+- **4 blocks:** 24 points
+- **10 blocks:** 180 points
+- **20 blocks:** 760 points

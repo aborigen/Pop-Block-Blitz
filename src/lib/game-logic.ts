@@ -211,7 +211,7 @@ export function checkGameOver(grid: Grid): boolean {
 }
 
 export function calculateMoveScore(n: number): number {
-  return n * (n - 1);
+  return n * (n - 1) * 2;
 }
 
 export function getBlockCounts(grid: Grid): Record<number, number> {
