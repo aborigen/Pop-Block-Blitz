@@ -317,9 +317,9 @@ export function GameController() {
   return (
     <div key={`palette-${paletteVersion}`} className="flex flex-col lg:flex-row items-center lg:items-stretch w-full h-full max-w-[95vw] lg:max-w-[1400px] mx-auto p-1 lg:p-4 gap-2 lg:gap-8 overflow-hidden">
       {/* Side Stats Section - On the left for landscape, top for portrait */}
-      <div className="w-full lg:w-[280px] xl:w-[350px] flex flex-col shrink-0 lg:justify-center">
-        <div className="w-full flex justify-between items-center px-1 mb-1 lg:mb-4">
-          <div className="flex items-center gap-1.5">
+      <div className="w-full lg:w-[260px] xl:w-[320px] flex flex-col shrink-0 lg:justify-center">
+        <div className="w-full flex justify-between items-center px-1 mb-0.5 lg:mb-2">
+          <div className="flex items-center gap-1">
             <Button 
               variant="ghost" 
               size="icon"
@@ -328,22 +328,22 @@ export function GameController() {
                 startNewGame();
               }} 
               title={t.resetSession}
-              className="rounded-full w-10 h-10 lg:w-12 lg:h-12 text-muted-foreground"
+              className="rounded-full w-9 h-9 lg:w-11 lg:h-11 text-muted-foreground"
             >
-              <RefreshCw className="w-5 h-5 lg:w-7 lg:h-7" />
+              <RefreshCw className="w-5 h-5 lg:w-6 lg:h-6" />
             </Button>
             <LeaderboardModal />
           </div>
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1">
              <Button 
               variant="ghost" 
               size="icon" 
               onClick={() => handleRotate('ccw')}
               disabled={isAnimatingRotation}
               title={t.rotateLeft}
-              className="rounded-full w-10 h-10 lg:w-12 lg:h-12 text-muted-foreground"
+              className="rounded-full w-9 h-9 lg:w-11 lg:h-11 text-muted-foreground"
             >
-              <RotateCcw className="w-5 h-5 lg:w-7 lg:h-7" />
+              <RotateCcw className="w-5 h-5 lg:w-6 lg:h-6" />
             </Button>
             <Button 
               variant="ghost" 
@@ -351,16 +351,16 @@ export function GameController() {
               onClick={() => handleRotate('cw')}
               disabled={isAnimatingRotation}
               title={t.rotateRight}
-              className="rounded-full w-10 h-10 lg:w-12 lg:h-12 text-muted-foreground"
+              className="rounded-full w-9 h-9 lg:w-11 lg:h-11 text-muted-foreground"
             >
-              <RotateCw className="w-5 h-5 lg:w-7 lg:h-7" />
+              <RotateCw className="w-5 h-5 lg:w-6 lg:h-6" />
             </Button>
             
             {/* Mobile Language Switcher */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="rounded-full w-10 h-10 lg:w-12 lg:h-12 text-muted-foreground lg:hidden">
-                  <Languages className="w-5 h-5 lg:w-7 lg:h-7" />
+                <Button variant="ghost" size="icon" className="rounded-full w-9 h-9 lg:w-11 lg:h-11 text-muted-foreground lg:hidden">
+                  <Languages className="w-5 h-5 lg:w-6 lg:h-6" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
@@ -377,9 +377,9 @@ export function GameController() {
               variant="ghost" 
               size="icon" 
               onClick={() => setSoundEnabled(!soundEnabled)}
-              className="rounded-full w-10 h-10 lg:w-12 lg:h-12 text-muted-foreground"
+              className="rounded-full w-9 h-9 lg:w-11 lg:h-11 text-muted-foreground"
             >
-              {soundEnabled ? <Volume2 className="w-5 h-5 lg:w-7 lg:h-7" /> : <VolumeX className="w-5 h-5 lg:w-7 lg:h-7" />}
+              {soundEnabled ? <Volume2 className="w-5 h-5 lg:w-6 lg:h-6" /> : <VolumeX className="w-5 h-5 lg:w-6 lg:h-6" />}
             </Button>
           </div>
         </div>
@@ -399,7 +399,7 @@ export function GameController() {
       <div className="relative flex-grow w-full flex items-center justify-center overflow-hidden h-full">
         <div 
           className={cn(
-            "grid gap-0.5 p-1 lg:p-2 rounded-xl bg-white/40 shadow-xl border border-white/60 backdrop-blur-md mx-auto relative w-full h-full max-h-[70vh] lg:max-h-none",
+            "grid gap-0.5 p-1 lg:p-2 rounded-xl bg-white/40 shadow-xl border border-white/60 backdrop-blur-md mx-auto relative w-full h-full max-h-[75vh] lg:max-h-none",
             isAnimatingRotation && "board-transition"
           )}
           style={{ 
