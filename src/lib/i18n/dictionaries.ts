@@ -23,6 +23,8 @@ export const dictionaries = {
     loading: "Loading...",
     noData: "No data available",
     remainingBlocks: "Remaining",
+    loginToSeeRank: "Log in to see your rank!",
+    login: "Log In",
     difficulty: {
       very_easy: "Very Easy",
       easy: "Easy",
@@ -56,6 +58,8 @@ export const dictionaries = {
     loading: "Загрузка...",
     noData: "Данных нет",
     remainingBlocks: "Осталось",
+    loginToSeeRank: "Войдите, чтобы увидеть свой ранг!",
+    login: "Войти",
     difficulty: {
       very_easy: "Очень Легко",
       easy: "Легко",

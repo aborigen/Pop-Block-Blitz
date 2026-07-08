@@ -155,6 +155,34 @@ export async function getLeaderboardEntries(leaderboardName: string): Promise<an
 }
 
 /**
+ * Checks if the player is currently authorized.
+ */
+export async function isPlayerAuthorized(): Promise<boolean> {
+  if (!sdkInstance) return false;
+  try {
+    const player = await sdkInstance.getPlayer({ scopes: false });
+    return player.getMode() !== 'lite';
+  } catch (e) {
+    console.warn('Failed to check authorization status:', e);
+    return false;
+  }
+}
+
+/**
+ * Opens the Yandex Games authorization dialog.
+ */
+export async function authorizePlayer(): Promise<boolean> {
+  if (!sdkInstance) return false;
+  try {
+    await sdkInstance.auth.openAuthDialog();
+    return true;
+  } catch (e) {
+    console.error('Authorization request failed:', e);
+    return false;
+  }
+}
+
+/**
  * Fetches remote configuration from Yandex Games.
  */
 export async function getRemoteConfig(): Promise<Record<string, any> | null> {

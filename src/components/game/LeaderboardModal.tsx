@@ -9,9 +9,9 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { Trophy, Users } from "lucide-react"
+import { Trophy, Users, LogIn } from "lucide-react"
 import { useTranslation } from "@/lib/i18n/context"
-import { getLeaderboardEntries } from "@/lib/yandex-games"
+import { getLeaderboardEntries, isPlayerAuthorized, authorizePlayer } from "@/lib/yandex-games"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
@@ -29,12 +29,19 @@ export function LeaderboardModal() {
   const [entries, setEntries] = useState<LeaderboardEntry[]>([])
   const [loading, setLoading] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
+  const [isAuthorized, setIsAuthorized] = useState<boolean>(false)
 
   useEffect(() => {
     if (isOpen) {
-      loadLeaderboard()
+      checkAuthAndLoad()
     }
   }, [isOpen])
+
+  const checkAuthAndLoad = async () => {
+    const authStatus = await isPlayerAuthorized()
+    setIsAuthorized(authStatus)
+    loadLeaderboard()
+  }
 
   const loadLeaderboard = async () => {
     setLoading(true)
@@ -47,6 +54,13 @@ export function LeaderboardModal() {
       console.error("Failed to load leaderboard", e)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleAuthorize = async () => {
+    const success = await authorizePlayer()
+    if (success) {
+      checkAuthAndLoad()
     }
   }
 
@@ -70,7 +84,19 @@ export function LeaderboardModal() {
           </DialogTitle>
         </DialogHeader>
 
-        <div className="py-4">
+        <div className="py-2">
+          {!isAuthorized && (
+            <div className="mb-4 p-3 rounded-lg bg-primary/10 border border-primary/20 flex flex-col items-center gap-2 text-center">
+              <p className="text-xs font-medium text-primary leading-tight">
+                {t.loginToSeeRank}
+              </p>
+              <Button size="sm" onClick={handleAuthorize} className="h-8 rounded-full bg-primary hover:bg-primary/90">
+                <LogIn size={14} className="mr-2" />
+                {t.login}
+              </Button>
+            </div>
+          )}
+
           {loading ? (
             <div className="flex flex-col items-center justify-center py-10 gap-3">
               <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
