@@ -319,7 +319,7 @@ export function GameController() {
       {/* Side Stats Section - On the left for landscape, top for portrait */}
       <div className="w-full lg:w-[280px] xl:w-[350px] flex flex-col shrink-0 lg:justify-center">
         <div className="w-full flex justify-between items-center px-1 mb-1 lg:mb-4">
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1.5">
             <Button 
               variant="ghost" 
               size="icon"
@@ -328,22 +328,22 @@ export function GameController() {
                 startNewGame();
               }} 
               title={t.resetSession}
-              className="rounded-full w-7 h-7 lg:w-9 lg:h-9 text-muted-foreground"
+              className="rounded-full w-10 h-10 lg:w-12 lg:h-12 text-muted-foreground"
             >
-              <RefreshCw className="w-3.5 h-3.5 lg:w-5 lg:h-5" />
+              <RefreshCw className="w-5 h-5 lg:w-7 lg:h-7" />
             </Button>
             <LeaderboardModal />
           </div>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1.5">
              <Button 
               variant="ghost" 
               size="icon" 
               onClick={() => handleRotate('ccw')}
               disabled={isAnimatingRotation}
               title={t.rotateLeft}
-              className="rounded-full w-7 h-7 lg:w-9 lg:h-9 text-muted-foreground"
+              className="rounded-full w-10 h-10 lg:w-12 lg:h-12 text-muted-foreground"
             >
-              <RotateCcw className="w-3.5 h-3.5 lg:w-5 lg:h-5" />
+              <RotateCcw className="w-5 h-5 lg:w-7 lg:h-7" />
             </Button>
             <Button 
               variant="ghost" 
@@ -351,16 +351,16 @@ export function GameController() {
               onClick={() => handleRotate('cw')}
               disabled={isAnimatingRotation}
               title={t.rotateRight}
-              className="rounded-full w-7 h-7 lg:w-9 lg:h-9 text-muted-foreground"
+              className="rounded-full w-10 h-10 lg:w-12 lg:h-12 text-muted-foreground"
             >
-              <RotateCw className="w-3.5 h-3.5 lg:w-5 lg:h-5" />
+              <RotateCw className="w-5 h-5 lg:w-7 lg:h-7" />
             </Button>
             
             {/* Mobile Language Switcher */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="rounded-full w-7 h-7 lg:w-9 lg:h-9 text-muted-foreground lg:hidden">
-                  <Languages size={14} className="lg:w-[18px] lg:h-[18px]" />
+                <Button variant="ghost" size="icon" className="rounded-full w-10 h-10 lg:w-12 lg:h-12 text-muted-foreground lg:hidden">
+                  <Languages className="w-5 h-5 lg:w-7 lg:h-7" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
@@ -377,9 +377,9 @@ export function GameController() {
               variant="ghost" 
               size="icon" 
               onClick={() => setSoundEnabled(!soundEnabled)}
-              className="rounded-full w-7 h-7 lg:w-9 lg:h-9 text-muted-foreground ml-1"
+              className="rounded-full w-10 h-10 lg:w-12 lg:h-12 text-muted-foreground"
             >
-              {soundEnabled ? <Volume2 className="w-3.5 h-3.5 lg:w-5 lg:h-5" /> : <VolumeX className="w-3.5 h-3.5 lg:w-5 lg:h-5" />}
+              {soundEnabled ? <Volume2 className="w-5 h-5 lg:w-7 lg:h-7" /> : <VolumeX className="w-5 h-5 lg:w-7 lg:h-7" />}
             </Button>
           </div>
         </div>
