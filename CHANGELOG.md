@@ -2,6 +2,18 @@
 
 All notable changes to the **Pop Block Blitz** project will be documented in this file.
 
+## [0.5.0] - 2024-05-24
+
+### Added
+- **Remote Configuration**: Integrated Yandex Games Remote Config to allow dynamic color palette updates directly from the developer console.
+- **Enhanced Scoring**: Updated the scoring formula to `n * (n - 1) * 2`, effectively doubling the reward for clearing clusters and making high-score chasing more exciting.
+- **Scoring Documentation**: Added clear, localized scoring rule explanations directly into the game's sidebar UI.
+
+### Changed
+- **UI Scaling**: Increased the size of rotation and control buttons for better accessibility and touch-friendliness.
+- **Enhanced Visibility**: Significantly increased the display size of the block count indicators to make them easier to read during intense gameplay.
+- **Compact Layout**: Further refined the info bar and stats sidebar to be more space-efficient, ensuring the game board remains the primary focus.
+
 ## [0.4.0] - 2024-05-24
 
 ### Added
