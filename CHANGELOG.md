@@ -2,6 +2,11 @@
 
 All notable changes to the **Pop Block Blitz** project will be documented in this file.
 
+## [0.5.1] - 2024-05-24
+
+### Fixed
+- **SDK Compatibility**: Replaced deprecated `Player.getMode()` with `Player.isAuthorized()` in Yandex Games SDK integration.
+
 ## [0.5.0] - 2024-05-24
 
 ### Added

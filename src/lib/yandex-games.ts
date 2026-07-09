@@ -161,7 +161,7 @@ export async function isPlayerAuthorized(): Promise<boolean> {
   if (!sdkInstance) return false;
   try {
     const player = await sdkInstance.getPlayer({ scopes: false });
-    return player.getMode() !== 'lite';
+    return player.isAuthorized();
   } catch (e) {
     console.warn('Failed to check authorization status:', e);
     return false;
