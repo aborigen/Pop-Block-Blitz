@@ -320,19 +320,6 @@ export function GameController() {
       <div className="w-full lg:w-[260px] xl:w-[320px] flex flex-col shrink-0 lg:justify-center">
         <div className="w-full flex justify-between items-center px-1 mb-1 lg:mb-4">
           <div className="flex items-center gap-1.5">
-            <Button 
-              variant="ghost" 
-              size="icon"
-              onClick={() => {
-                soundManager.playClick();
-                startNewGame();
-              }} 
-              title={t.resetSession}
-              aria-label={t.resetSession}
-              className="rounded-full w-10 h-10 lg:w-12 lg:h-12 text-muted-foreground"
-            >
-              <RefreshCw className="w-5 h-5 lg:w-6 lg:h-6" />
-            </Button>
             <LeaderboardModal />
           </div>
           <div className="flex items-center gap-1.5">
@@ -357,6 +344,20 @@ export function GameController() {
               className="rounded-full w-10 h-10 lg:w-12 lg:h-12 text-muted-foreground"
             >
               <RotateCw className="w-5 h-5 lg:w-6 lg:h-6" />
+            </Button>
+
+            <Button 
+              variant="ghost" 
+              size="icon"
+              onClick={() => {
+                soundManager.playClick();
+                startNewGame();
+              }} 
+              title={t.resetSession}
+              aria-label={t.resetSession}
+              className="rounded-full w-10 h-10 lg:w-12 lg:h-12 text-muted-foreground"
+            >
+              <RefreshCw className="w-5 h-5 lg:w-6 lg:h-6" />
             </Button>
             
             {/* Mobile Language Switcher */}

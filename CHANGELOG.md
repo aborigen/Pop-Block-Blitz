@@ -2,6 +2,12 @@
 
 All notable changes to the **Pop Block Blitz** project will be documented in this file.
 
+## [0.5.2] - 2024-05-24
+
+### Changed
+- **UI Layout**: Moved the "Reset Session" button to the right side of the control bar to better group it with primary action controls.
+- **UI Consistency**: Standardized button sizes and improved ARIA labels for better accessibility.
+
 ## [0.5.1] - 2024-05-24
 
 ### Fixed
@@ -34,44 +40,6 @@ All notable changes to the **Pop Block Blitz** project will be documented in thi
 
 ### Fixed
 - **Code Organization**: Extracted internal documentation from `game-logic.ts` into a separate `game-logic-docs.md` file for better maintainability.
-
-## [0.3.0] - 2024-05-24
-
-### Added
-- **Landscape Adaptation**: Redesigned the main game layout to support a responsive landscape mode. On wider screens, game stats now move to a sidebar, allowing the game board to occupy more than 70% of the screen area.
-- **Gesture Control**: Implemented `touch-action: none` and global gesture prevention to ensure smooth, uninterrupted gameplay without accidental browser navigation.
-
-### Fixed
-- **Input Handling**: Disabled the browser context menu on long-tap and right-click to prevent UI interruptions during fast-paced play.
-
-## [0.2.2] - 2024-05-24
-
-### Fixed
-- **SDK Lifecycle**: Implemented a singleton guard for `LoadingAPI.ready()` to ensure the "game ready" signal is sent to the Yandex Games platform exactly once per session.
-
-## [0.2.1] - 2024-05-24
-
-### Fixed
-- **SDK Readiness**: Refined the `LoadingAPI.ready()` sequence to prevent race conditions during game initialization.
-
-### Changed
-- **Automatic Localization**: The game now automatically detects and syncs with the Yandex Games environment language, setting the UI to English or Russian based on the player's platform profile.
-
-## [0.2.0] - 2024-05-24
-
-### Added
-- **Tutorial System**: Integrated a "double-tap" finger animation that guides new players to the best move.
-- **Extended Difficulty**: Added "Very Easy", "Expert", and "Insane" levels.
-- **Social Integration**: Full Yandex Games Leaderboard support.
-- **Game Over Effects**: Added a dynamic particle explosion.
-
-## [0.1.0] - 2024-05-24
-
-### Added
-- **Localization**: Full support for English and Russian.
-- **Sound Effects**: Procedural audio using Web Audio API for pops, clicks, and game-over states.
-- **Adaptive Difficulty**: Heuristic-based difficulty adjustment.
-- **Mobile Optimization**: Responsive layout and touch-friendly UI elements.
 
 ---
 *Initial prototype phase completed.*
