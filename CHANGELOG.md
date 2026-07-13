@@ -2,6 +2,12 @@
 
 All notable changes to the **Pop Block Blitz** project will be documented in this file.
 
+## [0.5.3] - 2024-05-24
+
+### Refactored
+- **Board Rotation Animation**: Re-engineered the rotation sequence to include a "lift" scale effect and refined state synchronization for more tactile feedback.
+- **Gravity Timing**: Optimized the delay between visual rotation and gravity cascade to ensure a smooth, satisfying settling of blocks.
+
 ## [0.5.2] - 2024-05-24
 
 ### Changed

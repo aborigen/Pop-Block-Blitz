@@ -309,8 +309,8 @@ export function GameController() {
         }));
         
         setIsAnimatingRotation(false);
-      }, 100);
-    }, 400);
+      }, 150);
+    }, 450);
   }
 
   const finalizeGame = () => {
@@ -428,7 +428,7 @@ export function GameController() {
             gridTemplateColumns: `repeat(${state.config.width}, 1fr)`,
             gridTemplateRows: `repeat(${state.config.height}, 1fr)`,
             aspectRatio: `${state.config.width} / ${state.config.height}`,
-            transform: `rotate(${visualRotation}deg)`
+            transform: `rotate(${visualRotation}deg) scale(${isAnimatingRotation ? 0.96 : 1})`
           }}
         >
           {state.grid.map((row, y) => 
