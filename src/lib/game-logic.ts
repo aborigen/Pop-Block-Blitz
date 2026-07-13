@@ -170,7 +170,7 @@ export function processClear(grid: Grid, group: [number, number][]): Grid {
   return applyGravityAndConsolidate(newGrid);
 }
 
-export function rotateGrid(grid: Grid, direction: 'cw' | 'ccw'): Grid {
+export function rotateGridRaw(grid: Grid, direction: 'cw' | 'ccw'): Grid {
   const oldHeight = grid.length;
   const oldWidth = grid[0].length;
   const rotated: Grid = [];
@@ -193,6 +193,11 @@ export function rotateGrid(grid: Grid, direction: 'cw' | 'ccw'): Grid {
     }
   }
 
+  return rotated;
+}
+
+export function rotateGrid(grid: Grid, direction: 'cw' | 'ccw'): Grid {
+  const rotated = rotateGridRaw(grid, direction);
   return applyGravityAndConsolidate(rotated);
 }
 

@@ -1,3 +1,4 @@
+
 # Pop Block Blitz
 
 A satisfying, hyper-casual block popping game built with Next.js, featuring AI-driven dynamic difficulty adjustment and a modern, playful UI.

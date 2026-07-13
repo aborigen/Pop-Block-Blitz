@@ -8,7 +8,8 @@ import {
   calculateMoveScore, 
   checkGameOver,
   findBestMove,
-  rotateGrid,
+  rotateGridRaw,
+  applyGravityAndConsolidate,
   getBlockCounts,
   setColors,
   type Grid,
@@ -272,21 +273,13 @@ export function GameController() {
     setIsAnimatingRotation(true);
     setVisualRotation(direction === 'cw' ? 90 : -90);
     
-    // Finalize rotation after animation duration (match CSS duration)
+    // Stage 1: Perform visual rotation and update grid structure without gravity
     setTimeout(() => {
-      const newGrid = rotateGrid(state.grid, direction);
-      const isGameOver = checkGameOver(newGrid);
+      const rawRotated = rotateGridRaw(state.grid, direction);
       
-      if (isGameOver) {
-        soundManager.playGameOver();
-        showInterstitialAd();
-        reportScore('leaders', state.score);
-      }
-
       setState(prev => ({
         ...prev,
-        grid: newGrid,
-        gameOver: isGameOver,
+        grid: rawRotated,
         config: {
           ...prev.config,
           width: prev.config.height,
@@ -294,10 +287,29 @@ export function GameController() {
         }
       }));
       
+      setVisualRotation(0);
       setTargetedGroup([]);
       setHintGroup([]);
-      setVisualRotation(0);
-      setIsAnimatingRotation(false);
+
+      // Stage 2: Apply gravity after a small delay to "feel" the drop
+      setTimeout(() => {
+        const finalGrid = applyGravityAndConsolidate(rawRotated);
+        const isGameOver = checkGameOver(finalGrid);
+        
+        if (isGameOver) {
+          soundManager.playGameOver();
+          showInterstitialAd();
+          reportScore('leaders', state.score);
+        }
+
+        setState(prev => ({
+          ...prev,
+          grid: finalGrid,
+          gameOver: isGameOver,
+        }));
+        
+        setIsAnimatingRotation(false);
+      }, 100);
     }, 400);
   }
 
