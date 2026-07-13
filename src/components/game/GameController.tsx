@@ -71,6 +71,7 @@ export function GameController() {
   const [lastIncrement, setLastIncrement] = useState<number | null>(null)
   const [visualRotation, setVisualRotation] = useState(0)
   const [isAnimatingRotation, setIsAnimatingRotation] = useState(false)
+  const [suppressTransitions, setSuppressTransitions] = useState(false)
   const [paletteVersion, setPaletteVersion] = useState(0)
   
   const scoreCounter = useRef(0)
@@ -97,14 +98,13 @@ export function GameController() {
           setLocale(detectedLang);
         }
 
-        // Fetch remote config for palette
         try {
           const config = await getRemoteConfig();
           if (config && config.color_palette) {
             const palette = config.color_palette.split(',').map((c: string) => c.trim()).filter((c: string) => c.startsWith('#'));
             if (palette.length >= 3) {
               setColors(palette);
-              setPaletteVersion(v => v + 1); // Force re-render of components using COLORS
+              setPaletteVersion(v => v + 1);
             }
           }
         } catch (e) {
@@ -189,6 +189,7 @@ export function GameController() {
     setLastIncrement(null);
     setVisualRotation(0);
     setIsAnimatingRotation(false);
+    setSuppressTransitions(false);
   }, [performanceHistory, getHeuristicDifficulty, state.config, state.difficulty]);
 
   useEffect(() => {
@@ -273,8 +274,11 @@ export function GameController() {
     setIsAnimatingRotation(true);
     setVisualRotation(direction === 'cw' ? 90 : -90);
     
-    // Stage 1: Perform visual rotation and update grid structure without gravity
+    // Stage 1: Wait for CSS transition (450ms)
     setTimeout(() => {
+      // Temporarily disable CSS transitions to prevent the "snap back" animation
+      setSuppressTransitions(true);
+      
       const rawRotated = rotateGridRaw(state.grid, direction);
       
       setState(prev => ({
@@ -291,8 +295,9 @@ export function GameController() {
       setTargetedGroup([]);
       setHintGroup([]);
 
-      // Stage 2: Apply gravity after a small delay to "feel" the drop
+      // Stage 2: Small delay to let the state settle, then apply gravity
       setTimeout(() => {
+        setSuppressTransitions(false);
         const finalGrid = applyGravityAndConsolidate(rawRotated);
         const isGameOver = checkGameOver(finalGrid);
         
@@ -309,7 +314,7 @@ export function GameController() {
         }));
         
         setIsAnimatingRotation(false);
-      }, 150);
+      }, 50);
     }, 450);
   }
 
@@ -328,7 +333,6 @@ export function GameController() {
 
   return (
     <div key={`palette-${paletteVersion}`} className="flex flex-col lg:flex-row items-center lg:items-stretch w-full h-full max-w-[95vw] lg:max-w-[1400px] mx-auto p-1 lg:p-4 gap-2 lg:gap-8 overflow-hidden">
-      {/* Side Stats Section - On the left for landscape, top for portrait */}
       <div className="w-full lg:w-[260px] xl:w-[320px] flex flex-col shrink-0 lg:justify-center">
         <div className="w-full flex justify-between items-center px-1 mb-1 lg:mb-4">
           <div className="flex items-center gap-1.5">
@@ -372,7 +376,6 @@ export function GameController() {
               <RefreshCw className="w-5 h-5 lg:w-6 lg:h-6" />
             </Button>
             
-            {/* Mobile Language Switcher */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button 
@@ -417,12 +420,11 @@ export function GameController() {
         />
       </div>
 
-      {/* Main Game Board Area - Fills remaining space */}
       <div className="relative flex-grow w-full flex items-center justify-center overflow-hidden h-full">
         <div 
           className={cn(
             "grid gap-0.5 p-1 lg:p-2 rounded-xl bg-white/40 shadow-xl border border-white/60 backdrop-blur-md mx-auto relative w-full h-full max-h-[75vh] lg:max-h-none",
-            isAnimatingRotation && "board-transition"
+            isAnimatingRotation && !suppressTransitions && "board-transition"
           )}
           style={{ 
             gridTemplateColumns: `repeat(${state.config.width}, 1fr)`,

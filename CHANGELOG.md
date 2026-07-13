@@ -2,6 +2,12 @@
 
 All notable changes to the **Pop Block Blitz** project will be documented in this file.
 
+## [0.5.4] - 2024-05-24
+
+### Fixed
+- **Board Rotation Consistency**: Refactored the rotation sequence to suppress transitions during internal state swaps, preventing visual flickering and accidental counter-animations.
+- **State Synchronization**: Improved the coordination between visual rotation and gravity cascade for a smoother "snap-and-drop" feel.
+
 ## [0.5.3] - 2024-05-24
 
 ### Refactored
@@ -30,22 +36,3 @@ All notable changes to the **Pop Block Blitz** project will be documented in thi
 - **UI Scaling**: Increased the size of rotation and control buttons for better accessibility and touch-friendliness.
 - **Enhanced Visibility**: Significantly increased the display size of the block count indicators to make them easier to read during intense gameplay.
 - **Compact Layout**: Further refined the info bar and stats sidebar to be more space-efficient, ensuring the game board remains the primary focus.
-
-## [0.4.0] - 2024-05-24
-
-### Added
-- **Board Rotation**: Players can now rotate the game board 90 degrees left or right. This physically shifts blocks and reapplies gravity, creating new strategic possibilities.
-- **Rotation Animation**: Added a smooth 400ms transition effect for board rotation using CSS transforms.
-- **Block Tracking**: Added a real-time counter for remaining blocks of each color in the sidebar to help with strategic planning.
-
-### Changed
-- **Portrait Optimization**: The header bar is now hidden in portrait mode to maximize game board size. The language switcher remains accessible via the mobile-specific control panel.
-- **UI Streamlining**: "Reset Session" and "Leaders" buttons are now icon-only for a cleaner, more focused interface.
-- **Compact Stats**: Reduced the footprint and padding of `StatCards` to ensure the sidebar fits perfectly in landscape mode.
-- **Difficulty Balancing**: Standardized the "Easy" difficulty level to start with an 8x8 grid.
-
-### Fixed
-- **Code Organization**: Extracted internal documentation from `game-logic.ts` into a separate `game-logic-docs.md` file for better maintainability.
-
----
-*Initial prototype phase completed.*
