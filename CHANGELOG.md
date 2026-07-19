@@ -1,3 +1,4 @@
+
 # Changelog
 
 All notable changes to the **Pop Block Blitz** project will be documented in this file.
@@ -5,9 +6,9 @@ All notable changes to the **Pop Block Blitz** project will be documented in thi
 ## [0.5.5] - 2024-05-24
 
 ### Improved
-- **Localization Sync**: Stabilized `setLocale` function within `LanguageProvider` using `useCallback` to prevent redundant SDK re-initializations.
-- **Yandex SDK Language Detection**: Refined `getLanguage` utility to prioritize platform-specific i18n settings from the Yandex environment.
-- **Initialization Robustness**: Enhanced logic in `GameController` to ensure localized settings from the SDK are applied correctly on first launch without overriding manual user choices.
+- **Board Sizing**: Refined board scaling logic to utilize more of the available screen space while maintaining aspect ratio.
+- **Mobile Layout**: Further compacted the statistics panel on mobile devices to prioritize vertical space for the game board.
+- **UI Responsiveness**: Adjusted flexbox constraints to prevent any potential overlapping in edge-case screen sizes.
 
 ## [0.5.4] - 2024-05-24
 

@@ -433,11 +433,12 @@ export function GameController() {
             gridTemplateColumns: `repeat(${state.config.width}, 1fr)`,
             gridTemplateRows: `repeat(${state.config.height}, 1fr)`,
             aspectRatio: `${state.config.width} / ${state.config.height}`,
-            width: 'auto',
+            width: '100%',
             height: 'auto',
             maxWidth: '100%',
             maxHeight: '100%',
-            transform: `rotate(${visualRotation}deg) scale(${isAnimatingRotation ? 0.95 : 1})`
+            transform: `rotate(${visualRotation}deg) scale(${isAnimatingRotation ? 0.95 : 1})`,
+            margin: 'auto'
           }}
         >
           {state.grid.map((row, y) => 
