@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useEffect, useCallback, useRef, useMemo } from "react"
@@ -331,15 +332,15 @@ export function GameController() {
   if (!mounted || state.grid.length === 0) return null
 
   return (
-    <div key={`palette-${paletteVersion}`} className="flex flex-col lg:flex-row items-stretch w-full h-full max-w-full p-1 lg:p-6 gap-2 lg:gap-10 overflow-hidden min-h-0">
+    <div key={`palette-${paletteVersion}`} className="flex flex-col lg:flex-row items-stretch w-full h-full max-w-full p-0 lg:p-4 gap-1 lg:gap-8 overflow-hidden min-h-0">
       {/* Sidebar/Top Panel */}
-      <div className="w-full lg:w-[280px] xl:w-[340px] flex flex-col shrink-0 min-h-0 overflow-y-auto lg:overflow-visible">
+      <div className="w-full lg:w-[260px] xl:w-[320px] flex flex-col shrink-0 min-h-0 overflow-y-auto lg:overflow-visible">
         {/* Controls Bar */}
-        <div className="w-full flex justify-between items-center px-2 py-1 lg:mb-6 shrink-0">
+        <div className="w-full flex justify-between items-center px-3 py-2 lg:py-0 lg:mb-4 shrink-0">
           <div className="flex items-center gap-2">
             <LeaderboardModal open={isLeaderboardOpen} onOpenChange={setIsLeaderboardOpen} />
           </div>
-          <div className="flex items-center gap-1 lg:gap-2">
+          <div className="flex items-center gap-1.5">
              <Button 
               variant="ghost" 
               size="icon" 
@@ -347,7 +348,7 @@ export function GameController() {
               disabled={isAnimatingRotation}
               title={t.rotateLeft}
               aria-label={t.rotateLeft}
-              className="rounded-full w-9 h-9 lg:w-12 lg:h-12 hover:bg-white/20"
+              className="rounded-full w-10 h-10 lg:w-11 lg:h-11 hover:bg-white/20"
             >
               <RotateCcw className="w-5 h-5 lg:w-6 lg:h-6" />
             </Button>
@@ -358,7 +359,7 @@ export function GameController() {
               disabled={isAnimatingRotation}
               title={t.rotateRight}
               aria-label={t.rotateRight}
-              className="rounded-full w-9 h-9 lg:w-12 lg:h-12 hover:bg-white/20"
+              className="rounded-full w-10 h-10 lg:w-11 lg:h-11 hover:bg-white/20"
             >
               <RotateCw className="w-5 h-5 lg:w-6 lg:h-6" />
             </Button>
@@ -372,7 +373,7 @@ export function GameController() {
               }} 
               title={t.resetSession}
               aria-label={t.resetSession}
-              className="rounded-full w-9 h-9 lg:w-12 lg:h-12 hover:bg-white/20"
+              className="rounded-full w-10 h-10 lg:w-11 lg:h-11 hover:bg-white/20"
             >
               <RefreshCw className="w-5 h-5 lg:w-6 lg:h-6" />
             </Button>
@@ -383,7 +384,7 @@ export function GameController() {
                   variant="ghost" 
                   size="icon" 
                   aria-label="Change Language"
-                  className="rounded-full w-9 h-9 lg:w-12 lg:h-12 hover:bg-white/20 lg:hidden"
+                  className="rounded-full w-10 h-10 lg:w-11 lg:h-11 hover:bg-white/20 lg:hidden"
                 >
                   <Languages className="w-5 h-5 lg:w-6 lg:h-6" />
                 </Button>
@@ -403,7 +404,7 @@ export function GameController() {
               size="icon" 
               onClick={() => setSoundEnabled(!soundEnabled)}
               aria-label={soundEnabled ? "Disable Sound" : "Enable Sound"}
-              className="rounded-full w-9 h-9 lg:w-12 lg:h-12 hover:bg-white/20"
+              className="rounded-full w-10 h-10 lg:w-11 lg:h-11 hover:bg-white/20"
             >
               {soundEnabled ? <Volume2 className="w-5 h-5 lg:w-6 lg:h-6" /> : <VolumeX className="w-5 h-5 lg:w-6 lg:h-6" />}
             </Button>
@@ -422,10 +423,10 @@ export function GameController() {
       </div>
 
       {/* Main Game Board Area */}
-      <div className="relative flex-grow w-full flex items-center justify-center min-h-0 overflow-hidden">
+      <div className="relative flex-grow w-full flex items-center justify-center min-h-0 overflow-hidden px-1 lg:px-0 pb-1 lg:pb-0">
         <div 
           className={cn(
-            "grid gap-0.5 p-1.5 lg:p-3 rounded-2xl bg-white/20 shadow-2xl border border-white/40 backdrop-blur-xl relative",
+            "grid gap-0.5 p-1 lg:p-3 rounded-xl lg:rounded-2xl bg-white/20 shadow-2xl border border-white/40 backdrop-blur-xl relative",
             isAnimatingRotation && !suppressTransitions && "board-transition"
           )}
           style={{ 
