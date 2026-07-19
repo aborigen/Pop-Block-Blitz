@@ -3,6 +3,11 @@
 
 All notable changes to the **Pop Block Blitz** project will be documented in this file.
 
+## [0.5.6] - 2024-05-24
+
+### Added
+- **Documentation**: Created `src/docs/localization-sync.md` explaining the synchronization between game localization and the Yandex Games environment language parameter.
+
 ## [0.5.5] - 2024-05-24
 
 ### Improved
