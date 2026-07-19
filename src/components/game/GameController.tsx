@@ -331,13 +331,15 @@ export function GameController() {
   if (!mounted || state.grid.length === 0) return null
 
   return (
-    <div key={`palette-${paletteVersion}`} className="flex flex-col lg:flex-row items-center lg:items-stretch w-full h-full max-w-[95vw] lg:max-w-[1400px] mx-auto p-1 lg:p-4 gap-2 lg:gap-8 overflow-hidden">
-      <div className="w-full lg:w-[260px] xl:w-[320px] flex flex-col shrink-0 lg:justify-center">
-        <div className="w-full flex justify-between items-center px-1 mb-1 lg:mb-4">
-          <div className="flex items-center gap-1.5">
+    <div key={`palette-${paletteVersion}`} className="flex flex-col lg:flex-row items-stretch w-full h-full max-w-full p-1 lg:p-6 gap-2 lg:gap-10 overflow-hidden min-h-0">
+      {/* Sidebar/Top Panel */}
+      <div className="w-full lg:w-[280px] xl:w-[340px] flex flex-col shrink-0 min-h-0 overflow-y-auto lg:overflow-visible">
+        {/* Controls Bar */}
+        <div className="w-full flex justify-between items-center px-2 py-1 lg:mb-6 shrink-0">
+          <div className="flex items-center gap-2">
             <LeaderboardModal open={isLeaderboardOpen} onOpenChange={setIsLeaderboardOpen} />
           </div>
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1 lg:gap-2">
              <Button 
               variant="ghost" 
               size="icon" 
@@ -345,7 +347,7 @@ export function GameController() {
               disabled={isAnimatingRotation}
               title={t.rotateLeft}
               aria-label={t.rotateLeft}
-              className="rounded-full w-10 h-10 lg:w-12 lg:h-12 text-muted-foreground"
+              className="rounded-full w-9 h-9 lg:w-12 lg:h-12 hover:bg-white/20"
             >
               <RotateCcw className="w-5 h-5 lg:w-6 lg:h-6" />
             </Button>
@@ -356,7 +358,7 @@ export function GameController() {
               disabled={isAnimatingRotation}
               title={t.rotateRight}
               aria-label={t.rotateRight}
-              className="rounded-full w-10 h-10 lg:w-12 lg:h-12 text-muted-foreground"
+              className="rounded-full w-9 h-9 lg:w-12 lg:h-12 hover:bg-white/20"
             >
               <RotateCw className="w-5 h-5 lg:w-6 lg:h-6" />
             </Button>
@@ -370,7 +372,7 @@ export function GameController() {
               }} 
               title={t.resetSession}
               aria-label={t.resetSession}
-              className="rounded-full w-10 h-10 lg:w-12 lg:h-12 text-muted-foreground"
+              className="rounded-full w-9 h-9 lg:w-12 lg:h-12 hover:bg-white/20"
             >
               <RefreshCw className="w-5 h-5 lg:w-6 lg:h-6" />
             </Button>
@@ -381,7 +383,7 @@ export function GameController() {
                   variant="ghost" 
                   size="icon" 
                   aria-label="Change Language"
-                  className="rounded-full w-10 h-10 lg:w-12 lg:h-12 text-muted-foreground lg:hidden"
+                  className="rounded-full w-9 h-9 lg:w-12 lg:h-12 hover:bg-white/20 lg:hidden"
                 >
                   <Languages className="w-5 h-5 lg:w-6 lg:h-6" />
                 </Button>
@@ -401,7 +403,7 @@ export function GameController() {
               size="icon" 
               onClick={() => setSoundEnabled(!soundEnabled)}
               aria-label={soundEnabled ? "Disable Sound" : "Enable Sound"}
-              className="rounded-full w-10 h-10 lg:w-12 lg:h-12 text-muted-foreground"
+              className="rounded-full w-9 h-9 lg:w-12 lg:h-12 hover:bg-white/20"
             >
               {soundEnabled ? <Volume2 className="w-5 h-5 lg:w-6 lg:h-6" /> : <VolumeX className="w-5 h-5 lg:w-6 lg:h-6" />}
             </Button>
@@ -419,17 +421,22 @@ export function GameController() {
         />
       </div>
 
-      <div className="relative flex-grow w-full flex items-center justify-center overflow-hidden h-full">
+      {/* Main Game Board Area */}
+      <div className="relative flex-grow w-full flex items-center justify-center min-h-0 overflow-hidden">
         <div 
           className={cn(
-            "grid gap-0.5 p-1 lg:p-2 rounded-xl bg-white/40 shadow-xl border border-white/60 backdrop-blur-md mx-auto relative w-full h-full max-h-[75vh] lg:max-h-none",
+            "grid gap-0.5 p-1.5 lg:p-3 rounded-2xl bg-white/20 shadow-2xl border border-white/40 backdrop-blur-xl relative",
             isAnimatingRotation && !suppressTransitions && "board-transition"
           )}
           style={{ 
             gridTemplateColumns: `repeat(${state.config.width}, 1fr)`,
             gridTemplateRows: `repeat(${state.config.height}, 1fr)`,
             aspectRatio: `${state.config.width} / ${state.config.height}`,
-            transform: `rotate(${visualRotation}deg) scale(${isAnimatingRotation ? 0.96 : 1})`
+            width: 'auto',
+            height: 'auto',
+            maxWidth: '100%',
+            maxHeight: '100%',
+            transform: `rotate(${visualRotation}deg) scale(${isAnimatingRotation ? 0.95 : 1})`
           }}
         >
           {state.grid.map((row, y) => 
@@ -451,12 +458,12 @@ export function GameController() {
           {floatingScores.map(fs => (
             <div 
               key={fs.id}
-              className="absolute z-30 pointer-events-none text-white font-black text-2xl md:text-5xl animate-float-up-fade"
+              className="absolute z-30 pointer-events-none text-white font-black text-3xl md:text-6xl animate-float-up-fade"
               style={{
                 left: `${(fs.x / state.config.width) * 100}%`,
                 top: `${(fs.y / state.config.height) * 100}%`,
                 transform: 'translate(-50%, -50%)',
-                textShadow: '0 2px 4px rgba(0,0,0,0.3)'
+                textShadow: '0 4px 12px rgba(0,0,0,0.5)'
               }}
             >
               +{fs.points}
@@ -466,11 +473,11 @@ export function GameController() {
           {state.gameOver && (
             <>
               <GameOverParticles />
-              <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-background/80 backdrop-blur-sm rounded-xl animate-in fade-in zoom-in duration-300 px-4 text-center">
-                <h2 className="text-xl md:text-5xl font-bold text-foreground mb-2 font-headline">{t.gameOver}</h2>
-                <p className="text-sm md:text-2xl text-muted-foreground mb-6 font-medium">{t.finalScore}: {state.score}</p>
-                <Button size="lg" onClick={finalizeGame} className="rounded-full px-8 bg-primary hover:bg-primary/90 h-10 md:h-14 md:text-xl">
-                  <PlayCircle className="mr-2 w-5 h-5 md:w-8 md:h-8" />
+              <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-background/90 backdrop-blur-md rounded-2xl animate-in fade-in zoom-in duration-300 px-6 text-center">
+                <h2 className="text-2xl md:text-5xl font-black text-foreground mb-3 font-headline uppercase tracking-tighter">{t.gameOver}</h2>
+                <p className="text-base md:text-2xl text-muted-foreground mb-8 font-semibold">{t.finalScore}: <span className="text-primary">{state.score}</span></p>
+                <Button size="lg" onClick={finalizeGame} className="rounded-full px-10 bg-primary hover:bg-primary/90 h-12 md:h-16 md:text-2xl font-black shadow-lg shadow-primary/20">
+                  <PlayCircle className="mr-3 w-6 h-6 md:w-8 md:h-8" />
                   {t.playAgain}
                 </Button>
               </div>

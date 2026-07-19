@@ -17,27 +17,27 @@ export default function Home() {
   return (
     <main 
       onContextMenu={(e) => e.preventDefault()}
-      className="h-screen flex flex-col bg-background overflow-hidden touch-none"
+      className="fixed inset-0 flex flex-col bg-background overflow-hidden touch-none"
     >
-      <header className="hidden lg:flex portrait-hidden py-1.5 px-3 md:py-4 md:px-8 items-center justify-between border-b border-white/20 bg-white/10 backdrop-blur-sm shrink-0 z-50">
+      <header className="hidden lg:flex portrait-hidden py-2 px-6 items-center justify-between border-b border-white/20 bg-white/5 backdrop-blur-md shrink-0 z-50">
         <div className="flex items-center gap-2">
-          <div className="bg-primary p-1 md:p-2 rounded-lg shadow-lg shadow-primary/20 rotate-12">
-            <Sparkles className="text-white w-3.5 h-3.5 md:w-5 md:h-5" />
+          <div className="bg-primary p-2 rounded-lg shadow-lg shadow-primary/20 rotate-12">
+            <Sparkles className="text-white w-4 h-4 md:w-5 md:h-5" />
           </div>
-          <h1 className="text-sm md:text-xl font-black text-foreground font-headline tracking-tight">
+          <h1 className="text-base md:text-xl font-black text-foreground font-headline tracking-tight">
             {t.title} <span className="text-primary">{t.subtitle}</span>
           </h1>
         </div>
         
-        <div className="flex items-center gap-2">
-          <div className="hidden sm:block text-[9px] font-semibold text-muted-foreground tracking-widest uppercase bg-white/40 px-2 py-1 rounded-full">
+        <div className="flex items-center gap-4">
+          <div className="hidden xl:block text-[10px] font-semibold text-muted-foreground tracking-widest uppercase bg-white/10 px-3 py-1 rounded-full border border-white/10">
             {t.aiPowered}
           </div>
           
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="rounded-full w-7 h-7 md:w-9 md:h-9">
-                <Languages size={14} className="md:w-[18px] md:h-[18px]" />
+              <Button variant="ghost" size="icon" className="rounded-full w-8 h-8 md:w-9 md:h-9">
+                <Languages size={16} className="md:w-[18px] md:h-[18px]" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -52,12 +52,12 @@ export default function Home() {
         </div>
       </header>
 
-      <section className="flex-grow flex items-center justify-center overflow-hidden p-1 md:p-4">
+      <section className="flex-grow flex items-center justify-center overflow-hidden min-h-0 relative">
         <GameController />
       </section>
 
-      <footer className="portrait-hidden py-1 text-center text-muted-foreground border-t border-white/10 shrink-0">
-        <p className="text-[8px] md:text-xs opacity-50">{t.copyright}</p>
+      <footer className="portrait-hidden py-1.5 text-center text-muted-foreground border-t border-white/5 bg-black/10 shrink-0">
+        <p className="text-[10px] md:text-xs opacity-40 font-medium">{t.copyright}</p>
       </footer>
     </main>
   )
