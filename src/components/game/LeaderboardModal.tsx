@@ -24,12 +24,26 @@ interface LeaderboardEntry {
   }
 }
 
-export function LeaderboardModal() {
+interface LeaderboardModalProps {
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
+}
+
+export function LeaderboardModal({ open: externalOpen, onOpenChange: onExternalOpenChange }: LeaderboardModalProps) {
   const { t } = useTranslation()
   const [entries, setEntries] = useState<LeaderboardEntry[]>([])
   const [loading, setLoading] = useState(false)
-  const [isOpen, setIsOpen] = useState(false)
+  const [internalOpen, setInternalOpen] = useState(false)
   const [isAuthorized, setIsAuthorized] = useState<boolean>(false)
+
+  const isOpen = externalOpen !== undefined ? externalOpen : internalOpen
+  const setIsOpen = (open: boolean) => {
+    if (onExternalOpenChange) {
+      onExternalOpenChange(open)
+    } else {
+      setInternalOpen(open)
+    }
+  }
 
   useEffect(() => {
     if (isOpen) {

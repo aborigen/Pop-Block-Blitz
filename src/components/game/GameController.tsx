@@ -28,7 +28,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { useTranslation } from "@/lib/i18n/context"
 import { soundManager } from "@/lib/sound-effects"
-import { initYandexSDK, showInterstitialAd, reportScore, reportReady, getLanguage, getRemoteConfig } from "@/lib/yandex-games"
+import { initYandexSDK, reportScore, reportReady, getLanguage, getRemoteConfig } from "@/lib/yandex-games"
 import { LeaderboardModal } from "./LeaderboardModal"
 import { GameOverParticles } from "./GameOverParticles"
 import { cn } from "@/lib/utils"
@@ -47,6 +47,7 @@ export function GameController() {
   const [mounted, setMounted] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [sdkReady, setSdkReady] = useState(false);
+  const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(false);
   const [state, setState] = useState<GameState>({
     grid: [],
     score: 0,
@@ -190,6 +191,7 @@ export function GameController() {
     setVisualRotation(0);
     setIsAnimatingRotation(false);
     setSuppressTransitions(false);
+    setIsLeaderboardOpen(false);
   }, [performanceHistory, getHeuristicDifficulty, state.config, state.difficulty]);
 
   useEffect(() => {
@@ -223,8 +225,8 @@ export function GameController() {
       const newScore = state.score + points
       if (isGameOver) {
         soundManager.playGameOver();
-        showInterstitialAd();
         reportScore('leaders', newScore);
+        setIsLeaderboardOpen(true);
       }
       const newFloatingScore = {
         id: ++scoreCounter.current,
@@ -274,9 +276,7 @@ export function GameController() {
     setIsAnimatingRotation(true);
     setVisualRotation(direction === 'cw' ? 90 : -90);
     
-    // Stage 1: Wait for CSS transition (450ms)
     setTimeout(() => {
-      // Temporarily disable CSS transitions to prevent the "snap back" animation
       setSuppressTransitions(true);
       
       const rawRotated = rotateGridRaw(state.grid, direction);
@@ -295,7 +295,6 @@ export function GameController() {
       setTargetedGroup([]);
       setHintGroup([]);
 
-      // Stage 2: Small delay to let the state settle, then apply gravity
       setTimeout(() => {
         setSuppressTransitions(false);
         const finalGrid = applyGravityAndConsolidate(rawRotated);
@@ -303,8 +302,8 @@ export function GameController() {
         
         if (isGameOver) {
           soundManager.playGameOver();
-          showInterstitialAd();
           reportScore('leaders', state.score);
+          setIsLeaderboardOpen(true);
         }
 
         setState(prev => ({
@@ -336,7 +335,7 @@ export function GameController() {
       <div className="w-full lg:w-[260px] xl:w-[320px] flex flex-col shrink-0 lg:justify-center">
         <div className="w-full flex justify-between items-center px-1 mb-1 lg:mb-4">
           <div className="flex items-center gap-1.5">
-            <LeaderboardModal />
+            <LeaderboardModal open={isLeaderboardOpen} onOpenChange={setIsLeaderboardOpen} />
           </div>
           <div className="flex items-center gap-1.5">
              <Button 
