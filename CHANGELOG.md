@@ -2,6 +2,13 @@
 
 All notable changes to the **Pop Block Blitz** project will be documented in this file.
 
+## [0.5.5] - 2024-05-24
+
+### Improved
+- **Localization Sync**: Stabilized `setLocale` function within `LanguageProvider` using `useCallback` to prevent redundant SDK re-initializations.
+- **Yandex SDK Language Detection**: Refined `getLanguage` utility to prioritize platform-specific i18n settings from the Yandex environment.
+- **Initialization Robustness**: Enhanced logic in `GameController` to ensure localized settings from the SDK are applied correctly on first launch without overriding manual user choices.
+
 ## [0.5.4] - 2024-05-24
 
 ### Fixed

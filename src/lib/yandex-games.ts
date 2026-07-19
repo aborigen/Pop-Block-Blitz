@@ -45,8 +45,13 @@ export function getLanguage(): 'en' | 'ru' | null {
   if (!sdkInstance) return null;
   
   const env = sdkInstance.environment;
-  // Try platform language first (e.g., 'ru' or 'en')
-  const lang = env.i18n?.lang || env.browser?.lang;
+  
+  // Platform language (preferred)
+  const sdkLang = env.i18n?.lang;
+  // Browser language as fallback
+  const browserLang = env.browser?.lang;
+  
+  const lang = sdkLang || browserLang;
   
   if (lang) {
     const code = lang.split('-')[0].toLowerCase();
