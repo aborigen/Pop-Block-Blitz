@@ -2,6 +2,11 @@
 
 All notable changes to the **Pop Block Blitz** project will be documented in this file.
 
+## [0.6.0] - 2024-05-24
+
+### Changed
+- **Localization**: Updated the default UI language to Russian ('ru').
+
 ## [0.5.9] - 2024-05-24
 
 ### Removed
