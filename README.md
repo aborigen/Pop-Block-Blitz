@@ -1,4 +1,3 @@
-
 # Pop Block Blitz
 
 A satisfying, hyper-casual block popping game built with Next.js, featuring AI-driven dynamic difficulty adjustment and a modern, playful UI.
@@ -6,8 +5,8 @@ A satisfying, hyper-casual block popping game built with Next.js, featuring AI-d
 ## Features
 
 - **Satisfying Gameplay**: Classic "pop" mechanics with smooth animations and floating point effects.
-- **Adaptive AI**: Integrated with Genkit to dynamically adjust board size and color complexity based on player performance (with a heuristic fallback for static exports).
-- **Fully Localized**: Support for English and Russian, including UI and AI-generated feedback.
+- **Adaptive AI**: Integrated with Genkit to dynamically adjust board size and color complexity based on player performance.
+- **Fully Localized**: Support for English and Russian, with automatic Yandex Games SDK environment synchronization.
 - **Responsive Design**: Optimized for both desktop and smartphone screens with a mobile-first approach.
 - **Visual Feedback**: High-impact animations, including floating scores, pulsing UI elements, and "pop-in" block effects.
 - **Static Export Ready**: Configured for `next export`, making it easy to host on any static web provider.
@@ -19,39 +18,16 @@ A satisfying, hyper-casual block popping game built with Next.js, featuring AI-d
 - **Components**: [Shadcn UI](https://ui.shadcn.com/)
 - **AI**: [Genkit](https://firebase.google.com/docs/genkit)
 - **Icons**: [Lucide React](https://lucide.dev/)
-- **Fonts**: [Poppins](https://fonts.google.com/specimen/Poppins) (Optimized via `next/font`)
+- **Fonts**: [Poppins](https://fonts.google.com/specimen/Poppins)
 
-## Getting Started
+## Localization Sync
 
-### Prerequisites
+The game automatically synchronizes its language with the Yandex Games platform:
+1. **Detection**: Uses the Yandex SDK `environment.i18n.lang` parameter.
+2. **Synchronization**: On startup, the game checks for a local override in `localStorage`. If absent, it applies the platform language.
+3. **Persistence**: Player language choices are saved locally and respect Yandex settings on fresh starts.
 
-- Node.js 18+ 
-- npm or yarn
-
-### Installation
-
-1. Clone the repository (if applicable)
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-### Development
-
-Run the development server:
-```bash
-npm run dev
-```
-
-Open [http://localhost:9002](http://localhost:9002) with your browser to see the result.
-
-### Building for Production
-
-To create a static export of the project:
-```bash
-npm run build
-```
-The output will be located in the `out/` directory.
+For more details, see `src/docs/localization-sync.md`.
 
 ## Game Logic
 
@@ -63,7 +39,7 @@ The game uses a "Match-2" or "Collapse" mechanic.
 
 ### Scoring
 Scores are calculated per move using a quadratic formula to reward larger combos:
-**`Score = n * (n - 1)`**
+**`Score = n * (n - 1) * 2`**
 Where `n` is the number of blocks popped in a single move.
 
 ## AI Difficulty Adjustment
