@@ -55,10 +55,6 @@ export default function Home() {
       <section className="flex-grow flex items-center justify-center overflow-hidden min-h-0 relative">
         <GameController />
       </section>
-
-      <footer className="portrait-hidden py-1.5 text-center text-muted-foreground border-t border-white/5 bg-black/10 shrink-0">
-        <p className="text-[10px] md:text-xs opacity-40 font-medium">{t.copyright}</p>
-      </footer>
     </main>
   )
 }

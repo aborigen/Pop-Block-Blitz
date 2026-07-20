@@ -2,6 +2,11 @@
 
 All notable changes to the **Pop Block Blitz** project will be documented in this file.
 
+## [0.5.8] - 2024-05-24
+
+### Removed
+- **UI**: Removed the copyright text footer from the main game page for a cleaner look.
+
 ## [0.5.7] - 2024-05-24
 
 ### Added
