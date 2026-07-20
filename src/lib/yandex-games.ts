@@ -45,7 +45,8 @@ export function getLanguage(): 'en' | 'ru' | null {
   if (!sdkInstance) return null;
   
   const env = sdkInstance.environment;
-  
+  if (!env) return null;
+
   // Platform language (preferred)
   const sdkLang = env.i18n?.lang;
   // Browser language as fallback

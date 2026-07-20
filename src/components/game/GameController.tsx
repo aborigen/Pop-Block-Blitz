@@ -37,7 +37,7 @@ interface FloatingScore {
 const DIFFICULTY_ORDER: DifficultyLevel[] = ['very_easy', 'easy', 'medium', 'hard', 'expert', 'insane'];
 
 export function GameController() {
-  const { t, setLocale } = useTranslation();
+  const { t, setLocale, locale: currentLocale } = useTranslation();
   const [mounted, setMounted] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [sdkReady, setSdkReady] = useState(false);
@@ -92,13 +92,14 @@ export function GameController() {
         
         console.log(`[Stage 2: Initialization] SDK initialized. Local preference: ${savedLocale}, SDK detected: ${detectedLang}`);
 
-        if (!savedLocale && detectedLang) {
+        // Sync with SDK only if no manual override is present and language differs
+        if (!savedLocale && detectedLang && detectedLang !== currentLocale) {
           console.log(`[Stage 2: Initialization] Syncing with SDK environment: ${detectedLang}`);
           setLocale(detectedLang);
         } else if (savedLocale) {
           console.log(`[Stage 2: Initialization] Respecting local manual override: ${savedLocale}`);
         } else {
-          console.log(`[Stage 2: Initialization] No preferences found, using default locale.`);
+          console.log(`[Stage 2: Initialization] Localization stable at: ${currentLocale}`);
         }
 
         try {
@@ -115,7 +116,7 @@ export function GameController() {
         }
       }
     });
-  }, [setLocale])
+  }, [setLocale, currentLocale])
 
   useEffect(() => {
     if (mounted) {

@@ -1,6 +1,6 @@
 "use client"
 
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import { dictionaries, type Locale, type Dictionary } from './dictionaries';
 
 interface LanguageContextType {
@@ -11,31 +11,46 @@ interface LanguageContextType {
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
+/**
+ * Detects the most likely locale based on browser settings before SDK init.
+ */
+function getInitialLocale(): Locale {
+  if (typeof window === 'undefined') return 'ru';
+  
+  const saved = localStorage.getItem('app-locale') as Locale;
+  if (saved === 'en' || saved === 'ru') return saved;
+  
+  const browserLang = navigator.language.split('-')[0].toLowerCase();
+  return browserLang === 'en' ? 'en' : 'ru'; // Default to 'ru' if not 'en'
+}
+
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  // Defaulting to Russian ('ru') as requested
-  const [locale, setLocale] = useState<Locale>('ru');
+  const [locale, setLocaleState] = useState<Locale>(getInitialLocale);
 
   useEffect(() => {
     const saved = localStorage.getItem('app-locale') as Locale;
-    if (saved && (saved === 'en' || saved === 'ru')) {
+    if (saved && (saved === 'en' || saved === 'ru') && saved !== locale) {
       console.log(`[Stage 3: Application] Restoring locale from storage: ${saved}`);
-      setLocale(saved);
+      setLocaleState(saved);
     }
+  }, [locale]);
+
+  const setLocale = useCallback((newLocale: Locale) => {
+    setLocaleState((prev) => {
+      if (prev === newLocale) return prev;
+      console.log(`[Stage 3: Application] Locale update applied: ${newLocale}`);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('app-locale', newLocale);
+      }
+      return newLocale;
+    });
   }, []);
 
-  const handleSetLocale = useCallback((newLocale: Locale) => {
-    console.log(`[Stage 3: Application] Locale update applied: ${newLocale}`);
-    setLocale(newLocale);
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('app-locale', newLocale);
-    }
-  }, []);
-
-  const value = {
+  const value = useMemo(() => ({
     locale,
-    setLocale: handleSetLocale,
+    setLocale,
     t: dictionaries[locale]
-  };
+  }), [locale, setLocale]);
 
   return (
     <LanguageContext.Provider value={value}>
