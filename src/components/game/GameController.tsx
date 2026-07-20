@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState, useEffect, useCallback, useRef, useMemo } from "react"
@@ -96,8 +95,16 @@ export function GameController() {
         setSdkReady(true);
         const detectedLang = getLanguage();
         const savedLocale = localStorage.getItem('app-locale');
+        
+        console.log(`[Stage 2: Initialization] SDK initialized. Local preference: ${savedLocale}, SDK detected: ${detectedLang}`);
+
         if (!savedLocale && detectedLang) {
+          console.log(`[Stage 2: Initialization] Syncing with SDK environment: ${detectedLang}`);
           setLocale(detectedLang);
+        } else if (savedLocale) {
+          console.log(`[Stage 2: Initialization] Respecting local manual override: ${savedLocale}`);
+        } else {
+          console.log(`[Stage 2: Initialization] No preferences found, using default locale.`);
         }
 
         try {

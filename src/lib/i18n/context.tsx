@@ -17,11 +17,13 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const saved = localStorage.getItem('app-locale') as Locale;
     if (saved && (saved === 'en' || saved === 'ru')) {
+      console.log(`[Stage 3: Application] Restoring locale from storage: ${saved}`);
       setLocale(saved);
     }
   }, []);
 
   const handleSetLocale = useCallback((newLocale: Locale) => {
+    console.log(`[Stage 3: Application] Locale update applied: ${newLocale}`);
     setLocale(newLocale);
     if (typeof window !== 'undefined') {
       localStorage.setItem('app-locale', newLocale);

@@ -53,13 +53,15 @@ export function getLanguage(): 'en' | 'ru' | null {
   
   const lang = sdkLang || browserLang;
   
+  let detected: 'en' | 'ru' | null = null;
   if (lang) {
     const code = lang.split('-')[0].toLowerCase();
-    if (code === 'ru') return 'ru';
-    if (code === 'en') return 'en';
+    if (code === 'ru') detected = 'ru';
+    else if (code === 'en') detected = 'en';
   }
   
-  return null;
+  console.log(`[Stage 1: Detection] SDK Lang: ${sdkLang}, Browser: ${browserLang} -> Mapped to: ${detected}`);
+  return detected;
 }
 
 /**

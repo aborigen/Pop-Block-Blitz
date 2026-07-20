@@ -1,7 +1,11 @@
-
 # Changelog
 
 All notable changes to the **Pop Block Blitz** project will be documented in this file.
+
+## [0.5.7] - 2024-05-24
+
+### Added
+- **Debugging**: Added console messages to all three localization synchronization stages (Detection, Initialization, Application) to improve traceability.
 
 ## [0.5.6] - 2024-05-24
 
@@ -18,7 +22,7 @@ All notable changes to the **Pop Block Blitz** project will be documented in thi
 ## [0.5.4] - 2024-05-24
 
 ### Fixed
-- **Board Rotation Consistency**: Refactored the rotation sequence to suppress transitions during internal state swaps, preventing visual flickering and accidental counter-animations.
+- **Board Rotation Consistency**: Refactor the rotation sequence to suppress transitions during internal state swaps, preventing visual flickering and accidental counter-animations.
 - **State Synchronization**: Improved the coordination between visual rotation and gravity cascade for a smoother "snap-and-drop" feel.
 
 ## [0.5.3] - 2024-05-24
