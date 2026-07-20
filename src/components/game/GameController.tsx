@@ -19,13 +19,7 @@ import {
 import { Block } from "./Block"
 import { GameStats } from "./GameStats"
 import { Button } from "@/components/ui/button"
-import { RefreshCw, PlayCircle, Volume2, VolumeX, RotateCcw, RotateCw, Languages } from "lucide-react"
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuTrigger 
-} from "@/components/ui/dropdown-menu"
+import { RefreshCw, PlayCircle, Volume2, VolumeX, RotateCcw, RotateCw } from "lucide-react"
 import { useTranslation } from "@/lib/i18n/context"
 import { soundManager } from "@/lib/sound-effects"
 import { initYandexSDK, reportScore, reportReady, getLanguage, getRemoteConfig } from "@/lib/yandex-games"
@@ -43,7 +37,7 @@ interface FloatingScore {
 const DIFFICULTY_ORDER: DifficultyLevel[] = ['very_easy', 'easy', 'medium', 'hard', 'expert', 'insane'];
 
 export function GameController() {
-  const { t, locale, setLocale } = useTranslation();
+  const { t, setLocale } = useTranslation();
   const [mounted, setMounted] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [sdkReady, setSdkReady] = useState(false);
@@ -158,11 +152,9 @@ export function GameController() {
       recommendedBoardHeight: nextHeight,
       recommendedNumColors: nextColors,
       recommendedDifficultyLevel: nextLevel,
-      difficultyAdjustmentFeedback: locale === 'ru' 
-        ? "ИИ адаптировал уровень сложности." 
-        : "AI adapted the difficulty level."
+      difficultyAdjustmentFeedback: t.aiPowered // Fallback to localized string
     };
-  }, [locale]);
+  }, [t.aiPowered]);
 
   const startNewGame = useCallback((isAiAdjustment = false) => {
     let nextConfig = { ...state.config };
@@ -339,7 +331,7 @@ export function GameController() {
   if (!mounted || state.grid.length === 0) return null
 
   return (
-    <div key={`palette-${paletteVersion}`} className="flex flex-col lg:flex-row items-stretch w-full h-full max-w-full p-0 lg:p-4 gap-1 lg:gap-8 overflow-hidden min-h-0">
+    <div className="flex flex-col lg:flex-row items-stretch w-full h-full max-w-full p-0 lg:p-4 gap-1 lg:gap-8 overflow-hidden min-h-0">
       {/* Sidebar/Top Panel */}
       <div className="w-full lg:w-[260px] xl:w-[320px] flex flex-col shrink-0 min-h-0 overflow-y-auto lg:overflow-visible">
         {/* Controls Bar */}
@@ -384,27 +376,6 @@ export function GameController() {
             >
               <RefreshCw className="w-5 h-5 lg:w-6 lg:h-6" />
             </Button>
-            
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  aria-label="Change Language"
-                  className="rounded-full w-10 h-10 lg:w-11 lg:h-11 hover:bg-white/20 lg:hidden"
-                >
-                  <Languages className="w-5 h-5 lg:w-6 lg:h-6" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => setLocale('en')} className={locale === 'en' ? 'bg-accent' : ''}>
-                  English
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setLocale('ru')} className={locale === 'ru' ? 'bg-accent' : ''}>
-                  Русский
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
 
             <Button 
               variant="ghost" 

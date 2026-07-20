@@ -1,18 +1,11 @@
 "use client"
 
 import { GameController } from "@/components/game/GameController"
-import { Sparkles, Languages } from "lucide-react"
+import { Sparkles } from "lucide-react"
 import { useTranslation } from "@/lib/i18n/context"
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuTrigger 
-} from "@/components/ui/dropdown-menu"
-import { Button } from "@/components/ui/button"
 
 export default function Home() {
-  const { t, locale, setLocale } = useTranslation();
+  const { t } = useTranslation();
 
   return (
     <main 
@@ -33,22 +26,6 @@ export default function Home() {
           <div className="hidden xl:block text-[10px] font-semibold text-muted-foreground tracking-widest uppercase bg-white/10 px-3 py-1 rounded-full border border-white/10">
             {t.aiPowered}
           </div>
-          
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="rounded-full w-8 h-8 md:w-9 md:h-9">
-                <Languages size={16} className="md:w-[18px] md:h-[18px]" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => setLocale('en')} className={locale === 'en' ? 'bg-accent' : ''}>
-                English
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setLocale('ru')} className={locale === 'ru' ? 'bg-accent' : ''}>
-                Русский
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
         </div>
       </header>
 

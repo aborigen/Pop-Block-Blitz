@@ -2,6 +2,11 @@
 
 All notable changes to the **Pop Block Blitz** project will be documented in this file.
 
+## [0.5.9] - 2024-05-24
+
+### Removed
+- **Localization**: Removed the manual language selection buttons from the UI. The game now relies fully on automatic platform/environment detection for localization.
+
 ## [0.5.8] - 2024-05-24
 
 ### Removed
