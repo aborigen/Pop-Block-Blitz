@@ -2,6 +2,11 @@
 
 All notable changes to the **Pop Block Blitz** project will be documented in this file.
 
+## [0.6.5] - 2024-05-24
+
+### Removed
+- **UI**: Removed manual language toggle button from the control bar. Localization is now fully automatic based on the Yandex platform environment.
+
 ## [0.6.4] - 2024-05-24
 
 ### Changed

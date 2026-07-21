@@ -19,7 +19,7 @@ import {
 import { Block } from "./Block"
 import { GameStats } from "./GameStats"
 import { Button } from "@/components/ui/button"
-import { RefreshCw, PlayCircle, Volume2, VolumeX, RotateCcw, RotateCw, Languages } from "lucide-react"
+import { RefreshCw, PlayCircle, Volume2, VolumeX, RotateCcw, RotateCw } from "lucide-react"
 import { useTranslation } from "@/lib/i18n/context"
 import { soundManager } from "@/lib/sound-effects"
 import { initYandexSDK, reportScore, reportReady, getLanguage, getRemoteConfig } from "@/lib/yandex-games"
@@ -322,12 +322,6 @@ export function GameController() {
     }, 450);
   }
 
-  const toggleLanguage = () => {
-    const nextLocale = currentLocale === 'ru' ? 'en' : 'ru';
-    soundManager.playClick();
-    setLocale(nextLocale, true); // true: manually changed, so persist to localStorage
-  }
-
   const finalizeGame = () => {
     soundManager.playClick();
     setPerformanceHistory(prev => ({
@@ -349,15 +343,6 @@ export function GameController() {
             <LeaderboardModal open={isLeaderboardOpen} onOpenChange={setIsLeaderboardOpen} />
           </div>
           <div className="flex items-center gap-1.5">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              onClick={toggleLanguage}
-              title={currentLocale === 'ru' ? 'English' : 'Русский'}
-              className="rounded-full w-10 h-10 lg:w-11 lg:h-11 hover:bg-white/20 text-muted-foreground"
-            >
-              <Languages className="w-5 h-5 lg:w-6 lg:h-6" />
-            </Button>
             <Button 
               variant="ghost" 
               size="icon" 
