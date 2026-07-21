@@ -2,6 +2,11 @@
 
 All notable changes to the **Pop Block Blitz** project will be documented in this file.
 
+## [0.6.2] - 2024-05-24
+
+### Optimized
+- **Leaderboard**: Scores are now only reported to the Yandex Games leaderboard if they exceed the player's personal high score, reducing unnecessary API calls and ensuring only records are synced.
+
 ## [0.6.1] - 2024-05-24
 
 ### Changed

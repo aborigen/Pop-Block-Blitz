@@ -227,11 +227,16 @@ export function GameController() {
       
       if (isGameOver) {
         soundManager.playGameOver();
-        console.log(`[Game Over] Reporting score: ${newScore}`);
-        // Ensure score is reported before showing leaderboard
-        reportScore('leaders', newScore).finally(() => {
+        // Update leaderboard only if the new score is better than the all-time high score
+        if (newScore > state.highScore) {
+          console.log(`[Game Over] New Personal Best! Reporting score: ${newScore}`);
+          reportScore('leaders', newScore).finally(() => {
+            setIsLeaderboardOpen(true);
+          });
+        } else {
+          console.log(`[Game Over] Score ${newScore} is not a new high score. Skipping report.`);
           setIsLeaderboardOpen(true);
-        });
+        }
       }
 
       const newFloatingScore = {
@@ -308,11 +313,16 @@ export function GameController() {
         
         if (isGameOver) {
           soundManager.playGameOver();
-          console.log(`[Game Over] Reporting score (rotation): ${state.score}`);
-          // Ensure score is reported before showing leaderboard
-          reportScore('leaders', state.score).finally(() => {
+          // Update leaderboard only if the current score is better than the all-time high score
+          if (state.score > state.highScore) {
+            console.log(`[Game Over] New Personal Best (Rotation)! Reporting score: ${state.score}`);
+            reportScore('leaders', state.score).finally(() => {
+              setIsLeaderboardOpen(true);
+            });
+          } else {
+            console.log(`[Game Over] Score ${state.score} (Rotation) is not a new high score. Skipping report.`);
             setIsLeaderboardOpen(true);
-          });
+          }
         }
 
         setState(prev => ({
