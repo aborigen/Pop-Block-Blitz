@@ -2,6 +2,11 @@
 
 All notable changes to the **Pop Block Blitz** project will be documented in this file.
 
+## [0.6.1] - 2024-05-24
+
+### Changed
+- **Leaderboard**: Ensured the score is successfully reported to Yandex Games before displaying the leaderboard modal on game over, preventing rank synchronization delays.
+
 ## [0.6.0] - 2024-05-24
 
 ### Changed

@@ -224,11 +224,16 @@ export function GameController() {
       const newGrid = processClear(state.grid, group)
       const isGameOver = checkGameOver(newGrid)
       const newScore = state.score + points
+      
       if (isGameOver) {
         soundManager.playGameOver();
-        reportScore('leaders', newScore);
-        setIsLeaderboardOpen(true);
+        console.log(`[Game Over] Reporting score: ${newScore}`);
+        // Ensure score is reported before showing leaderboard
+        reportScore('leaders', newScore).finally(() => {
+          setIsLeaderboardOpen(true);
+        });
       }
+
       const newFloatingScore = {
         id: ++scoreCounter.current,
         x,
@@ -303,8 +308,11 @@ export function GameController() {
         
         if (isGameOver) {
           soundManager.playGameOver();
-          reportScore('leaders', state.score);
-          setIsLeaderboardOpen(true);
+          console.log(`[Game Over] Reporting score (rotation): ${state.score}`);
+          // Ensure score is reported before showing leaderboard
+          reportScore('leaders', state.score).finally(() => {
+            setIsLeaderboardOpen(true);
+          });
         }
 
         setState(prev => ({
