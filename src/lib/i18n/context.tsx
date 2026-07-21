@@ -5,7 +5,7 @@ import { dictionaries, type Locale, type Dictionary } from './dictionaries';
 
 interface LanguageContextType {
   locale: Locale;
-  setLocale: (locale: Locale, persist?: boolean) => void;
+  setLocale: (locale: Locale) => void;
   t: Dictionary;
 }
 
@@ -13,12 +13,10 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 
 /**
  * Detects the most likely locale based on browser settings before SDK init.
+ * Removed localStorage check to ensure pure session-based/platform-driven logic.
  */
 function getInitialLocale(): Locale {
   if (typeof window === 'undefined') return 'ru';
-  
-  const saved = localStorage.getItem('app-locale') as Locale;
-  if (saved === 'en' || saved === 'ru') return saved;
   
   const browserLang = typeof navigator !== 'undefined' ? navigator.language.split('-')[0].toLowerCase() : 'ru';
   return browserLang === 'en' ? 'en' : 'ru'; 
@@ -34,15 +32,11 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     }
   }, [locale]);
 
-  const setLocale = useCallback((newLocale: Locale, persist: boolean = true) => {
+  const setLocale = useCallback((newLocale: Locale) => {
     setLocaleState((prev) => {
       if (prev === newLocale) return prev;
       
-      console.log(`[Stage 3: Application] Locale update applied: ${newLocale} (Manual Persist: ${persist})`);
-      
-      if (persist && typeof window !== 'undefined') {
-        localStorage.setItem('app-locale', newLocale);
-      }
+      console.log(`[Stage 3: Application] Locale update applied: ${newLocale}`);
       
       return newLocale;
     });

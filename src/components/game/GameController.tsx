@@ -91,10 +91,10 @@ export function GameController() {
         
         console.log(`[Stage 2: Initialization] SDK initialized. SDK detected lang: ${sdkLang}`);
 
-        // Always sync with SDK on first init, but do NOT overwrite localStorage unless it's a manual change.
+        // Always sync with SDK on first init. localStorage persistence has been removed.
         if (sdkLang && sdkLang !== currentLocale) {
           console.log(`[Stage 2: Initialization] Preferring SDK environment language: ${sdkLang}`);
-          setLocale(sdkLang, false); // persist=false: don't save to localStorage
+          setLocale(sdkLang); 
         }
 
         try {
