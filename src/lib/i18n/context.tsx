@@ -27,6 +27,13 @@ function getInitialLocale(): Locale {
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [locale, setLocaleState] = useState<Locale>(getInitialLocale);
 
+  // Sync HTML lang attribute with the current locale
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      document.documentElement.lang = locale;
+    }
+  }, [locale]);
+
   useEffect(() => {
     const saved = localStorage.getItem('app-locale') as Locale;
     if (saved && (saved === 'en' || saved === 'ru') && saved !== locale) {

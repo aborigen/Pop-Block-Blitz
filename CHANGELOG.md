@@ -2,6 +2,11 @@
 
 All notable changes to the **Pop Block Blitz** project will be documented in this file.
 
+## [0.6.3] - 2024-05-24
+
+### Changed
+- **Localization**: Removed hardcoded `lang="en"` from `layout.tsx`. The `lang` attribute is now dynamically synced with the application's locale via the `LanguageProvider`.
+
 ## [0.6.2] - 2024-05-24
 
 ### Optimized

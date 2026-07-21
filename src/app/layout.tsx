@@ -14,7 +14,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html>
       <head>
         <Script 
           src="https://yandex.ru/games/sdk/v2" 
