@@ -19,7 +19,7 @@ import {
 import { Block } from "./Block"
 import { GameStats } from "./GameStats"
 import { Button } from "@/components/ui/button"
-import { RefreshCw, PlayCircle, Volume2, VolumeX, RotateCcw, RotateCw } from "lucide-react"
+import { RefreshCw, PlayCircle, Volume2, VolumeX, RotateCcw, RotateCw, Languages } from "lucide-react"
 import { useTranslation } from "@/lib/i18n/context"
 import { soundManager } from "@/lib/sound-effects"
 import { initYandexSDK, reportScore, reportReady, getLanguage, getRemoteConfig } from "@/lib/yandex-games"
@@ -87,19 +87,14 @@ export function GameController() {
     initYandexSDK().then(async (sdk) => {
       if (sdk) {
         setSdkReady(true);
-        const detectedLang = getLanguage();
-        const savedLocale = localStorage.getItem('app-locale');
+        const sdkLang = getLanguage();
         
-        console.log(`[Stage 2: Initialization] SDK initialized. Local preference: ${savedLocale}, SDK detected: ${detectedLang}`);
+        console.log(`[Stage 2: Initialization] SDK initialized. SDK detected lang: ${sdkLang}`);
 
-        // Sync with SDK only if no manual override is present and language differs
-        if (!savedLocale && detectedLang && detectedLang !== currentLocale) {
-          console.log(`[Stage 2: Initialization] Syncing with SDK environment: ${detectedLang}`);
-          setLocale(detectedLang);
-        } else if (savedLocale) {
-          console.log(`[Stage 2: Initialization] Respecting local manual override: ${savedLocale}`);
-        } else {
-          console.log(`[Stage 2: Initialization] Localization stable at: ${currentLocale}`);
+        // Always sync with SDK on first init, but do NOT overwrite localStorage unless it's a manual change.
+        if (sdkLang && sdkLang !== currentLocale) {
+          console.log(`[Stage 2: Initialization] Preferring SDK environment language: ${sdkLang}`);
+          setLocale(sdkLang, false); // persist=false: don't save to localStorage
         }
 
         try {
@@ -153,7 +148,7 @@ export function GameController() {
       recommendedBoardHeight: nextHeight,
       recommendedNumColors: nextColors,
       recommendedDifficultyLevel: nextLevel,
-      difficultyAdjustmentFeedback: t.aiPowered // Fallback to localized string
+      difficultyAdjustmentFeedback: t.aiPowered
     };
   }, [t.aiPowered]);
 
@@ -227,14 +222,11 @@ export function GameController() {
       
       if (isGameOver) {
         soundManager.playGameOver();
-        // Update leaderboard only if the new score is better than the all-time high score
         if (newScore > state.highScore) {
-          console.log(`[Game Over] New Personal Best! Reporting score: ${newScore}`);
           reportScore('leaders', newScore).finally(() => {
             setIsLeaderboardOpen(true);
           });
         } else {
-          console.log(`[Game Over] Score ${newScore} is not a new high score. Skipping report.`);
           setIsLeaderboardOpen(true);
         }
       }
@@ -289,9 +281,7 @@ export function GameController() {
     
     setTimeout(() => {
       setSuppressTransitions(true);
-      
       const rawRotated = rotateGridRaw(state.grid, direction);
-      
       setState(prev => ({
         ...prev,
         grid: rawRotated,
@@ -301,7 +291,6 @@ export function GameController() {
           height: prev.config.width
         }
       }));
-      
       setVisualRotation(0);
       setTargetedGroup([]);
       setHintGroup([]);
@@ -313,14 +302,11 @@ export function GameController() {
         
         if (isGameOver) {
           soundManager.playGameOver();
-          // Update leaderboard only if the current score is better than the all-time high score
           if (state.score > state.highScore) {
-            console.log(`[Game Over] New Personal Best (Rotation)! Reporting score: ${state.score}`);
             reportScore('leaders', state.score).finally(() => {
               setIsLeaderboardOpen(true);
             });
           } else {
-            console.log(`[Game Over] Score ${state.score} (Rotation) is not a new high score. Skipping report.`);
             setIsLeaderboardOpen(true);
           }
         }
@@ -334,6 +320,12 @@ export function GameController() {
         setIsAnimatingRotation(false);
       }, 50);
     }, 450);
+  }
+
+  const toggleLanguage = () => {
+    const nextLocale = currentLocale === 'ru' ? 'en' : 'ru';
+    soundManager.playClick();
+    setLocale(nextLocale, true); // true: manually changed, so persist to localStorage
   }
 
   const finalizeGame = () => {
@@ -351,21 +343,27 @@ export function GameController() {
 
   return (
     <div className="flex flex-col lg:flex-row items-stretch w-full h-full max-w-full p-0 lg:p-4 gap-1 lg:gap-8 overflow-hidden min-h-0">
-      {/* Sidebar/Top Panel */}
       <div className="w-full lg:w-[260px] xl:w-[320px] flex flex-col shrink-0 min-h-0 overflow-y-auto lg:overflow-visible">
-        {/* Controls Bar */}
         <div className="w-full flex justify-between items-center px-3 py-2 lg:py-0 lg:mb-4 shrink-0">
           <div className="flex items-center gap-2">
             <LeaderboardModal open={isLeaderboardOpen} onOpenChange={setIsLeaderboardOpen} />
           </div>
           <div className="flex items-center gap-1.5">
-             <Button 
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={toggleLanguage}
+              title={currentLocale === 'ru' ? 'English' : 'Русский'}
+              className="rounded-full w-10 h-10 lg:w-11 lg:h-11 hover:bg-white/20 text-muted-foreground"
+            >
+              <Languages className="w-5 h-5 lg:w-6 lg:h-6" />
+            </Button>
+            <Button 
               variant="ghost" 
               size="icon" 
               onClick={() => handleRotate('ccw')}
               disabled={isAnimatingRotation}
               title={t.rotateLeft}
-              aria-label={t.rotateLeft}
               className="rounded-full w-10 h-10 lg:w-11 lg:h-11 hover:bg-white/20"
             >
               <RotateCcw className="w-5 h-5 lg:w-6 lg:h-6" />
@@ -376,12 +374,10 @@ export function GameController() {
               onClick={() => handleRotate('cw')}
               disabled={isAnimatingRotation}
               title={t.rotateRight}
-              aria-label={t.rotateRight}
               className="rounded-full w-10 h-10 lg:w-11 lg:h-11 hover:bg-white/20"
             >
               <RotateCw className="w-5 h-5 lg:w-6 lg:h-6" />
             </Button>
-
             <Button 
               variant="ghost" 
               size="icon"
@@ -390,17 +386,14 @@ export function GameController() {
                 startNewGame();
               }} 
               title={t.resetSession}
-              aria-label={t.resetSession}
               className="rounded-full w-10 h-10 lg:w-11 lg:h-11 hover:bg-white/20"
             >
               <RefreshCw className="w-5 h-5 lg:w-6 lg:h-6" />
             </Button>
-
             <Button 
               variant="ghost" 
               size="icon" 
               onClick={() => setSoundEnabled(!soundEnabled)}
-              aria-label={soundEnabled ? "Disable Sound" : "Enable Sound"}
               className="rounded-full w-10 h-10 lg:w-11 lg:h-11 hover:bg-white/20"
             >
               {soundEnabled ? <Volume2 className="w-5 h-5 lg:w-6 lg:h-6" /> : <VolumeX className="w-5 h-5 lg:w-6 lg:h-6" />}
@@ -419,7 +412,6 @@ export function GameController() {
         />
       </div>
 
-      {/* Main Game Board Area */}
       <div className="relative flex-grow w-full flex items-center justify-center min-h-0 overflow-hidden px-1 lg:px-0 pb-1 lg:pb-0">
         <div 
           className={cn(
