@@ -2,6 +2,12 @@
 
 All notable changes to the **Pop Block Blitz** project will be documented in this file.
 
+## [0.7.0] - 2024-05-24
+
+### Added
+- **New Rule**: Added the "Perfect Clear" bonus. If the player empties the entire board, their final score is multiplied by 5.
+- **UI**: Added a "PERFECT CLEAR!" celebratory message to the game over screen.
+
 ## [0.6.7] - 2024-05-24
 
 ### Changed
@@ -11,10 +17,5 @@ All notable changes to the **Pop Block Blitz** project will be documented in thi
 
 ### Removed
 - **Localization**: Removed `localStorage` persistence for language settings. The application is now fully stateless regarding localization, relying entirely on the platform environment.
-
-## [0.6.5] - 2024-05-24
-
-### Removed
-- **UI**: Removed manual language toggle button from the control bar. Localization is now fully automatic based on the Yandex platform environment.
 
 ...

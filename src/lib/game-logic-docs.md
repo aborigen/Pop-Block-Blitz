@@ -5,7 +5,7 @@ This file contains descriptions for the core mechanics and helper functions used
 ## Functions
 
 ### `generateGrid`
-Generates a random game grid based on width, height, and the number of colors.
+Generates a random game grid based on width, height, and the number of colors. Ensures even quantity of colors for solvability.
 
 ### `getConnectedBlocks`
 Finds all adjacent blocks of the same color starting from a specific coordinate.
@@ -25,14 +25,15 @@ Rotates the entire grid clockwise or counter-clockwise and reapplies gravity.
 ### `checkGameOver`
 Checks if any valid moves (groups of 2 or more) remain on the board.
 
+### `isGridEmpty`
+Checks if every cell in the grid is `null`.
+
 ### `calculateMoveScore`
 Calculates the score for a specific move using the formula: `Score = n * (n - 1) * 2`, where `n` is the number of blocks cleared.
 
 ## Scoring Rules
-The game rewards larger clusters exponentially to encourage strategic play:
-- **Formula:** `Points = n × (n - 1) × 2`
-- **2 blocks:** 4 points
-- **3 blocks:** 12 points
-- **4 blocks:** 24 points
-- **10 blocks:** 180 points
-- **20 blocks:** 760 points
+The game rewards larger clusters exponentially and board mastery:
+- **Combo Formula:** `Points = n × (n - 1) × 2`
+- **Perfect Clear:** Total score multiplied by 5 if board is empty on game over.
+
+```

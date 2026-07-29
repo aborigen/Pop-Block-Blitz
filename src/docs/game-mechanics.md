@@ -19,13 +19,18 @@ The game rewards players for creating large clusters rather than clearing small 
   - 20 blocks: 760 points
 - **Strategy**: It is often better to wait and set up a massive cluster than to clear small groups immediately.
 
-## 3. Board Rotation Strategy
+## 3. Perfect Clear Bonus
+If you manage to clear every single block from the board by the time the game ends, you achieve a **Perfect Clear**.
+- **Reward**: Your total score for that round is multiplied by **5**.
+- **Strategy**: Aiming for a Perfect Clear is the ultimate high-risk, high-reward strategy.
+
+## 4. Board Rotation Strategy
 Unique to Pop Block Blitz is the ability to rotate the board 90 degrees.
 - **Mechanic**: Rotating shifts the physical position of all blocks.
 - **Gravity Re-application**: After rotation, gravity is reapplied to the new "down" direction.
 - **Tactical Use**: Use rotation to bring blocks of the same color together that were previously separated by different columns.
 
-## 4. Adaptive AI Game Master
+## 5. Adaptive AI Game Master
 The game features a Genkit-powered AI agent that adjusts difficulty between sessions.
 - **Tracking**: The AI monitors your score, average clear size (combo), and total moves.
 - **Adjustment**: 
@@ -33,7 +38,7 @@ The game features a Genkit-powered AI agent that adjusts difficulty between sess
   - If you are struggling, it simplifies the grid to ensure a fun, "zen" experience.
 - **Levels**: Difficulty scales from `Very Easy` to `Insane`.
 
-## 5. Visual and Auditory Feedback
+## 6. Visual and Auditory Feedback
 - **Floating Points**: Every move displays a floating score indicator at the point of impact.
 - **Targeting**: Hovering over or clicking a group highlights the entire cluster to help players visualize their move.
 - **Procedural Sound**: The pitch of the "pop" sound increases slightly based on the size of the cluster, providing auditory satisfaction for big combos.

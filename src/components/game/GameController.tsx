@@ -7,6 +7,7 @@ import {
   processClear, 
   calculateMoveScore, 
   checkGameOver,
+  isGridEmpty,
   findBestMove,
   rotateGridRaw,
   applyGravityAndConsolidate,
@@ -19,7 +20,7 @@ import {
 import { Block } from "./Block"
 import { GameStats } from "./GameStats"
 import { Button } from "@/components/ui/button"
-import { RefreshCw, PlayCircle, Volume2, VolumeX, RotateCcw, RotateCw } from "lucide-react"
+import { RefreshCw, PlayCircle, Volume2, VolumeX, RotateCcw, RotateCw, Sparkles } from "lucide-react"
 import { useTranslation } from "@/lib/i18n/context"
 import { soundManager } from "@/lib/sound-effects"
 import { initYandexSDK, reportScore, reportReady, getLanguage, getRemoteConfig } from "@/lib/yandex-games"
@@ -42,6 +43,7 @@ export function GameController() {
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [sdkReady, setSdkReady] = useState(false);
   const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(false);
+  const [isPerfectClear, setIsPerfectClear] = useState(false);
   const [state, setState] = useState<GameState>({
     grid: [],
     score: 0,
@@ -188,6 +190,7 @@ export function GameController() {
     setIsAnimatingRotation(false);
     setSuppressTransitions(false);
     setIsLeaderboardOpen(false);
+    setIsPerfectClear(false);
   }, [performanceHistory, getHeuristicDifficulty, state.config, state.difficulty]);
 
   useEffect(() => {
@@ -218,7 +221,13 @@ export function GameController() {
       const points = calculateMoveScore(group.length)
       const newGrid = processClear(state.grid, group)
       const isGameOver = checkGameOver(newGrid)
-      const newScore = state.score + points
+      const isPerfect = isGameOver && isGridEmpty(newGrid)
+      
+      let newScore = state.score + points
+      if (isPerfect) {
+        newScore *= 5;
+        setIsPerfectClear(true);
+      }
       
       if (isGameOver) {
         soundManager.playGameOver();
@@ -299,11 +308,18 @@ export function GameController() {
         setSuppressTransitions(false);
         const finalGrid = applyGravityAndConsolidate(rawRotated);
         const isGameOver = checkGameOver(finalGrid);
+        const isPerfect = isGameOver && isGridEmpty(finalGrid);
         
+        let newScore = state.score;
+        if (isPerfect) {
+          newScore *= 5;
+          setIsPerfectClear(true);
+        }
+
         if (isGameOver) {
           soundManager.playGameOver();
-          if (state.score > state.highScore) {
-            reportScore('leaders', state.score).finally(() => {
+          if (newScore > state.highScore) {
+            reportScore('leaders', newScore).finally(() => {
               setIsLeaderboardOpen(true);
             });
           } else {
@@ -314,7 +330,9 @@ export function GameController() {
         setState(prev => ({
           ...prev,
           grid: finalGrid,
+          score: newScore,
           gameOver: isGameOver,
+          highScore: Math.max(prev.highScore, newScore)
         }));
         
         setIsAnimatingRotation(false);
@@ -450,6 +468,13 @@ export function GameController() {
             <>
               <GameOverParticles />
               <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-background/90 backdrop-blur-md rounded-2xl animate-in fade-in zoom-in duration-300 px-6 text-center">
+                {isPerfectClear && (
+                  <div className="mb-4 animate-bounce bg-accent text-accent-foreground px-4 py-2 rounded-full font-black text-lg md:text-3xl flex items-center gap-2 shadow-xl">
+                    <Sparkles className="w-5 h-5 md:w-8 md:h-8" />
+                    {t.perfectClear}
+                    <Sparkles className="w-5 h-5 md:w-8 md:h-8" />
+                  </div>
+                )}
                 <h2 className="text-2xl md:text-5xl font-black text-foreground mb-3 font-headline uppercase tracking-tighter">{t.gameOver}</h2>
                 <p className="text-base md:text-2xl text-muted-foreground mb-8 font-semibold">{t.finalScore}: <span className="text-primary">{state.score}</span></p>
                 <Button size="lg" onClick={finalizeGame} className="rounded-full px-10 bg-primary hover:bg-primary/90 h-12 md:h-16 md:text-2xl font-black shadow-lg shadow-primary/20">

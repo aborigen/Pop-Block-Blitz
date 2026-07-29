@@ -235,6 +235,10 @@ export function checkGameOver(grid: Grid): boolean {
   return true;
 }
 
+export function isGridEmpty(grid: Grid): boolean {
+  return grid.every(row => row.every(cell => cell === null));
+}
+
 export function calculateMoveScore(n: number): number {
   return n * (n - 1) * 2;
 }

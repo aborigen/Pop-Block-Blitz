@@ -4,7 +4,7 @@ export const dictionaries = {
     subtitle: "BLITZ",
     aiPowered: "Powered by Adaptive AI",
     instruction: "Pop adjacent same-color blocks to win! Larger groups = More points.",
-    scoringRules: "Scoring: n × (n - 1) × 2. Larger groups = More points!",
+    scoringRules: "Scoring: n × (n - 1) × 2. Larger groups = More points! Clear the board for x5 score!",
     copyright: "© 2024 Pop Block Blitz Studios",
     score: "Score",
     best: "Best",
@@ -25,6 +25,7 @@ export const dictionaries = {
     remainingBlocks: "Remaining",
     loginToSeeRank: "Log in to see your rank!",
     login: "Log In",
+    perfectClear: "PERFECT CLEAR! x5 SCORE",
     difficulty: {
       very_easy: "Very Easy",
       easy: "Easy",
@@ -39,7 +40,7 @@ export const dictionaries = {
     subtitle: "БЛИЦ",
     aiPowered: "На базе адаптивного ИИ",
     instruction: "Лопайте соседние блоки одного цвета! Большие группы = Больше очков.",
-    scoringRules: "Очки: n × (n - 1) × 2. Чем больше группа, тем больше очков!",
+    scoringRules: "Очки: n × (n - 1) × 2. Чем больше группа, тем больше очков! Очистите поле для x5 счета!",
     copyright: "© 2024 Студия Поп Блок Блиц",
     score: "Счет",
     best: "Рекорд",
@@ -60,6 +61,7 @@ export const dictionaries = {
     remainingBlocks: "Осталось",
     loginToSeeRank: "Войдите, чтобы увидеть свой ранг!",
     login: "Войти",
+    perfectClear: "ПОЛНАЯ ОЧИСТКА! СЧЕТ x5",
     difficulty: {
       very_easy: "Очень Легко",
       easy: "Легко",
