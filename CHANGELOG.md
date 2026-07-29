@@ -2,6 +2,11 @@
 
 All notable changes to the **Pop Block Blitz** project will be documented in this file.
 
+## [0.6.7] - 2024-05-24
+
+### Changed
+- **Game Logic**: Updated `generateGrid` to ensure every color appears an even number of times, improving potential board solvability.
+
 ## [0.6.6] - 2024-05-24
 
 ### Removed
@@ -12,10 +17,4 @@ All notable changes to the **Pop Block Blitz** project will be documented in thi
 ### Removed
 - **UI**: Removed manual language toggle button from the control bar. Localization is now fully automatic based on the Yandex platform environment.
 
-## [0.6.4] - 2024-05-24
-
-### Changed
-- **Localization**: Refined synchronization logic to always prioritize the Yandex Games SDK environment language on initial sync, while only persisting player preferences to `localStorage` when manually changed via the UI.
-- **UI**: Re-introduced a subtle language switcher in the control bar to support manual localization overrides.
-
-... (rest of changelog)
+...

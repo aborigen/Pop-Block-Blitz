@@ -42,11 +42,31 @@ export interface GameState {
 }
 
 export function generateGrid(width: number, height: number, numColors: number): Grid {
+  const totalCells = width * height;
+  const flatColors: number[] = [];
+
+  // Generate pairs to ensure even counts for each color instance
+  for (let i = 0; i < Math.floor(totalCells / 2); i++) {
+    const color = Math.floor(Math.random() * numColors);
+    flatColors.push(color, color);
+  }
+
+  // Handle odd number of cells (rare with standard dimensions, but safe)
+  if (totalCells % 2 !== 0) {
+    flatColors.push(Math.floor(Math.random() * numColors));
+  }
+
+  // Fisher-Yates shuffle to randomize position while preserving parity
+  for (let i = flatColors.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [flatColors[i], flatColors[j]] = [flatColors[j], flatColors[i]];
+  }
+
   const grid: Grid = [];
   for (let y = 0; y < height; y++) {
     const row: BlockColor[] = [];
     for (let x = 0; x < width; x++) {
-      row.push(Math.floor(Math.random() * numColors));
+      row.push(flatColors[y * width + x]);
     }
     grid.push(row);
   }
