@@ -3,23 +3,14 @@
 
 All notable changes to the **Pop Block Blitz** project will be documented in this file.
 
+## [0.7.6] - 2024-05-24
+### Added
+- **SDK Documentation**: Detailed explanation of the `reportReady` implementation for Yandex Games SDK synchronization.
+
 ## [0.7.5] - 2024-05-24
 ### Improved
 - **Landscape Scaling**: Optimized board scaling for landscape orientation to prevent content from cutting off on short viewports.
 - **UI Layout**: Compacted the desktop header to provide more vertical space for the game board.
 - **Resizing Logic**: Hardened the aspect-ratio and dimension constraints to ensure the board remains centered and correctly sized during browser window resizing.
-
-## [0.7.4] - 2024-05-24
-### Fixed
-- **Board Scaling**: Corrected the game board sizing logic to ensure it fills the maximum available screen space while maintaining its aspect ratio and staying within viewport bounds. Changed from 'auto' dimensions to '100%' width and height with strict boundary constraints.
-
-## [0.7.3] - 2024-05-24
-### Improved
-- **Viewport Constraints**: Hardened the game board scaling logic to strictly remain within available vertical space, preventing any cutting off on small mobile devices.
-
-## [0.7.2] - 2024-05-24
-### Improved
-- **Board Scaling**: Enhanced the game board scaling logic to maximize screen real estate while ensuring no content is cut off on any device.
-- **Mobile UI**: Compacted the stats section on mobile to provide more vertical space for the game grid.
 
 ...

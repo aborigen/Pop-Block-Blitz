@@ -1,3 +1,4 @@
+
 # Yandex Games SDK Integration Guide
 
 This project is pre-configured to work with the Yandex Games SDK. Below are the details of the implementation and the steps required to go live.
@@ -11,14 +12,14 @@ The SDK script is loaded in `src/app/layout.tsx` using the Next.js `Script` comp
 A dedicated utility at `src/lib/yandex-games.ts` handles:
 - **Initialization**: `initYandexSDK()` connects the app to the Yandex environment.
 - **Environment**: Automatically detects language settings from `sdkInstance.environment`.
-- **Loading Progress**: `reportReady()` calls `ysdk.features.LoadingAPI.ready()` to dismiss the Yandex loading screen.
+- **Game Ready (Loading Screen)**: The function `reportReady()` calls `ysdk.features.LoadingAPI.ready()`. This is **mandatory** for Yandex Games; without it, your game will be stuck behind the platform's loading screen. In this project, it is triggered in `GameController.tsx` only after the SDK is initialized and the first game board is generated.
 - **Interstitial Ads**: `showInterstitialAd()` triggers a full-screen ad.
-- **Leaderboards**: `reportScore(leaderboardName, score)` submits player scores using the direct `ysdk.leaderboards.setScore()` method (avoiding deprecated `getLeaderboards()`).
+- **Leaderboards**: `reportScore(leaderboardName, score)` submits player scores using the direct `ysdk.leaderboards.setScore()` method.
 
 ### Integration Points
 - **Initialization**: Called in `GameController.tsx` via `useEffect` on mount.
 - **Automatic Localization**: Detects 'ru' or 'en' from the Yandex environment and switches UI language automatically.
-- **Game Over**: When the game ends, `showInterstitialAd()` is called and the score is reported to a leaderboard named `'leaders'`.
+- **Game Over**: When the game ends, `showInterstitialAd()` is called and the score is reported to a leaderboard named `'leaders'` (only if it's a new high score).
 
 ## 2. Yandex Console Configuration
 
@@ -46,5 +47,5 @@ The SDK uses `window.parent` to communicate. When testing locally:
 
 ## 4. Troubleshooting
 - **"YaGames is not defined"**: Ensure the script in `layout.tsx` is loading correctly.
+- **Game stuck on loader**: Check if `reportReady()` is being called. Ensure `sdkReady` and `state.grid` are properly populated in `GameController`.
 - **Ad not showing**: Yandex limits how often ads can be shown (usually once every 60-120 seconds per user). Check the browser console for `wasShown: false`.
-- **Leaderboard error**: Verify the leaderboard name matches exactly between the code and the Yandex Console.
