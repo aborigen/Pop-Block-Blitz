@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useEffect, useCallback, useRef, useMemo } from "react"
@@ -91,10 +92,7 @@ export function GameController() {
         setSdkReady(true);
         const sdkLang = getLanguage();
         
-        console.log(`[Stage 2: Initialization] SDK initialized. SDK detected lang: ${sdkLang}`);
-
         if (sdkLang && sdkLang !== currentLocale) {
-          console.log(`[Stage 2: Initialization] Preferring SDK environment language: ${sdkLang}`);
           setLocale(sdkLang); 
         }
 
@@ -355,18 +353,18 @@ export function GameController() {
   return (
     <div className="flex flex-col lg:flex-row items-stretch w-full h-full max-w-full p-0 lg:p-4 gap-1 lg:gap-8 overflow-hidden min-h-0">
       <div className="w-full lg:w-[260px] xl:w-[320px] flex flex-col shrink-0 min-h-0 overflow-y-auto lg:overflow-visible">
-        <div className="w-full flex justify-between items-center px-3 py-2 lg:py-0 lg:mb-4 shrink-0">
+        <div className="w-full flex justify-between items-center px-3 py-1.5 lg:py-0 lg:mb-4 shrink-0">
           <div className="flex items-center gap-2">
             <LeaderboardModal open={isLeaderboardOpen} onOpenChange={setIsLeaderboardOpen} />
           </div>
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1">
             <Button 
               variant="ghost" 
               size="icon" 
               onClick={() => handleRotate('ccw')}
               disabled={isAnimatingRotation}
               title={t.rotateLeft}
-              className="rounded-full w-10 h-10 lg:w-11 lg:h-11 hover:bg-white/20"
+              className="rounded-full w-9 h-9 lg:w-11 lg:h-11 hover:bg-white/20"
             >
               <RotateCcw className="w-5 h-5 lg:w-6 lg:h-6" />
             </Button>
@@ -376,7 +374,7 @@ export function GameController() {
               onClick={() => handleRotate('cw')}
               disabled={isAnimatingRotation}
               title={t.rotateRight}
-              className="rounded-full w-10 h-10 lg:w-11 lg:h-11 hover:bg-white/20"
+              className="rounded-full w-9 h-9 lg:w-11 lg:h-11 hover:bg-white/20"
             >
               <RotateCw className="w-5 h-5 lg:w-6 lg:h-6" />
             </Button>
@@ -388,7 +386,7 @@ export function GameController() {
                 startNewGame();
               }} 
               title={t.resetSession}
-              className="rounded-full w-10 h-10 lg:w-11 lg:h-11 hover:bg-white/20"
+              className="rounded-full w-9 h-9 lg:w-11 lg:h-11 hover:bg-white/20"
             >
               <RefreshCw className="w-5 h-5 lg:w-6 lg:h-6" />
             </Button>
@@ -396,7 +394,7 @@ export function GameController() {
               variant="ghost" 
               size="icon" 
               onClick={() => setSoundEnabled(!soundEnabled)}
-              className="rounded-full w-10 h-10 lg:w-11 lg:h-11 hover:bg-white/20"
+              className="rounded-full w-9 h-9 lg:w-11 lg:h-11 hover:bg-white/20"
             >
               {soundEnabled ? <Volume2 className="w-5 h-5 lg:w-6 lg:h-6" /> : <VolumeX className="w-5 h-5 lg:w-6 lg:h-6" />}
             </Button>
@@ -414,18 +412,18 @@ export function GameController() {
         />
       </div>
 
-      <div className="relative flex-grow w-full flex items-center justify-center min-h-0 overflow-hidden px-1 lg:px-0 pb-1 lg:pb-0">
+      <div className="relative flex-grow w-full h-full flex items-center justify-center min-h-0 overflow-hidden px-1 lg:px-4 pb-1 lg:pb-4">
         <div 
           className={cn(
-            "grid gap-0.5 p-1 lg:p-3 rounded-xl lg:rounded-2xl bg-white/20 shadow-2xl border border-white/40 backdrop-blur-xl relative",
+            "grid gap-0.5 p-1 lg:p-2.5 rounded-xl lg:rounded-2xl bg-white/20 shadow-2xl border border-white/40 backdrop-blur-xl relative overflow-hidden",
             isAnimatingRotation && !suppressTransitions && "board-transition"
           )}
           style={{ 
             gridTemplateColumns: `repeat(${state.config.width}, 1fr)`,
             gridTemplateRows: `repeat(${state.config.height}, 1fr)`,
             aspectRatio: `${state.config.width} / ${state.config.height}`,
-            width: 'auto',
-            height: 'auto',
+            width: '100%',
+            height: '100%',
             maxWidth: '100%',
             maxHeight: '100%',
             transform: `rotate(${visualRotation}deg) scale(${isAnimatingRotation ? 0.95 : 1})`,

@@ -63,27 +63,27 @@ export function GameStats({ score, highScore, moves, difficulty, aiFeedback, las
         />
       </div>
 
-      <Card className="p-1.5 lg:p-3 bg-white/10 backdrop-blur-md border-white/10 shadow-sm">
-        <div className="flex items-center gap-1.5 mb-1.5 lg:mb-2 px-1">
-          <Layers className="text-muted-foreground w-3 h-3 lg:w-3.5 lg:h-3.5" />
-          <span className="text-[9px] lg:text-[10px] uppercase font-black text-muted-foreground tracking-widest leading-none">{t.remainingBlocks || "Remaining"}</span>
+      <Card className="p-1 lg:p-3 bg-white/10 backdrop-blur-md border-white/10 shadow-sm">
+        <div className="flex items-center gap-1.5 mb-1 lg:mb-2 px-1">
+          <Layers className="text-muted-foreground w-2.5 h-2.5 lg:w-3.5 lg:h-3.5" />
+          <span className="text-[8px] lg:text-[10px] uppercase font-black text-muted-foreground tracking-widest leading-none">{t.remainingBlocks || "Remaining"}</span>
         </div>
-        <div className="flex flex-row flex-wrap lg:flex-wrap items-center gap-2.5 lg:gap-4 px-1">
+        <div className="flex flex-row flex-wrap items-center gap-2 lg:gap-4 px-1">
           {Object.entries(blockCounts).map(([index, count]) => (
-            <div key={index} className="flex items-center gap-1.5 lg:gap-2">
+            <div key={index} className="flex items-center gap-1 lg:gap-2">
               <div 
-                className="w-3 h-3 lg:w-4 lg:h-4 rounded-full shadow-lg border-2 border-white/20"
+                className="w-2.5 h-2.5 lg:w-4 lg:h-4 rounded-full shadow-lg border border-white/20"
                 style={{ backgroundColor: COLORS[parseInt(index)] }}
               />
-              <span className="text-xs lg:text-base font-black text-foreground font-headline leading-none">{count}</span>
+              <span className="text-[10px] lg:text-base font-black text-foreground font-headline leading-none">{count}</span>
             </div>
           ))}
         </div>
       </Card>
       
       {aiFeedback && (
-        <div className="bg-primary/10 border border-primary/20 rounded-lg p-1.5 lg:p-2.5 text-[8px] md:text-[10px] text-primary font-semibold flex items-start gap-2 animate-in fade-in slide-in-from-top-1">
-          <Sparkles className="shrink-0 w-2.5 h-2.5 md:w-3.5 md:h-3.5 mt-0.5" />
+        <div className="bg-primary/10 border border-primary/20 rounded-lg p-1 lg:p-2.5 text-[8px] md:text-[10px] text-primary font-semibold flex items-start gap-1.5 animate-in fade-in slide-in-from-top-1">
+          <Sparkles className="shrink-0 w-2 h-2 md:w-3.5 md:h-3.5 mt-0.5" />
           <span className="leading-tight">{aiFeedback}</span>
         </div>
       )}
@@ -100,12 +100,12 @@ export function GameStats({ score, highScore, moves, difficulty, aiFeedback, las
 
 function StatCard({ label, value, icon, className }: { label: string, value: string, icon: React.ReactNode, className?: string }) {
   return (
-    <Card className={cn("p-1.5 lg:p-2.5 flex flex-col items-center justify-center bg-white/10 backdrop-blur-md border-white/10 shadow-md transition-all duration-300 min-h-[42px] md:min-h-[58px]", className)}>
+    <Card className={cn("p-1 lg:p-2.5 flex flex-col items-center justify-center bg-white/10 backdrop-blur-md border-white/10 shadow-md transition-all duration-300 min-h-[36px] md:min-h-[58px]", className)}>
       <div className="flex items-center gap-1 mb-0.5">
         {icon}
         <span className="text-[7px] md:text-[9px] uppercase font-black text-muted-foreground tracking-widest leading-none">{label}</span>
       </div>
-      <div className="text-xs md:text-lg font-black text-foreground font-headline leading-none tracking-tight">{value}</div>
+      <div className="text-[10px] md:text-lg font-black text-foreground font-headline leading-none tracking-tight">{value}</div>
     </Card>
   )
 }
