@@ -351,8 +351,8 @@ export function GameController() {
   if (!mounted || state.grid.length === 0) return null
 
   return (
-    <div className="flex flex-col lg:flex-row items-stretch w-full h-full max-w-full p-0 lg:p-4 gap-1 lg:gap-8 overflow-hidden min-h-0">
-      <div className="w-full lg:w-[260px] xl:w-[320px] flex flex-col shrink-0 min-h-0 overflow-y-auto lg:overflow-visible">
+    <div className="flex flex-col lg:flex-row items-stretch w-full h-full max-w-full p-0 lg:p-4 lg:pb-6 gap-1 lg:gap-8 overflow-hidden min-h-0">
+      <div className="w-full lg:w-[260px] xl:w-[320px] flex flex-col shrink-0 min-h-0 overflow-y-auto lg:overflow-visible relative z-40">
         <div className="w-full flex justify-between items-center px-3 py-1.5 lg:py-0 lg:mb-4 shrink-0">
           <div className="flex items-center gap-2">
             <LeaderboardModal open={isLeaderboardOpen} onOpenChange={setIsLeaderboardOpen} />
@@ -412,7 +412,7 @@ export function GameController() {
         />
       </div>
 
-      <div className="relative flex-grow w-full h-full flex items-center justify-center min-h-0 overflow-hidden px-1 lg:px-4 pb-1 lg:pb-4">
+      <div className="relative flex-grow w-full h-full flex items-center justify-center min-h-0 overflow-hidden px-1 lg:px-4 pb-2 lg:pb-0">
         <div 
           className={cn(
             "grid gap-0.5 p-1 lg:p-2.5 rounded-xl lg:rounded-2xl bg-white/20 shadow-2xl border border-white/40 backdrop-blur-xl relative overflow-hidden",
