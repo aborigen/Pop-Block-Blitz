@@ -10,7 +10,7 @@ export default function Home() {
   return (
     <main 
       onContextMenu={(e) => e.preventDefault()}
-      className="fixed inset-0 flex flex-col bg-background overflow-hidden touch-none"
+      className="fixed inset-0 h-[100dvh] flex flex-col bg-background overflow-hidden touch-none"
     >
       <header className="hidden lg:flex portrait-hidden py-2 px-6 items-center justify-between border-b border-white/20 bg-white/5 backdrop-blur-md shrink-0 z-50">
         <div className="flex items-center gap-2">

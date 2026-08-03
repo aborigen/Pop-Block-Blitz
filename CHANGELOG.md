@@ -2,6 +2,10 @@
 
 All notable changes to the **Pop Block Blitz** project will be documented in this file.
 
+## [0.7.1] - 2024-05-24
+### Refined
+- **Viewport Adaptation**: Optimized the game layout for various screen sizes using `h-[100dvh]` and improved aspect-ratio constraints to prevent bottom cut-off on mobile devices.
+
 ## [0.7.0] - 2024-05-24
 
 ### Added

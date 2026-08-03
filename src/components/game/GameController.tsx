@@ -93,7 +93,6 @@ export function GameController() {
         
         console.log(`[Stage 2: Initialization] SDK initialized. SDK detected lang: ${sdkLang}`);
 
-        // Always sync with SDK on first init. localStorage persistence has been removed.
         if (sdkLang && sdkLang !== currentLocale) {
           console.log(`[Stage 2: Initialization] Preferring SDK environment language: ${sdkLang}`);
           setLocale(sdkLang); 
@@ -425,7 +424,7 @@ export function GameController() {
             gridTemplateColumns: `repeat(${state.config.width}, 1fr)`,
             gridTemplateRows: `repeat(${state.config.height}, 1fr)`,
             aspectRatio: `${state.config.width} / ${state.config.height}`,
-            width: '100%',
+            width: 'auto',
             height: 'auto',
             maxWidth: '100%',
             maxHeight: '100%',
