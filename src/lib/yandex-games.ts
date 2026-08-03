@@ -1,3 +1,4 @@
+
 /**
  * @fileOverview Utility for interacting with the Yandex Games SDK.
  * Uses official types from @types/ysdk.
@@ -22,10 +23,10 @@ export async function initYandexSDK(): Promise<YSDK | null> {
 
     const sdk = await YaGames.init();
     sdkInstance = sdk;
-    console.log('Yandex Games SDK initialized', sdk.environment);
+    console.log('[Yandex SDK] Initialized successfully', sdk.environment);
     return sdkInstance;
   } catch (e) {
-    console.error('Yandex Games SDK failed to initialize:', e);
+    console.error('[Yandex SDK] Failed to initialize:', e);
     return null;
   }
 }
@@ -42,26 +43,30 @@ export function getEnvironment(): any | null {
  * Prioritizes the platform's i18n settings.
  */
 export function getLanguage(): 'en' | 'ru' | null {
-  if (!sdkInstance) return null;
+  if (!sdkInstance) {
+    console.log('[Yandex SDK] No instance found during language detection.');
+    return null;
+  }
   
   const env = sdkInstance.environment;
   if (!env) return null;
 
-  // Platform language (preferred)
+  // 1. Platform language (preferred) - e.g. "ru", "en"
   const sdkLang = env.i18n?.lang;
-  // Browser language as fallback
+  
+  // 2. Browser language as reported by platform - e.g. "ru-RU", "en-US"
   const browserLang = env.browser?.lang;
   
-  const lang = sdkLang || browserLang;
+  const rawLang = sdkLang || browserLang;
   
   let detected: 'en' | 'ru' | null = null;
-  if (lang) {
-    const code = lang.split('-')[0].toLowerCase();
+  if (rawLang) {
+    const code = rawLang.split('-')[0].toLowerCase();
     if (code === 'ru') detected = 'ru';
     else if (code === 'en') detected = 'en';
   }
   
-  console.log(`[Stage 1: Detection] SDK Lang: ${sdkLang}, Browser: ${browserLang} -> Mapped to: ${detected}`);
+  console.log(`[Yandex SDK] Environment Detection: i18n.lang=${sdkLang}, browser.lang=${browserLang} -> Mapped to: ${detected}`);
   return detected;
 }
 
@@ -71,26 +76,27 @@ export function getLanguage(): 'en' | 'ru' | null {
  */
 export function reportReady(): void {
   if (!sdkInstance) {
-    console.warn('SDK not initialized. Cannot report ready.');
+    console.warn('[Yandex SDK] SDK not initialized. Cannot report ready.');
     return;
   }
 
   if (isReadyCalled) {
-    console.log('Yandex Games: reportReady already called, skipping.');
+    console.log('[Yandex SDK] reportReady already called, skipping.');
     return;
   }
 
   try {
+    // Handling different SDK feature structures
     const loadingApi = (sdkInstance as any).features?.LoadingAPI || (sdkInstance as any).LoadingAPI;
     if (loadingApi && typeof loadingApi.ready === 'function') {
       loadingApi.ready();
       isReadyCalled = true;
-      console.log('Yandex Games: reported ready via LoadingAPI');
+      console.log('[Yandex SDK] Reported ready via LoadingAPI');
     } else {
-      console.warn('LoadingAPI.ready not found in SDK');
+      console.warn('[Yandex SDK] LoadingAPI.ready not found in SDK instance');
     }
   } catch (e) {
-    console.warn('Failed to report ready:', e);
+    console.warn('[Yandex SDK] Failed to report ready:', e);
   }
 }
 
@@ -99,17 +105,17 @@ export function reportReady(): void {
  */
 export function showInterstitialAd(): void {
   if (!sdkInstance) {
-    console.warn('SDK not initialized. Cannot show ad.');
+    console.warn('[Yandex SDK] SDK not initialized. Cannot show ad.');
     return;
   }
 
   sdkInstance.adv.showFullscreenAdv({
     callbacks: {
       onClose: (wasShown: boolean) => {
-        console.log('Ad closed, wasShown:', wasShown);
+        console.log('[Yandex SDK] Ad closed, wasShown:', wasShown);
       },
       onError: (error: string) => {
-        console.error('Ad error:', error);
+        console.error('[Yandex SDK] Ad error:', error);
       }
     }
   });
@@ -120,7 +126,7 @@ export function showInterstitialAd(): void {
  */
 export async function reportScore(leaderboardName: string, score: number): Promise<void> {
   if (!sdkInstance) {
-    console.warn('SDK not initialized. Cannot report score.');
+    console.warn('[Yandex SDK] SDK not initialized. Cannot report score.');
     return;
   }
 
@@ -128,12 +134,12 @@ export async function reportScore(leaderboardName: string, score: number): Promi
     const lb = (sdkInstance as any).leaderboards;
     if (lb && typeof lb.setScore === 'function') {
       await lb.setScore(leaderboardName, score);
-      console.log(`Score ${score} reported to ${leaderboardName} via setScore`);
+      console.log(`[Yandex SDK] Score ${score} reported to ${leaderboardName}`);
     } else {
-      console.warn('leaderboards.setScore not available on SDK instance');
+      console.warn('[Yandex SDK] Leaderboards API not available');
     }
   } catch (e) {
-    console.warn('Could not report score:', e);
+    console.warn('[Yandex SDK] Could not report score:', e);
   }
 }
 
@@ -142,7 +148,7 @@ export async function reportScore(leaderboardName: string, score: number): Promi
  */
 export async function getLeaderboardEntries(leaderboardName: string): Promise<any> {
   if (!sdkInstance) {
-    console.warn('SDK not initialized. Cannot fetch leaderboard.');
+    console.warn('[Yandex SDK] SDK not initialized. Cannot fetch leaderboard.');
     return null;
   }
 
@@ -157,7 +163,7 @@ export async function getLeaderboardEntries(leaderboardName: string): Promise<an
       return result;
     }
   } catch (e) {
-    console.warn('Could not fetch leaderboard entries:', e);
+    console.warn('[Yandex SDK] Could not fetch leaderboard entries:', e);
   }
   return null;
 }
@@ -171,7 +177,7 @@ export async function isPlayerAuthorized(): Promise<boolean> {
     const player = await sdkInstance.getPlayer({ scopes: false });
     return player.isAuthorized();
   } catch (e) {
-    console.warn('Failed to check authorization status:', e);
+    console.warn('[Yandex SDK] Failed to check authorization status:', e);
     return false;
   }
 }
@@ -185,7 +191,7 @@ export async function authorizePlayer(): Promise<boolean> {
     await sdkInstance.auth.openAuthDialog();
     return true;
   } catch (e) {
-    console.error('Authorization request failed:', e);
+    console.error('[Yandex SDK] Authorization request failed:', e);
     return false;
   }
 }
@@ -200,7 +206,7 @@ export async function getRemoteConfig(): Promise<Record<string, any> | null> {
     const config = await sdkInstance.getRemoteConfig();
     return config;
   } catch (e) {
-    console.warn('Failed to fetch remote config:', e);
+    console.warn('[Yandex SDK] Failed to fetch remote config:', e);
     return null;
   }
 }

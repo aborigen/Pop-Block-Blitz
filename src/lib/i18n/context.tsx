@@ -1,3 +1,4 @@
+
 "use client"
 
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
@@ -13,19 +14,23 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 
 /**
  * Detects the most likely locale based on browser settings before SDK init.
- * Removed localStorage check to ensure pure session-based/platform-driven logic.
+ * Provides a sensible first-render default to avoid flashes of wrong language.
  */
 function getInitialLocale(): Locale {
   if (typeof window === 'undefined') return 'ru';
   
+  // Standard browser detection
   const browserLang = typeof navigator !== 'undefined' ? navigator.language.split('-')[0].toLowerCase() : 'ru';
-  return browserLang === 'en' ? 'en' : 'ru'; 
+  const initial = browserLang === 'en' ? 'en' : 'ru';
+  
+  console.log(`[Stage 2: Initialization] Initial heuristic locale: ${initial}`);
+  return initial; 
 }
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [locale, setLocaleState] = useState<Locale>(getInitialLocale);
 
-  // Sync HTML lang attribute with the current locale
+  // Sync HTML lang attribute with the current locale for A11y
   useEffect(() => {
     if (typeof window !== 'undefined') {
       document.documentElement.lang = locale;
@@ -36,7 +41,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     setLocaleState((prev) => {
       if (prev === newLocale) return prev;
       
-      console.log(`[Stage 3: Application] Locale update applied: ${newLocale}`);
+      console.log(`[Stage 3: Application] Locale sync applied: ${prev} -> ${newLocale}`);
       
       return newLocale;
     });
