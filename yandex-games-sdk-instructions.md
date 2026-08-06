@@ -12,12 +12,13 @@ The SDK script is loaded in `src/app/layout.tsx` using the Next.js `Script` comp
 A dedicated utility at `src/lib/yandex-games.ts` handles:
 - **Initialization**: `initYandexSDK()` connects the app to the Yandex environment.
 - **Environment**: Automatically detects language settings from `sdkInstance.environment`.
-- **Game Ready (Loading Screen)**: The function `reportReady()` calls `ysdk.features.LoadingAPI.ready()`. This is **mandatory** for Yandex Games; without it, your game will be stuck behind the platform's loading screen. In this project, it is triggered in `GameController.tsx` only after the SDK is initialized and the first game board is generated.
+- **Game Ready (Loading Screen)**: The function `reportReady()` calls `ysdk.features.LoadingAPI.ready()`. This is **mandatory** for Yandex Games; without it, your game will be stuck behind the platform's loading screen. 
 - **Interstitial Ads**: `showInterstitialAd()` triggers a full-screen ad.
 - **Leaderboards**: `reportScore(leaderboardName, score)` submits player scores using the direct `ysdk.leaderboards.setScore()` method.
 
 ### Integration Points
 - **Initialization**: Called in `GameController.tsx` via `useEffect` on mount.
+- **Game Ready Lifecycle**: In `GameController.tsx`, the `reportReady()` call is strategically delayed (200ms) after the game board is generated and rendered. This ensures all UI elements are visible and interactive before the platform loading screen is removed.
 - **Automatic Localization**: Detects 'ru' or 'en' from the Yandex environment and switches UI language automatically.
 - **Game Over**: When the game ends, `showInterstitialAd()` is called and the score is reported to a leaderboard named `'leaders'` (only if it's a new high score).
 

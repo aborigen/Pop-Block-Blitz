@@ -196,10 +196,17 @@ export function GameController() {
     }
   }, [mounted, state.grid.length, startNewGame]);
 
+  // Handle reporting ready to Yandex Games. 
+  // We wait until the grid is generated, UI is mounted, and SDK is ready.
   useEffect(() => {
     if (mounted && state.grid.length > 0 && sdkReady && !isReadyReported.current) {
-      reportReady();
-      isReadyReported.current = true;
+      // Strategic delay (200ms) to ensure the browser has finished the first paint 
+      // of the game board so the player sees a fully loaded game when the platform loader hides.
+      const timer = setTimeout(() => {
+        reportReady();
+        isReadyReported.current = true;
+      }, 200);
+      return () => clearTimeout(timer);
     }
   }, [mounted, state.grid.length, sdkReady]);
 

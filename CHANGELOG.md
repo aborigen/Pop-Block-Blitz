@@ -1,6 +1,11 @@
+
 # Changelog
 
 All notable changes to the **Pop Block Blitz** project will be documented in this file.
+
+## [0.8.0] - 2024-05-25
+### Hardened
+- **Game Ready Lifecycle**: Refined the Yandex Games `reportReady` trigger to ensure it occurs only after the game UI is fully painted and interactive. Added a strategic delay to the `LoadingAPI.ready()` call to prevent any flicker or visibility of internal loading states.
 
 ## [0.7.9] - 2024-05-24
 ### Fixed
