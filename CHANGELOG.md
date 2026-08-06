@@ -3,6 +3,10 @@
 
 All notable changes to the **Pop Block Blitz** project will be documented in this file.
 
+## [0.8.5] - 2024-05-25
+### Improved
+- **Hint System**: Optimized the hint lifecycle. Hints now automatically disappear after 3 full sequential cycles of the top 3 moves, ensuring a balance between helpful onboarding and non-intrusive gameplay.
+
 ## [0.8.4] - 2024-05-25
 ### Improved
 - **Sequential Hints**: Refined the visual onboarding to display the top 3 largest possible moves in a sequential cycle (every 2 seconds) instead of showing them all at once. This makes the UI cleaner while still guiding new players through multiple options.

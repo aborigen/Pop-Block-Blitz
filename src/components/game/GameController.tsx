@@ -68,6 +68,7 @@ export function GameController() {
   const [targetedGroup, setTargetedGroup] = useState<[number, number][]>([])
   const [hintGroups, setHintGroups] = useState<[number, number][][]>([])
   const [activeHintIndex, setActiveHintIndex] = useState(0)
+  const [hintCycleCount, setHintCycleCount] = useState(0)
   const [floatingScores, setFloatingScores] = useState<FloatingScore[]>([])
   const [lastIncrement, setLastIncrement] = useState<number | null>(null)
   const [visualRotation, setVisualRotation] = useState(0)
@@ -128,13 +129,27 @@ export function GameController() {
 
   // Hint cycling effect
   useEffect(() => {
-    if (hintGroups.length > 1) {
+    if (hintGroups.length > 0) {
       const interval = setInterval(() => {
-        setActiveHintIndex(prev => (prev + 1) % hintGroups.length);
+        setActiveHintIndex(prev => {
+          const next = (prev + 1) % hintGroups.length;
+          if (next === 0) {
+            setHintCycleCount(c => c + 1);
+          }
+          return next;
+        });
       }, 2000);
       return () => clearInterval(interval);
     }
   }, [hintGroups]);
+
+  // Hint termination effect: clear hints after 3 full cycles
+  useEffect(() => {
+    if (hintCycleCount >= 3) {
+      setHintGroups([]);
+      setHintCycleCount(0);
+    }
+  }, [hintCycleCount]);
 
   const getHeuristicDifficulty = useCallback((performance: any, currentConfig: any, currentDifficulty: DifficultyLevel) => {
     const avgScore = performance.cumulativeScore / (performance.totalGames || 1);
@@ -200,6 +215,7 @@ export function GameController() {
     setTargetedGroup([]);
     setHintGroups(performanceHistory.totalGames < 2 ? topMoves : []);
     setActiveHintIndex(0);
+    setHintCycleCount(0);
     setFloatingScores([]);
     setLastIncrement(null);
     setVisualRotation(0);
@@ -228,7 +244,10 @@ export function GameController() {
 
   const handleBlockClick = (x: number, y: number) => {
     if (state.gameOver || isAnimatingRotation || isProcessing) return
-    if (hintGroups.length > 0) setHintGroups([]);
+    if (hintGroups.length > 0) {
+      setHintGroups([]);
+      setHintCycleCount(0);
+    }
     
     const group = getConnectedBlocks(state.grid, x, y)
     if (group.length < 2) {
@@ -350,6 +369,7 @@ export function GameController() {
       setVisualRotation(0);
       setTargetedGroup([]);
       setHintGroups([]);
+      setHintCycleCount(0);
 
       setTimeout(() => {
         setSuppressTransitions(false);
