@@ -1,6 +1,7 @@
+
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import {
   Dialog,
   DialogContent,
@@ -20,7 +21,11 @@ interface LeaderboardEntry {
   score: number
   player: {
     publicName: string
-    getAvatarSrc: (size: string) => string
+    // Methods might be missing on anonymous or plain objects
+    getAvatarSrc?: (size: string) => string
+    getPhoto?: (size: string) => string
+    avatarSrc?: string
+    photo?: string
   }
 }
 
@@ -45,19 +50,7 @@ export function LeaderboardModal({ open: externalOpen, onOpenChange: onExternalO
     }
   }
 
-  useEffect(() => {
-    if (isOpen) {
-      checkAuthAndLoad()
-    }
-  }, [isOpen])
-
-  const checkAuthAndLoad = async () => {
-    const authStatus = await isPlayerAuthorized()
-    setIsAuthorized(authStatus)
-    loadLeaderboard()
-  }
-
-  const loadLeaderboard = async () => {
+  const loadLeaderboard = useCallback(async () => {
     setLoading(true)
     try {
       const data = await getLeaderboardEntries('leaders')
@@ -69,7 +62,19 @@ export function LeaderboardModal({ open: externalOpen, onOpenChange: onExternalO
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
+
+  const checkAuthAndLoad = useCallback(async () => {
+    const authStatus = await isPlayerAuthorized()
+    setIsAuthorized(authStatus)
+    loadLeaderboard()
+  }, [loadLeaderboard])
+
+  useEffect(() => {
+    if (isOpen) {
+      checkAuthAndLoad()
+    }
+  }, [isOpen, checkAuthAndLoad])
 
   const handleAuthorize = async () => {
     const success = await authorizePlayer()
@@ -77,6 +82,27 @@ export function LeaderboardModal({ open: externalOpen, onOpenChange: onExternalO
       checkAuthAndLoad()
     }
   }
+
+  /**
+   * Safely resolves the avatar URL from the Yandex Player object.
+   * Handles SDK inconsistencies between getAvatarSrc and getPhoto.
+   */
+  const getAvatarUrl = (player: LeaderboardEntry['player']) => {
+    if (!player) return undefined;
+    
+    try {
+      if (typeof player.getAvatarSrc === 'function') {
+        return player.getAvatarSrc('small');
+      }
+      if (typeof player.getPhoto === 'function') {
+        return player.getPhoto('small');
+      }
+    } catch (e) {
+      console.warn('Failed to call avatar method on player object', e);
+    }
+
+    return player.avatarSrc || player.photo;
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -120,9 +146,9 @@ export function LeaderboardModal({ open: externalOpen, onOpenChange: onExternalO
           ) : entries.length > 0 ? (
             <ScrollArea className="h-[350px] pr-4">
               <div className="space-y-2">
-                {entries.map((entry) => (
+                {entries.map((entry, idx) => (
                   <div 
-                    key={entry.rank} 
+                    key={`${entry.rank}-${idx}`} 
                     className="flex items-center justify-between p-3 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-colors"
                   >
                     <div className="flex items-center gap-3">
@@ -130,7 +156,7 @@ export function LeaderboardModal({ open: externalOpen, onOpenChange: onExternalO
                         #{entry.rank}
                       </div>
                       <Avatar className="w-8 h-8 border border-white/20">
-                        <AvatarImage src={entry.player.getAvatarSrc('small')} />
+                        <AvatarImage src={getAvatarUrl(entry.player)} alt={entry.player.publicName} />
                         <AvatarFallback><Users size={14} /></AvatarFallback>
                       </Avatar>
                       <span className="font-bold text-sm truncate max-w-[120px]">
