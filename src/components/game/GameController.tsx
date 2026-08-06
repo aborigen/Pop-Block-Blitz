@@ -39,7 +39,7 @@ interface FloatingScore {
 const DIFFICULTY_ORDER: DifficultyLevel[] = ['very_easy', 'easy', 'medium', 'hard', 'expert', 'insane'];
 
 export function GameController() {
-  const { t, setLocale, locale: currentLocale } = useTranslation();
+  const { t, setLocale } = useTranslation();
   const [mounted, setMounted] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [sdkReady, setSdkReady] = useState(false);
@@ -77,12 +77,16 @@ export function GameController() {
   const scoreCounter = useRef(0)
   const incrementTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const isReadyReported = useRef(false)
+  const isInitialized = useRef(false)
 
   // Derived state: Block counts
   const blockCounts = useMemo(() => getBlockCounts(state.grid), [state.grid]);
 
-  // Initialization
+  // Initialization: This runs once at "Launch"
   useEffect(() => {
+    if (isInitialized.current) return;
+    isInitialized.current = true;
+
     setMounted(true);
     const saved = localStorage.getItem('pop-block-high-score')
     if (saved) {
@@ -92,9 +96,10 @@ export function GameController() {
     initYandexSDK().then(async (sdk) => {
       if (sdk) {
         setSdkReady(true);
-        const sdkLang = getLanguage();
         
-        if (sdkLang && sdkLang !== currentLocale) {
+        // Stage 2 & 3: Sync platform language ONCE at launch
+        const sdkLang = getLanguage();
+        if (sdkLang) {
           setLocale(sdkLang); 
         }
 
@@ -112,7 +117,7 @@ export function GameController() {
         }
       }
     });
-  }, [setLocale, currentLocale])
+  }, [setLocale])
 
   useEffect(() => {
     if (mounted) {
