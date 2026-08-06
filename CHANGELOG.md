@@ -1,7 +1,10 @@
-
 # Changelog
 
 All notable changes to the **Pop Block Blitz** project will be documented in this file.
+
+## [0.7.9] - 2024-05-24
+### Fixed
+- **Type Safety**: Resolved the "Cannot find name 'YSDK'" TypeScript error in `yandex-games.ts` by using `any` and improving the global SDK reference strategy to be more resilient to environmental type-resolution issues.
 
 ## [0.7.8] - 2024-05-24
 ### Fixed
@@ -11,9 +14,5 @@ All notable changes to the **Pop Block Blitz** project will be documented in thi
 ### Improved
 - **Environment Sync**: Audited and hardened the Yandex Games environment auto-definition process for robust locale detection.
 - **Logging**: Added detailed sync lifecycle logging for easier platform debugging.
-
-## [0.7.6] - 2024-05-24
-### Added
-- **SDK Documentation**: Detailed explanation of the `reportReady` implementation for Yandex Games SDK synchronization.
 
 ...

@@ -1,27 +1,28 @@
-
 /**
  * @fileOverview Utility for interacting with the Yandex Games SDK.
- * Uses official types from @types/ysdk.
+ * Handles initialization, environment detection, ads, and leaderboards.
  */
 
-let sdkInstance: YSDK | null = null;
+let sdkInstance: any | null = null;
 let isReadyCalled = false;
 
 /**
  * Initializes the Yandex Games SDK.
  * Should be called once on the client side.
  */
-export async function initYandexSDK(): Promise<YSDK | null> {
+export async function initYandexSDK(): Promise<any | null> {
   if (typeof window === 'undefined') return null;
   if (sdkInstance) return sdkInstance;
 
   try {
-    if (typeof YaGames === 'undefined') {
-      console.warn('Yandex Games SDK script not found');
+    // Accessing YaGames via window to avoid potential "YaGames is not defined" errors
+    const yaGames = (window as any).YaGames;
+    if (!yaGames) {
+      console.warn('Yandex Games SDK script not found on window object');
       return null;
     }
 
-    const sdk = await YaGames.init();
+    const sdk = await yaGames.init();
     sdkInstance = sdk;
     console.log('[Yandex SDK] Initialized successfully', sdk.environment);
     return sdkInstance;
