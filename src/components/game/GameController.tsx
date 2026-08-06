@@ -45,6 +45,8 @@ export function GameController() {
   const [sdkReady, setSdkReady] = useState(false);
   const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(false);
   const [isPerfectClear, setIsPerfectClear] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+  
   const [state, setState] = useState<GameState>({
     grid: [],
     score: 0,
@@ -188,6 +190,7 @@ export function GameController() {
     setSuppressTransitions(false);
     setIsLeaderboardOpen(false);
     setIsPerfectClear(false);
+    setIsProcessing(false);
   }, [performanceHistory, getHeuristicDifficulty, state.config, state.difficulty]);
 
   useEffect(() => {
@@ -196,12 +199,8 @@ export function GameController() {
     }
   }, [mounted, state.grid.length, startNewGame]);
 
-  // Handle reporting ready to Yandex Games. 
-  // We wait until the grid is generated, UI is mounted, and SDK is ready.
   useEffect(() => {
     if (mounted && state.grid.length > 0 && sdkReady && !isReadyReported.current) {
-      // Strategic delay (200ms) to ensure the browser has finished the first paint 
-      // of the game board so the player sees a fully loaded game when the platform loader hides.
       const timer = setTimeout(() => {
         reportReady();
         isReadyReported.current = true;
@@ -211,74 +210,101 @@ export function GameController() {
   }, [mounted, state.grid.length, sdkReady]);
 
   const handleBlockClick = (x: number, y: number) => {
-    if (state.gameOver || isAnimatingRotation) return
+    if (state.gameOver || isAnimatingRotation || isProcessing) return
     if (hintGroup.length > 0) setHintGroup([]);
+    
     const group = getConnectedBlocks(state.grid, x, y)
     if (group.length < 2) {
       soundManager.playClick();
       return;
     }
+    
     const groupKey = group.map(p => `${p[0]},${p[1]}`).sort().join('|')
     const targetKey = targetedGroup.map(p => `${p[0]},${p[1]}`).sort().join('|')
+    
     if (groupKey === targetKey) {
+      setIsProcessing(true);
       soundManager.playPop(group.length);
       const points = calculateMoveScore(group.length)
-      const newGrid = processClear(state.grid, group)
-      const isGameOver = checkGameOver(newGrid)
-      const isPerfect = isGameOver && isGridEmpty(newGrid)
       
-      let newScore = state.score + points
-      if (isPerfect) {
-        newScore *= 5;
-        setIsPerfectClear(true);
+      // Stage 1: The "Pop" - remove blocks and update score immediately
+      const gridWithHoles = state.grid.map(row => [...row]);
+      for (const [gx, gy] of group) {
+        gridWithHoles[gy][gx] = null;
       }
       
-      if (isGameOver) {
-        soundManager.playGameOver();
-        if (newScore > state.highScore) {
-          reportScore('leaders', newScore).finally(() => {
-            setIsLeaderboardOpen(true);
-          });
-        } else {
-          setIsLeaderboardOpen(true);
-        }
-      }
-
+      const newScoreBeforeGravity = state.score + points;
       const newFloatingScore = {
         id: ++scoreCounter.current,
         x,
         y,
         points
       };
+      
       setFloatingScores(prev => [...prev, newFloatingScore]);
       setLastIncrement(points);
+      
       if (incrementTimerRef.current) clearTimeout(incrementTimerRef.current);
       incrementTimerRef.current = setTimeout(() => {
         setLastIncrement(null);
       }, 2000);
+
       setTimeout(() => {
         setFloatingScores(prev => prev.filter(s => s.id !== newFloatingScore.id));
       }, 800);
-      setState(prev => {
-        const newHighScore = Math.max(prev.highScore, newScore)
-        if (newHighScore > prev.highScore && typeof window !== 'undefined') {
-          localStorage.setItem('pop-block-high-score', newHighScore.toString())
-        }
-        return {
-          ...prev,
-          grid: newGrid,
-          score: newScore,
-          highScore: newHighScore,
-          moves: prev.moves + 1,
-          gameOver: isGameOver
-        }
-      })
-      setPerformanceHistory(prev => ({
+
+      setState(prev => ({
         ...prev,
-        lastMaxCombo: Math.max(prev.lastMaxCombo, group.length),
-        lastAvgClear: ((prev.lastAvgClear * state.moves) + group.length) / (state.moves + 1)
-      }))
-      setTargetedGroup([])
+        grid: gridWithHoles,
+        score: newScoreBeforeGravity,
+        moves: prev.moves + 1,
+        highScore: Math.max(prev.highScore, newScoreBeforeGravity)
+      }));
+      
+      setTargetedGroup([]);
+
+      // Stage 2: The "Cascade" - apply gravity after a satisfying delay
+      setTimeout(() => {
+        const finalGrid = applyGravityAndConsolidate(gridWithHoles);
+        const isGameOver = checkGameOver(finalGrid);
+        const isPerfect = isGameOver && isGridEmpty(finalGrid);
+        
+        setState(prev => {
+          let finalScore = prev.score;
+          if (isPerfect) {
+            finalScore *= 5;
+            setIsPerfectClear(true);
+          }
+
+          if (isGameOver) {
+            soundManager.playGameOver();
+            if (finalScore > prev.highScore) {
+              reportScore('leaders', finalScore).finally(() => {
+                setIsLeaderboardOpen(true);
+              });
+            } else {
+              setIsLeaderboardOpen(true);
+            }
+          }
+
+          return {
+            ...prev,
+            grid: finalGrid,
+            score: finalScore,
+            gameOver: isGameOver,
+            highScore: Math.max(prev.highScore, finalScore)
+          }
+        });
+
+        setPerformanceHistory(prev => ({
+          ...prev,
+          lastMaxCombo: Math.max(prev.lastMaxCombo, group.length),
+          lastAvgClear: ((prev.lastAvgClear * state.moves) + group.length) / (state.moves + 1)
+        }))
+
+        setIsProcessing(false);
+      }, 350);
+
     } else {
       soundManager.playClick();
       setTargetedGroup(group)
@@ -286,7 +312,7 @@ export function GameController() {
   }
 
   const handleRotate = (direction: 'cw' | 'ccw') => {
-    if (state.gameOver || isAnimatingRotation) return;
+    if (state.gameOver || isAnimatingRotation || isProcessing) return;
     soundManager.playClick();
     
     setIsAnimatingRotation(true);
@@ -314,30 +340,32 @@ export function GameController() {
         const isGameOver = checkGameOver(finalGrid);
         const isPerfect = isGameOver && isGridEmpty(finalGrid);
         
-        let newScore = state.score;
-        if (isPerfect) {
-          newScore *= 5;
-          setIsPerfectClear(true);
-        }
-
-        if (isGameOver) {
-          soundManager.playGameOver();
-          if (newScore > state.highScore) {
-            reportScore('leaders', newScore).finally(() => {
-              setIsLeaderboardOpen(true);
-            });
-          } else {
-            setIsLeaderboardOpen(true);
+        setState(prev => {
+          let newScore = prev.score;
+          if (isPerfect) {
+            newScore *= 5;
+            setIsPerfectClear(true);
           }
-        }
 
-        setState(prev => ({
-          ...prev,
-          grid: finalGrid,
-          score: newScore,
-          gameOver: isGameOver,
-          highScore: Math.max(prev.highScore, newScore)
-        }));
+          if (isGameOver) {
+            soundManager.playGameOver();
+            if (newScore > prev.highScore) {
+              reportScore('leaders', newScore).finally(() => {
+                setIsLeaderboardOpen(true);
+              });
+            } else {
+              setIsLeaderboardOpen(true);
+            }
+          }
+
+          return {
+            ...prev,
+            grid: finalGrid,
+            score: newScore,
+            gameOver: isGameOver,
+            highScore: Math.max(prev.highScore, newScore)
+          }
+        });
         
         setIsAnimatingRotation(false);
       }, 50);
@@ -369,7 +397,7 @@ export function GameController() {
               variant="ghost" 
               size="icon" 
               onClick={() => handleRotate('ccw')}
-              disabled={isAnimatingRotation}
+              disabled={isAnimatingRotation || isProcessing}
               title={t.rotateLeft}
               className="rounded-full w-9 h-9 lg:w-11 lg:h-11 hover:bg-white/20"
             >
@@ -379,7 +407,7 @@ export function GameController() {
               variant="ghost" 
               size="icon" 
               onClick={() => handleRotate('cw')}
-              disabled={isAnimatingRotation}
+              disabled={isAnimatingRotation || isProcessing}
               title={t.rotateRight}
               className="rounded-full w-9 h-9 lg:w-11 lg:h-11 hover:bg-white/20"
             >
@@ -388,6 +416,7 @@ export function GameController() {
             <Button 
               variant="ghost" 
               size="icon"
+              disabled={isProcessing}
               onClick={() => {
                 soundManager.playClick();
                 startNewGame();
@@ -468,7 +497,7 @@ export function GameController() {
             </div>
           ))}
 
-          {state.gameOver && (
+          {state.gameOver && !isProcessing && (
             <>
               <GameOverParticles />
               <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-background/90 backdrop-blur-md rounded-2xl animate-in fade-in zoom-in duration-300 px-6 text-center">
