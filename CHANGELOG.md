@@ -3,6 +3,10 @@
 
 All notable changes to the **Pop Block Blitz** project will be documented in this file.
 
+## [0.8.3] - 2024-05-25
+### Improved
+- **Hint System**: Enhanced the visual onboarding by showing the top 3 largest possible moves simultaneously at the start of a session, instead of just one. Each hinted group now features a finger icon to clearly guide new players.
+
 ## [0.8.2] - 2024-05-25
 ### Fixed
 - **Launch Synchronization**: Hardened the initialization logic in `GameController` to ensure automatic language synchronization via the Yandex SDK happens exactly once during the launch sequence. Removed reactive dependencies that could cause mid-game language resets, providing a more stable and platform-compliant experience.

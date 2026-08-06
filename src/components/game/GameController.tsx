@@ -9,7 +9,7 @@ import {
   calculateMoveScore, 
   checkGameOver,
   isGridEmpty,
-  findBestMove,
+  findTopMoves,
   rotateGridRaw,
   applyGravityAndConsolidate,
   getBlockCounts,
@@ -66,7 +66,7 @@ export function GameController() {
 
   const [aiFeedback, setAiFeedback] = useState<string>("")
   const [targetedGroup, setTargetedGroup] = useState<[number, number][]>([])
-  const [hintGroup, setHintGroup] = useState<[number, number][]>([])
+  const [hintGroups, setHintGroups] = useState<[number, number][][]>([])
   const [floatingScores, setFloatingScores] = useState<FloatingScore[]>([])
   const [lastIncrement, setLastIncrement] = useState<number | null>(null)
   const [visualRotation, setVisualRotation] = useState(0)
@@ -174,7 +174,7 @@ export function GameController() {
     }
 
     const finalGrid = generateGrid(nextConfig.width, nextConfig.height, nextConfig.numColors);
-    const bestMove = findBestMove(finalGrid);
+    const topMoves = findTopMoves(finalGrid, 3);
     
     setState(prev => ({
       ...prev,
@@ -187,7 +187,7 @@ export function GameController() {
     }));
 
     setTargetedGroup([]);
-    setHintGroup(performanceHistory.totalGames < 2 ? bestMove : []);
+    setHintGroups(performanceHistory.totalGames < 2 ? topMoves : []);
     setFloatingScores([]);
     setLastIncrement(null);
     setVisualRotation(0);
@@ -216,7 +216,7 @@ export function GameController() {
 
   const handleBlockClick = (x: number, y: number) => {
     if (state.gameOver || isAnimatingRotation || isProcessing) return
-    if (hintGroup.length > 0) setHintGroup([]);
+    if (hintGroups.length > 0) setHintGroups([]);
     
     const group = getConnectedBlocks(state.grid, x, y)
     if (group.length < 2) {
@@ -337,7 +337,7 @@ export function GameController() {
       }));
       setVisualRotation(0);
       setTargetedGroup([]);
-      setHintGroup([]);
+      setHintGroups([]);
 
       setTimeout(() => {
         setSuppressTransitions(false);
@@ -473,14 +473,16 @@ export function GameController() {
         >
           {state.grid.map((row, y) => 
             row.map((colorIndex, x) => {
-              const hintIndex = hintGroup.findIndex(p => p[0] === x && p[1] === y);
+              const isInHint = hintGroups.some(group => group.some(p => p[0] === x && p[1] === y));
+              const isFingerHead = hintGroups.some(group => group.length > 0 && group[0][0] === x && group[0][1] === y);
+              
               return (
                 <Block 
                   key={`${x}-${y}`} 
                   colorIndex={colorIndex} 
                   isTargeted={targetedGroup.some(p => p[0] === x && p[1] === y)}
-                  isHinted={hintIndex !== -1}
-                  showFinger={hintIndex === 0}
+                  isHinted={isInHint}
+                  showFinger={isFingerHead}
                   onClick={() => handleBlockClick(x, y)} 
                 />
               );

@@ -111,11 +111,24 @@ export function getConnectedBlocks(grid: Grid, x: number, y: number): [number, n
   return group;
 }
 
+/**
+ * Finds the single largest connected group in the grid.
+ */
 export function findBestMove(grid: Grid): [number, number][] {
+  const moves = findTopMoves(grid, 1);
+  return moves.length > 0 ? moves[0] : [];
+}
+
+/**
+ * Finds the top N largest connected groups in the grid.
+ * Useful for providing multiple hints to the player.
+ */
+export function findTopMoves(grid: Grid, count: number = 3): [number, number][][] {
+  if (grid.length === 0) return [];
   const width = grid[0].length;
   const height = grid.length;
   const visited = new Set<string>();
-  let bestGroup: [number, number][] = [];
+  const allGroups: [number, number][][] = [];
 
   for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {
@@ -125,13 +138,14 @@ export function findBestMove(grid: Grid): [number, number][] {
       const group = getConnectedBlocks(grid, x, y);
       group.forEach(([gx, gy]) => visited.add(`${gx},${gy}`));
 
-      if (group.length > bestGroup.length) {
-        bestGroup = group;
+      if (group.length >= 2) {
+        allGroups.push(group);
       }
     }
   }
 
-  return bestGroup.length >= 2 ? bestGroup : [];
+  // Sort by group size descending and take top N
+  return allGroups.sort((a, b) => b.length - a.length).slice(0, count);
 }
 
 export function applyGravityAndConsolidate(grid: Grid): Grid {

@@ -13,6 +13,9 @@ Finds all adjacent blocks of the same color starting from a specific coordinate.
 ### `findBestMove`
 Finds the largest connected group in the grid to provide hints to the player.
 
+### `findTopMoves`
+Finds the top N largest connected groups in the grid. Useful for providing multiple hints to the player simultaneously.
+
 ### `applyGravityAndConsolidate`
 Applies gravity to pull blocks down and consolidates empty columns by shifting them to the left.
 
@@ -35,5 +38,3 @@ Calculates the score for a specific move using the formula: `Score = n * (n - 1)
 The game rewards larger clusters exponentially and board mastery:
 - **Combo Formula:** `Points = n × (n - 1) × 2`
 - **Perfect Clear:** Total score multiplied by 5 if board is empty on game over.
-
-```
