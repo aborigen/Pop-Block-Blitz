@@ -67,6 +67,7 @@ export function GameController() {
   const [aiFeedback, setAiFeedback] = useState<string>("")
   const [targetedGroup, setTargetedGroup] = useState<[number, number][]>([])
   const [hintGroups, setHintGroups] = useState<[number, number][][]>([])
+  const [activeHintIndex, setActiveHintIndex] = useState(0)
   const [floatingScores, setFloatingScores] = useState<FloatingScore[]>([])
   const [lastIncrement, setLastIncrement] = useState<number | null>(null)
   const [visualRotation, setVisualRotation] = useState(0)
@@ -124,6 +125,16 @@ export function GameController() {
       soundManager.setEnabled(soundEnabled);
     }
   }, [soundEnabled, mounted]);
+
+  // Hint cycling effect
+  useEffect(() => {
+    if (hintGroups.length > 1) {
+      const interval = setInterval(() => {
+        setActiveHintIndex(prev => (prev + 1) % hintGroups.length);
+      }, 2000);
+      return () => clearInterval(interval);
+    }
+  }, [hintGroups]);
 
   const getHeuristicDifficulty = useCallback((performance: any, currentConfig: any, currentDifficulty: DifficultyLevel) => {
     const avgScore = performance.cumulativeScore / (performance.totalGames || 1);
@@ -188,6 +199,7 @@ export function GameController() {
 
     setTargetedGroup([]);
     setHintGroups(performanceHistory.totalGames < 2 ? topMoves : []);
+    setActiveHintIndex(0);
     setFloatingScores([]);
     setLastIncrement(null);
     setVisualRotation(0);
@@ -473,8 +485,9 @@ export function GameController() {
         >
           {state.grid.map((row, y) => 
             row.map((colorIndex, x) => {
-              const isInHint = hintGroups.some(group => group.some(p => p[0] === x && p[1] === y));
-              const isFingerHead = hintGroups.some(group => group.length > 0 && group[0][0] === x && group[0][1] === y);
+              const currentHintGroup = hintGroups[activeHintIndex] || [];
+              const isInHint = currentHintGroup.some(group => group[0] === x && group[1] === y);
+              const isFingerHead = currentHintGroup.length > 0 && currentHintGroup[0][0] === x && currentHintGroup[0][1] === y;
               
               return (
                 <Block 

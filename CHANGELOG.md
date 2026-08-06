@@ -3,6 +3,10 @@
 
 All notable changes to the **Pop Block Blitz** project will be documented in this file.
 
+## [0.8.4] - 2024-05-25
+### Improved
+- **Sequential Hints**: Refined the visual onboarding to display the top 3 largest possible moves in a sequential cycle (every 2 seconds) instead of showing them all at once. This makes the UI cleaner while still guiding new players through multiple options.
+
 ## [0.8.3] - 2024-05-25
 ### Improved
 - **Hint System**: Enhanced the visual onboarding by showing the top 3 largest possible moves simultaneously at the start of a session, instead of just one. Each hinted group now features a finger icon to clearly guide new players.
