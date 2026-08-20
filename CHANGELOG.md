@@ -3,6 +3,12 @@
 
 All notable changes to the **Pop Block Blitz** project will be documented in this file.
 
+## [0.8.6] - 2024-05-25
+### Added
+- **Session Persistence**: Implemented automatic mid-game state saving. Progress (grid, score, moves) is now persisted to `localStorage` after every move and restored on page refresh.
+- **Immediate Leaderboard Sync**: High scores are now reported to the Yandex Games SDK leaderboard immediately upon achievement, ensuring cross-session reliability.
+- **Manual Save Button**: Added a "Save" icon to the game header for explicit manual progress synchronization.
+
 ## [0.8.5] - 2024-05-25
 ### Improved
 - **Hint System**: Optimized the hint lifecycle. Hints now automatically disappear after 3 full sequential cycles of the top 3 moves, ensuring a balance between helpful onboarding and non-intrusive gameplay.
@@ -27,5 +33,3 @@ All notable changes to the **Pop Block Blitz** project will be documented in thi
 ## [0.8.0] - 2024-05-25
 ### Hardened
 - **Game Ready Lifecycle**: Refined the Yandex Games `reportReady` trigger to ensure it occurs only after the game UI is fully painted and interactive. Added a strategic delay to the `LoadingAPI.ready()` call to prevent any flicker or visibility of internal loading states.
-
-...

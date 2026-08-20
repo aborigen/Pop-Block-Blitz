@@ -21,13 +21,14 @@ import {
 import { Block } from "./Block"
 import { GameStats } from "./GameStats"
 import { Button } from "@/components/ui/button"
-import { RefreshCw, PlayCircle, Volume2, VolumeX, RotateCcw, RotateCw, Sparkles } from "lucide-react"
+import { RefreshCw, PlayCircle, Volume2, VolumeX, RotateCcw, RotateCw, Sparkles, Save } from "lucide-react"
 import { useTranslation } from "@/lib/i18n/context"
 import { soundManager } from "@/lib/sound-effects"
 import { initYandexSDK, reportScore, reportReady, getLanguage, getRemoteConfig } from "@/lib/yandex-games"
 import { LeaderboardModal } from "./LeaderboardModal"
 import { GameOverParticles } from "./GameOverParticles"
 import { cn } from "@/lib/utils"
+import { useToast } from "@/hooks/use-toast"
 
 interface FloatingScore {
   id: number;
@@ -40,6 +41,7 @@ const DIFFICULTY_ORDER: DifficultyLevel[] = ['very_easy', 'easy', 'medium', 'har
 
 export function GameController() {
   const { t, setLocale } = useTranslation();
+  const { toast } = useToast();
   const [mounted, setMounted] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [sdkReady, setSdkReady] = useState(false);
@@ -84,26 +86,42 @@ export function GameController() {
   // Derived state: Block counts
   const blockCounts = useMemo(() => getBlockCounts(state.grid), [state.grid]);
 
-  // Initialization: This runs once at "Launch"
+  // Initialization: Restore session and High Score
   useEffect(() => {
     if (isInitialized.current) return;
     isInitialized.current = true;
 
     setMounted(true);
-    const saved = localStorage.getItem('pop-block-high-score')
-    if (saved) {
-      setState(prev => ({ ...prev, highScore: parseInt(saved, 10) }))
+    
+    // Restore High Score
+    const savedHighScore = localStorage.getItem('pop-block-high-score');
+    if (savedHighScore) {
+      setState(prev => ({ ...prev, highScore: parseInt(savedHighScore, 10) }));
+    }
+
+    // Restore Game Session
+    const savedSession = localStorage.getItem('pop-block-session');
+    if (savedSession) {
+      try {
+        const session = JSON.parse(savedSession);
+        setState(prev => ({
+          ...prev,
+          grid: session.grid,
+          score: session.score,
+          moves: session.moves,
+          difficulty: session.difficulty,
+          config: session.config
+        }));
+      } catch (e) {
+        console.warn("Failed to restore session", e);
+      }
     }
 
     initYandexSDK().then(async (sdk) => {
       if (sdk) {
         setSdkReady(true);
-        
-        // Stage 2 & 3: Sync platform language ONCE at launch
         const sdkLang = getLanguage();
-        if (sdkLang) {
-          setLocale(sdkLang); 
-        }
+        if (sdkLang) setLocale(sdkLang); 
 
         try {
           const config = await getRemoteConfig();
@@ -121,21 +139,59 @@ export function GameController() {
     });
   }, [setLocale])
 
+  // Persistence: Auto-save session to localStorage
+  useEffect(() => {
+    if (mounted && state.grid.length > 0 && !state.gameOver) {
+      const session = {
+        grid: state.grid,
+        score: state.score,
+        moves: state.moves,
+        difficulty: state.difficulty,
+        config: state.config
+      };
+      localStorage.setItem('pop-block-session', JSON.stringify(session));
+      localStorage.setItem('pop-block-high-score', state.highScore.toString());
+    }
+  }, [state.grid, state.score, state.moves, state.highScore, state.difficulty, state.config, state.gameOver, mounted]);
+
+  // Persistence: Sync High Score with Yandex Leaderboard
+  useEffect(() => {
+    if (sdkReady && state.highScore > 0) {
+      reportScore('leaders', state.highScore);
+    }
+  }, [state.highScore, sdkReady]);
+
+  const handleManualSave = () => {
+    if (state.gameOver) return;
+    soundManager.playClick();
+    const session = {
+      grid: state.grid,
+      score: state.score,
+      moves: state.moves,
+      difficulty: state.difficulty,
+      config: state.config
+    };
+    localStorage.setItem('pop-block-session', JSON.stringify(session));
+    localStorage.setItem('pop-block-high-score', state.highScore.toString());
+    
+    toast({
+      description: t.gameSaved,
+      duration: 2000,
+    });
+  }
+
   useEffect(() => {
     if (mounted) {
       soundManager.setEnabled(soundEnabled);
     }
   }, [soundEnabled, mounted]);
 
-  // Hint cycling effect
   useEffect(() => {
     if (hintGroups.length > 0) {
       const interval = setInterval(() => {
         setActiveHintIndex(prev => {
           const next = (prev + 1) % hintGroups.length;
-          if (next === 0) {
-            setHintCycleCount(c => c + 1);
-          }
+          if (next === 0) setHintCycleCount(c => c + 1);
           return next;
         });
       }, 2000);
@@ -143,7 +199,6 @@ export function GameController() {
     }
   }, [hintGroups]);
 
-  // Hint termination effect: clear hints after 3 full cycles
   useEffect(() => {
     if (hintCycleCount >= 3) {
       setHintGroups([]);
@@ -173,13 +228,11 @@ export function GameController() {
       nextColors = Math.max(3, nextColors - (nextIdx < currentIdx ? 1 : 0));
     }
 
-    const nextLevel = DIFFICULTY_ORDER[nextIdx];
-
     return {
       recommendedBoardWidth: nextWidth,
       recommendedBoardHeight: nextHeight,
       recommendedNumColors: nextColors,
-      recommendedDifficultyLevel: nextLevel,
+      recommendedDifficultyLevel: DIFFICULTY_ORDER[nextIdx],
       difficultyAdjustmentFeedback: t.aiPowered
     };
   }, [t.aiPowered]);
@@ -224,6 +277,8 @@ export function GameController() {
     setIsLeaderboardOpen(false);
     setIsPerfectClear(false);
     setIsProcessing(false);
+    
+    localStorage.removeItem('pop-block-session');
   }, [performanceHistory, getHeuristicDifficulty, state.config, state.difficulty]);
 
   useEffect(() => {
@@ -263,27 +318,19 @@ export function GameController() {
       soundManager.playPop(group.length);
       const points = calculateMoveScore(group.length)
       
-      // Stage 1: The "Pop" - remove blocks and update score immediately
       const gridWithHoles = state.grid.map(row => [...row]);
       for (const [gx, gy] of group) {
         gridWithHoles[gy][gx] = null;
       }
       
       const newScoreBeforeGravity = state.score + points;
-      const newFloatingScore = {
-        id: ++scoreCounter.current,
-        x,
-        y,
-        points
-      };
+      const newFloatingScore = { id: ++scoreCounter.current, x, y, points };
       
       setFloatingScores(prev => [...prev, newFloatingScore]);
       setLastIncrement(points);
       
       if (incrementTimerRef.current) clearTimeout(incrementTimerRef.current);
-      incrementTimerRef.current = setTimeout(() => {
-        setLastIncrement(null);
-      }, 2000);
+      incrementTimerRef.current = setTimeout(() => setLastIncrement(null), 2000);
 
       setTimeout(() => {
         setFloatingScores(prev => prev.filter(s => s.id !== newFloatingScore.id));
@@ -299,7 +346,6 @@ export function GameController() {
       
       setTargetedGroup([]);
 
-      // Stage 2: The "Cascade" - apply gravity after a satisfying delay
       setTimeout(() => {
         const finalGrid = applyGravityAndConsolidate(gridWithHoles);
         const isGameOver = checkGameOver(finalGrid);
@@ -314,13 +360,8 @@ export function GameController() {
 
           if (isGameOver) {
             soundManager.playGameOver();
-            if (finalScore > prev.highScore) {
-              reportScore('leaders', finalScore).finally(() => {
-                setIsLeaderboardOpen(true);
-              });
-            } else {
-              setIsLeaderboardOpen(true);
-            }
+            localStorage.removeItem('pop-block-session');
+            setIsLeaderboardOpen(true);
           }
 
           return {
@@ -360,11 +401,7 @@ export function GameController() {
       setState(prev => ({
         ...prev,
         grid: rawRotated,
-        config: {
-          ...prev.config,
-          width: prev.config.height,
-          height: prev.config.width
-        }
+        config: { ...prev.config, width: prev.config.height, height: prev.config.width }
       }));
       setVisualRotation(0);
       setTargetedGroup([]);
@@ -386,13 +423,8 @@ export function GameController() {
 
           if (isGameOver) {
             soundManager.playGameOver();
-            if (newScore > prev.highScore) {
-              reportScore('leaders', newScore).finally(() => {
-                setIsLeaderboardOpen(true);
-              });
-            } else {
-              setIsLeaderboardOpen(true);
-            }
+            localStorage.removeItem('pop-block-session');
+            setIsLeaderboardOpen(true);
           }
 
           return {
@@ -430,6 +462,16 @@ export function GameController() {
             <LeaderboardModal open={isLeaderboardOpen} onOpenChange={setIsLeaderboardOpen} />
           </div>
           <div className="flex items-center gap-1">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={handleManualSave}
+              disabled={isProcessing || state.gameOver}
+              title={t.saveGame}
+              className="rounded-full w-9 h-9 lg:w-11 lg:h-11 hover:bg-white/20"
+            >
+              <Save className="w-5 h-5 lg:w-6 lg:h-6" />
+            </Button>
             <Button 
               variant="ghost" 
               size="icon" 

@@ -1,3 +1,4 @@
+
 export const dictionaries = {
   en: {
     title: "POP BLOCK",
@@ -26,6 +27,8 @@ export const dictionaries = {
     loginToSeeRank: "Log in to see your rank!",
     login: "Log In",
     perfectClear: "PERFECT CLEAR! x5 SCORE",
+    saveGame: "Save Game",
+    gameSaved: "Progress Saved!",
     difficulty: {
       very_easy: "Very Easy",
       easy: "Easy",
@@ -62,6 +65,8 @@ export const dictionaries = {
     loginToSeeRank: "Войдите, чтобы увидеть свой ранг!",
     login: "Войти",
     perfectClear: "ПОЛНАЯ ОЧИСТКА! СЧЕТ x5",
+    saveGame: "Сохранить",
+    gameSaved: "Прогресс сохранен!",
     difficulty: {
       very_easy: "Очень Легко",
       easy: "Легко",
