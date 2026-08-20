@@ -55,8 +55,8 @@ export function GameController() {
     highScore: 0,
     gameOver: false,
     moves: 0,
-    difficulty: 'easy',
-    config: { width: 8, height: 8, numColors: 4 }
+    difficulty: 'very_easy',
+    config: { width: 6, height: 6, numColors: 3 }
   })
   
   const [performanceHistory, setPerformanceHistory] = useState({
@@ -223,8 +223,8 @@ export function GameController() {
       nextColors = Math.min(7, nextColors + (nextIdx > currentIdx ? 1 : 0));
     } else if (scoreDiff < 0.7 && performance.totalGames > 2) {
       nextIdx = Math.max(0, currentIdx - 1);
-      nextWidth = Math.max(8, nextWidth - 1);
-      nextHeight = Math.max(8, nextHeight - 1);
+      nextWidth = Math.max(6, nextWidth - 1);
+      nextHeight = Math.max(6, nextHeight - 1);
       nextColors = Math.max(3, nextColors - (nextIdx < currentIdx ? 1 : 0));
     }
 

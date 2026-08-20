@@ -1,8 +1,13 @@
+
 # Pop Block Blitz - Development Chat History
 
 This document provides a summary of the key features, refinements, and bug fixes implemented during the development of Pop Block Blitz.
 
 ## Development Milestones
+
+### 🛠 Gameplay Onboarding (v0.8.9)
+- **Tutorial Integration**: Introduced a "Very Easy" starting level with a 6x6 grid and 3 colors for optimized first-time user experience.
+- **Dynamic Scaling**: Hardened the difficulty adjustment algorithm to support the 6x6 "Tutorial" bounds for struggling players.
 
 ### 🛠 Architecture & Localization (v0.6.6 - v0.8.2)
 - **Stateless Localization**: Removed `localStorage` for language preferences. The game now relies exclusively on the Yandex Games platform environment for session-based language detection.
