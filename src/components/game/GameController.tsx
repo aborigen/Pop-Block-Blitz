@@ -287,8 +287,10 @@ export function GameController() {
     }
   }, [mounted, state.grid.length, startNewGame]);
 
+  // Mandatory Yandex Games lifecycle synchronization
   useEffect(() => {
     if (mounted && state.grid.length > 0 && sdkReady && !isReadyReported.current) {
+      console.log("[Game Lifecycle] Board ready, SDK ready. Reporting 'ready' to platform in 200ms.");
       const timer = setTimeout(() => {
         reportReady();
         isReadyReported.current = true;

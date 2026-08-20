@@ -3,6 +3,10 @@
 
 All notable changes to the **Pop Block Blitz** project will be documented in this file.
 
+## [0.8.8] - 2024-05-25
+### Verified
+- **Game Ready Lifecycle**: Re-confirmed and hardened the Yandex Games `reportReady` trigger. The call to `LoadingAPI.ready()` is precisely timed to occur 200ms after the game is mounted, the SDK is initialized, and the interactive grid is rendered, ensuring no loading screens block gameplay.
+
 ## [0.8.7] - 2024-05-25
 ### Improved
 - **UI Styling**: Increased the horizontal padding of the "Reset Session" button in the game header to make it more distinct and easier to click.
