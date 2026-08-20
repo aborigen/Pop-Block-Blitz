@@ -3,6 +3,10 @@
 
 All notable changes to the **Pop Block Blitz** project will be documented in this file.
 
+## [0.8.7] - 2024-05-25
+### Improved
+- **UI Styling**: Increased the horizontal padding of the "Reset Session" button in the game header to make it more distinct and easier to click.
+
 ## [0.8.6] - 2024-05-25
 ### Added
 - **Session Persistence**: Implemented automatic mid-game state saving. Progress (grid, score, moves) is now persisted to `localStorage` after every move and restored on page refresh.

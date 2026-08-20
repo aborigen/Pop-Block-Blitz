@@ -494,14 +494,13 @@ export function GameController() {
             </Button>
             <Button 
               variant="ghost" 
-              size="icon"
               disabled={isProcessing}
               onClick={() => {
                 soundManager.playClick();
                 startNewGame();
               }} 
               title={t.resetSession}
-              className="rounded-full w-9 h-9 lg:w-11 lg:h-11 hover:bg-white/20"
+              className="rounded-full h-9 lg:h-11 px-4 lg:px-6 hover:bg-white/20"
             >
               <RefreshCw className="w-5 h-5 lg:w-6 lg:h-6" />
             </Button>
