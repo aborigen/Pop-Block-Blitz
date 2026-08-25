@@ -88,7 +88,6 @@ export function GameController() {
   useEffect(() => {
     if (isInitialized.current) return;
     isInitialized.current = true;
-
     setMounted(true);
     
     const savedHighScore = localStorage.getItem('pop-block-high-score');
@@ -283,7 +282,6 @@ export function GameController() {
 
   useEffect(() => {
     if (mounted && state.grid.length > 0 && sdkReady && !isReadyReported.current) {
-      console.log("[Game Lifecycle] Board ready, SDK ready. Reporting 'ready' to platform in 200ms.");
       const timer = setTimeout(() => {
         reportReady();
         isReadyReported.current = true;
@@ -450,22 +448,23 @@ export function GameController() {
   if (!mounted || state.grid.length === 0) return null
 
   return (
-    <div className="flex flex-col landscape:flex-row lg:flex-row items-stretch w-full h-full max-w-full p-0 landscape:p-1 lg:p-4 gap-0.5 landscape:gap-1 lg:gap-4 overflow-hidden min-h-0">
-      <div className="w-full landscape:w-[140px] md:landscape:w-[160px] lg:w-[240px] xl:w-[280px] flex flex-col shrink-0 min-h-0 overflow-y-auto landscape:overflow-y-auto lg:overflow-visible relative z-40 bg-background/50 backdrop-blur-sm landscape:bg-transparent">
-        <div className="w-full flex justify-between items-center px-2 py-1 lg:py-0 lg:mb-4 shrink-0">
+    <div className="flex flex-col landscape:flex-row w-full h-full p-2 md:p-4 gap-2 md:gap-4 overflow-hidden items-stretch justify-center relative z-10">
+      {/* Sidebar/Top Panel */}
+      <div className="flex flex-col shrink-0 w-full landscape:w-56 lg:landscape:w-72 xl:landscape:w-80 gap-2 md:gap-4 z-20">
+        <div className="flex items-center justify-between px-1 landscape:px-0">
           <div className="flex items-center gap-1">
             <LeaderboardModal open={isLeaderboardOpen} onOpenChange={setIsLeaderboardOpen} />
           </div>
-          <div className="flex items-center gap-0.5 md:gap-1">
+          <div className="flex items-center gap-1">
             <Button 
               variant="ghost" 
               size="icon" 
               onClick={handleManualSave}
               disabled={isProcessing || state.gameOver}
               title={t.saveGame}
-              className="rounded-full w-7 h-7 md:w-8 md:h-8 lg:w-10 lg:h-10 hover:bg-white/20"
+              className="rounded-full w-8 h-8 md:w-10 md:h-10 hover:bg-white/10"
             >
-              <Save className="w-3.5 h-3.5 lg:w-5 lg:h-5" />
+              <Save className="w-4 h-4 md:w-5 md:h-5" />
             </Button>
             <Button 
               variant="ghost" 
@@ -473,9 +472,9 @@ export function GameController() {
               onClick={() => handleRotate('ccw')}
               disabled={isAnimatingRotation || isProcessing}
               title={t.rotateLeft}
-              className="rounded-full w-7 h-7 md:w-8 md:h-8 lg:w-10 lg:h-10 hover:bg-white/20"
+              className="rounded-full w-8 h-8 md:w-10 md:h-10 hover:bg-white/10"
             >
-              <RotateCcw className="w-3.5 h-3.5 lg:w-5 lg:h-5" />
+              <RotateCcw className="w-4 h-4 md:w-5 md:h-5" />
             </Button>
             <Button 
               variant="ghost" 
@@ -483,9 +482,9 @@ export function GameController() {
               onClick={() => handleRotate('cw')}
               disabled={isAnimatingRotation || isProcessing}
               title={t.rotateRight}
-              className="rounded-full w-7 h-7 md:w-8 md:h-8 lg:w-10 lg:h-10 hover:bg-white/20"
+              className="rounded-full w-8 h-8 md:w-10 md:h-10 hover:bg-white/10"
             >
-              <RotateCw className="w-3.5 h-3.5 lg:w-5 lg:h-5" />
+              <RotateCw className="w-4 h-4 md:w-5 md:h-5" />
             </Button>
             <Button 
               variant="ghost" 
@@ -495,17 +494,18 @@ export function GameController() {
                 startNewGame();
               }} 
               title={t.resetSession}
-              className="rounded-full h-7 md:h-8 lg:h-10 px-2 md:px-3 lg:px-4 hover:bg-white/20"
+              className="rounded-full h-8 md:h-10 px-3 md:px-5 hover:bg-white/10 font-bold"
             >
-              <RefreshCw className="w-3.5 h-3.5 lg:w-5 lg:h-5" />
+              <RefreshCw className="w-4 h-4 md:w-5 md:h-5 mr-1" />
+              <span className="hidden md:inline">{t.resetSession}</span>
             </Button>
             <Button 
               variant="ghost" 
               size="icon" 
               onClick={() => setSoundEnabled(!soundEnabled)}
-              className="rounded-full w-7 h-7 md:w-8 md:h-8 lg:w-10 lg:h-10 hover:bg-white/20"
+              className="rounded-full w-8 h-8 md:w-10 md:h-10 hover:bg-white/10"
             >
-              {soundEnabled ? <Volume2 className="w-3.5 h-3.5 lg:w-5 lg:h-5" /> : <VolumeX className="w-3.5 h-3.5 lg:w-5 lg:h-5" />}
+              {soundEnabled ? <Volume2 className="w-4 h-4 md:w-5 md:h-5" /> : <VolumeX className="w-4 h-4 md:w-5 md:h-5" />}
             </Button>
           </div>
         </div>
@@ -521,10 +521,11 @@ export function GameController() {
         />
       </div>
 
-      <div className="relative flex-grow w-full h-full flex items-center justify-center min-h-0 overflow-hidden px-0.5 landscape:px-0 lg:px-2 pb-0.5 lg:pb-0">
+      {/* Main Board Area */}
+      <div className="flex-grow flex items-center justify-center relative min-h-0 overflow-hidden">
         <div 
           className={cn(
-            "grid gap-0.5 p-0.5 md:p-1 lg:p-2 rounded-lg md:rounded-xl lg:rounded-2xl bg-white/20 shadow-2xl border border-white/40 backdrop-blur-xl relative overflow-hidden",
+            "grid gap-1 p-1 md:p-2 rounded-xl bg-white/10 shadow-2xl border border-white/20 backdrop-blur-md relative overflow-hidden",
             isAnimatingRotation && !suppressTransitions && "board-transition"
           )}
           style={{ 
@@ -535,7 +536,7 @@ export function GameController() {
             height: 'auto',
             maxWidth: '100%',
             maxHeight: '100%',
-            transform: `rotate(${visualRotation}deg) scale(${isAnimatingRotation ? 0.95 : 1})`,
+            transform: `rotate(${visualRotation}deg) scale(${isAnimatingRotation ? 0.96 : 1})`,
             margin: 'auto'
           }}
         >
@@ -561,12 +562,12 @@ export function GameController() {
           {floatingScores.map(fs => (
             <div 
               key={fs.id}
-              className="absolute z-30 pointer-events-none text-white font-black text-2xl md:text-5xl lg:text-6xl animate-float-up-fade"
+              className="absolute z-30 pointer-events-none text-white font-black text-3xl md:text-6xl animate-float-up-fade"
               style={{
                 left: `${(fs.x / state.config.width) * 100}%`,
                 top: `${(fs.y / state.config.height) * 100}%`,
                 transform: 'translate(-50%, -50%)',
-                textShadow: '0 4px 12px rgba(0,0,0,0.5)'
+                textShadow: '0 0 20px rgba(0,0,0,0.8)'
               }}
             >
               +{fs.points}
@@ -574,24 +575,30 @@ export function GameController() {
           ))}
 
           {state.gameOver && !isProcessing && (
-            <>
+            <div className="absolute inset-0 z-40 flex flex-col items-center justify-center bg-background/95 backdrop-blur-xl rounded-xl animate-in fade-in duration-300 p-8 text-center">
               <GameOverParticles />
-              <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-background/90 backdrop-blur-md rounded-2xl animate-in fade-in zoom-in duration-300 px-6 text-center">
-                {isPerfectClear && (
-                  <div className="mb-4 animate-bounce bg-accent text-accent-foreground px-4 py-2 rounded-full font-black text-lg md:text-3xl flex items-center gap-2 shadow-xl">
-                    <Sparkles className="w-5 h-5 md:w-8 md:h-8" />
-                    {t.perfectClear}
-                    <Sparkles className="w-5 h-5 md:w-8 md:h-8" />
-                  </div>
-                )}
-                <h2 className="text-xl md:text-4xl lg:text-5xl font-black text-foreground mb-2 font-headline uppercase tracking-tighter">{t.gameOver}</h2>
-                <p className="text-sm md:text-xl lg:text-2xl text-muted-foreground mb-6 font-semibold">{t.finalScore}: <span className="text-primary">{state.score}</span></p>
-                <Button size="lg" onClick={finalizeGame} className="rounded-full px-8 lg:px-10 bg-primary hover:bg-primary/90 h-10 md:h-14 lg:h-16 md:text-xl lg:text-2xl font-black shadow-lg shadow-primary/20">
-                  <PlayCircle className="mr-2 lg:mr-3 w-5 h-5 md:w-7 md:h-7 lg:w-8 lg:h-8" />
-                  {t.playAgain}
-                </Button>
-              </div>
-            </>
+              {isPerfectClear && (
+                <div className="mb-6 animate-bounce bg-accent text-accent-foreground px-6 py-3 rounded-full font-black text-2xl md:text-4xl flex items-center gap-3 shadow-2xl">
+                  <Sparkles className="w-6 h-6 md:w-10 md:h-10" />
+                  {t.perfectClear}
+                  <Sparkles className="w-6 h-6 md:w-10 md:h-10" />
+                </div>
+              )}
+              <h2 className="text-3xl md:text-6xl font-black text-foreground mb-4 font-headline uppercase tracking-tighter">
+                {t.gameOver}
+              </h2>
+              <p className="text-xl md:text-3xl text-muted-foreground mb-8 font-bold">
+                {t.finalScore}: <span className="text-primary">{state.score}</span>
+              </p>
+              <Button 
+                size="lg" 
+                onClick={finalizeGame} 
+                className="rounded-full px-12 md:px-16 bg-primary hover:bg-primary/90 h-14 md:h-20 text-xl md:text-3xl font-black shadow-xl shadow-primary/30 transition-all hover:scale-105"
+              >
+                <PlayCircle className="mr-3 w-7 h-7 md:w-10 md:h-10" />
+                {t.playAgain}
+              </Button>
+            </div>
           )}
         </div>
       </div>
