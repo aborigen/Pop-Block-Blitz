@@ -450,7 +450,7 @@ export function GameController() {
   return (
     <div className="flex flex-col landscape:flex-row w-full h-full p-2 md:p-4 gap-2 md:gap-4 overflow-hidden items-stretch justify-center relative z-10">
       {/* Sidebar/Top Panel */}
-      <div className="flex flex-col shrink-0 w-full landscape:w-56 lg:landscape:w-72 xl:landscape:w-80 gap-2 md:gap-4 z-20">
+      <div className="flex flex-col shrink-0 w-full landscape:w-[220px] lg:landscape:w-[260px] xl:landscape:w-[300px] gap-2 md:gap-4 z-20">
         <div className="flex items-center justify-between px-1 landscape:px-0">
           <div className="flex items-center gap-1">
             <LeaderboardModal open={isLeaderboardOpen} onOpenChange={setIsLeaderboardOpen} />
@@ -521,8 +521,8 @@ export function GameController() {
         />
       </div>
 
-      {/* Main Board Area */}
-      <div className="flex-grow flex items-center justify-center relative min-h-0 overflow-hidden">
+      {/* Main Board Area - Optimized for maximum scale */}
+      <div className="flex-grow flex items-center justify-center relative min-h-0 w-full h-full p-2 overflow-hidden">
         <div 
           className={cn(
             "grid gap-1 p-1 md:p-2 rounded-xl bg-white/10 shadow-2xl border border-white/20 backdrop-blur-md relative overflow-hidden",
@@ -532,12 +532,13 @@ export function GameController() {
             gridTemplateColumns: `repeat(${state.config.width}, 1fr)`,
             gridTemplateRows: `repeat(${state.config.height}, 1fr)`,
             aspectRatio: `${state.config.width} / ${state.config.height}`,
-            width: 'auto',
-            height: 'auto',
+            width: '100%',
+            height: '100%',
             maxWidth: '100%',
             maxHeight: '100%',
             transform: `rotate(${visualRotation}deg) scale(${isAnimatingRotation ? 0.96 : 1})`,
-            margin: 'auto'
+            margin: 'auto',
+            objectFit: 'contain'
           }}
         >
           {state.grid.map((row, y) => 
