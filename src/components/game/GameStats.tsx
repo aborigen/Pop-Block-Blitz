@@ -31,17 +31,17 @@ export function GameStats({ score, highScore, moves, difficulty, aiFeedback, las
   }, [score]);
 
   return (
-    <div className="w-full space-y-1 landscape:space-y-1.5 lg:space-y-4 px-1.5 lg:px-1 shrink-0">
-      <div className="grid grid-cols-4 landscape:grid-cols-2 lg:grid-cols-2 gap-1 lg:gap-3">
+    <div className="w-full space-y-0.5 md:space-y-1 landscape:space-y-1 lg:space-y-4 px-1 lg:px-1 shrink-0">
+      <div className="grid grid-cols-4 landscape:grid-cols-1 lg:grid-cols-2 gap-0.5 md:gap-1 lg:gap-3">
         <div className="relative">
           <StatCard 
             label={t.score} 
             value={score.toLocaleString()} 
-            icon={<Target className="text-primary w-2.5 h-2.5 md:w-4 md:h-4" />} 
+            icon={<Target className="text-primary w-2 h-2 md:w-4 md:h-4" />} 
             className={cn(pulseScore && "animate-bump border-primary/60 shadow-lg shadow-primary/10")}
           />
           {lastIncrement !== null && lastIncrement !== undefined && (
-            <div className="absolute -top-1 -right-0.5 z-10 bg-primary text-white text-[7px] md:text-[11px] font-black px-1 py-0.5 rounded-full shadow-xl animate-in fade-in zoom-in slide-in-from-bottom-1 duration-300">
+            <div className="absolute -top-1 -right-0.5 z-10 bg-primary text-white text-[6px] md:text-[11px] font-black px-1 py-0.5 rounded-full shadow-xl animate-in fade-in zoom-in slide-in-from-bottom-1 duration-300">
               +{lastIncrement}
             </div>
           )}
@@ -49,41 +49,41 @@ export function GameStats({ score, highScore, moves, difficulty, aiFeedback, las
         <StatCard 
           label={t.best} 
           value={highScore.toLocaleString()} 
-          icon={<Trophy className="text-accent-foreground w-2.5 h-2.5 md:w-4 md:h-4" />} 
+          icon={<Trophy className="text-accent-foreground w-2 h-2 md:w-4 md:h-4" />} 
         />
         <StatCard 
           label={t.moves} 
           value={moves.toString()} 
-          icon={<Activity className="text-muted-foreground w-2.5 h-2.5 md:w-4 md:h-4" />} 
+          icon={<Activity className="text-muted-foreground w-2 h-2 md:w-4 md:h-4" />} 
         />
         <StatCard 
           label={t.level} 
           value={t.difficulty[difficulty]?.toUpperCase() || difficulty.toUpperCase()} 
-          icon={<Sparkles className="text-primary w-2.5 h-2.5 md:w-4 md:h-4" />} 
+          icon={<Sparkles className="text-primary w-2 h-2 md:w-4 md:h-4" />} 
         />
       </div>
 
-      <Card className="p-1 landscape:p-1.5 lg:p-3 bg-white/10 backdrop-blur-md border-white/10 shadow-sm">
+      <Card className="p-0.5 md:p-1 landscape:p-1 lg:p-3 bg-white/10 backdrop-blur-md border-white/10 shadow-sm">
         <div className="flex items-center gap-1 mb-0.5 lg:mb-2 px-1">
-          <Layers className="text-muted-foreground w-2 h-2 lg:w-3.5 lg:h-3.5" />
-          <span className="text-[7px] lg:text-[10px] uppercase font-black text-muted-foreground tracking-widest leading-none">{t.remainingBlocks || "Remaining"}</span>
+          <Layers className="text-muted-foreground w-1.5 h-1.5 md:w-3.5 md:h-3.5" />
+          <span className="text-[5px] md:text-[8px] lg:text-[10px] uppercase font-black text-muted-foreground tracking-widest leading-none">{t.remainingBlocks || "Remaining"}</span>
         </div>
-        <div className="flex flex-row flex-wrap items-center gap-1.5 lg:gap-4 px-1">
+        <div className="flex flex-row landscape:flex-col lg:flex-row flex-wrap items-center landscape:items-start gap-1 md:gap-1.5 lg:gap-4 px-1">
           {Object.entries(blockCounts).map(([index, count]) => (
             <div key={index} className="flex items-center gap-1 lg:gap-2">
               <div 
-                className="w-2 h-2 lg:w-4 lg:h-4 rounded-full shadow-lg border border-white/20"
+                className="w-1.5 h-1.5 md:w-3 md:h-3 lg:w-4 lg:h-4 rounded-full shadow-lg border border-white/20"
                 style={{ backgroundColor: COLORS[parseInt(index)] }}
               />
-              <span className="text-[9px] lg:text-base font-black text-foreground font-headline leading-none">{count}</span>
+              <span className="text-[7px] md:text-sm lg:text-base font-black text-foreground font-headline leading-none">{count}</span>
             </div>
           ))}
         </div>
       </Card>
       
       {aiFeedback && (
-        <div className="bg-primary/10 border border-primary/20 rounded-lg p-1 lg:p-2.5 text-[7px] md:text-[10px] text-primary font-semibold flex items-start gap-1 animate-in fade-in slide-in-from-top-1">
-          <Sparkles className="shrink-0 w-2 h-2 md:w-3.5 md:h-3.5 mt-0.5" />
+        <div className="bg-primary/10 border border-primary/20 rounded-lg p-0.5 md:p-1 lg:p-2.5 text-[5px] md:text-[9px] lg:text-[10px] text-primary font-semibold flex items-start gap-0.5 md:gap-1 animate-in fade-in slide-in-from-top-1">
+          <Sparkles className="shrink-0 w-1.5 h-1.5 md:w-3 md:h-3 lg:w-3.5 lg:h-3.5 mt-0.5" />
           <span className="leading-tight line-clamp-1 landscape:line-clamp-2 lg:line-clamp-none">{aiFeedback}</span>
         </div>
       )}
@@ -100,12 +100,12 @@ export function GameStats({ score, highScore, moves, difficulty, aiFeedback, las
 
 function StatCard({ label, value, icon, className }: { label: string, value: string, icon: React.ReactNode, className?: string }) {
   return (
-    <Card className={cn("p-1 lg:p-2.5 flex flex-col items-center justify-center bg-white/10 backdrop-blur-md border-white/10 shadow-md transition-all duration-300 min-h-[30px] landscape:min-h-[36px] md:min-h-[58px]", className)}>
+    <Card className={cn("p-0.5 md:p-1.5 lg:p-2.5 flex flex-col items-center justify-center bg-white/10 backdrop-blur-md border-white/10 shadow-md transition-all duration-300 min-h-[24px] landscape:min-h-[28px] md:landscape:min-h-[36px] md:min-h-[58px]", className)}>
       <div className="flex items-center gap-0.5 lg:gap-1 mb-0.5">
         {icon}
-        <span className="text-[6px] md:text-[9px] uppercase font-black text-muted-foreground tracking-widest leading-none">{label}</span>
+        <span className="text-[5px] md:text-[8px] lg:text-[9px] uppercase font-black text-muted-foreground tracking-widest leading-none">{label}</span>
       </div>
-      <div className="text-[9px] md:text-lg font-black text-foreground font-headline leading-none tracking-tight">{value}</div>
+      <div className="text-[8px] md:text-sm lg:text-lg font-black text-foreground font-headline leading-none tracking-tight">{value}</div>
     </Card>
   )
 }

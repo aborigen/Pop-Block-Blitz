@@ -83,23 +83,19 @@ export function GameController() {
   const isReadyReported = useRef(false)
   const isInitialized = useRef(false)
 
-  // Derived state: Block counts
   const blockCounts = useMemo(() => getBlockCounts(state.grid), [state.grid]);
 
-  // Initialization: Restore session and High Score
   useEffect(() => {
     if (isInitialized.current) return;
     isInitialized.current = true;
 
     setMounted(true);
     
-    // Restore High Score
     const savedHighScore = localStorage.getItem('pop-block-high-score');
     if (savedHighScore) {
       setState(prev => ({ ...prev, highScore: parseInt(savedHighScore, 10) }));
     }
 
-    // Restore Game Session
     const savedSession = localStorage.getItem('pop-block-session');
     if (savedSession) {
       try {
@@ -139,7 +135,6 @@ export function GameController() {
     });
   }, [setLocale])
 
-  // Persistence: Auto-save session to localStorage
   useEffect(() => {
     if (mounted && state.grid.length > 0 && !state.gameOver) {
       const session = {
@@ -154,7 +149,6 @@ export function GameController() {
     }
   }, [state.grid, state.score, state.moves, state.highScore, state.difficulty, state.config, state.gameOver, mounted]);
 
-  // Persistence: Sync High Score with Yandex Leaderboard
   useEffect(() => {
     if (sdkReady && state.highScore > 0) {
       reportScore('leaders', state.highScore);
@@ -287,7 +281,6 @@ export function GameController() {
     }
   }, [mounted, state.grid.length, startNewGame]);
 
-  // Mandatory Yandex Games lifecycle synchronization
   useEffect(() => {
     if (mounted && state.grid.length > 0 && sdkReady && !isReadyReported.current) {
       console.log("[Game Lifecycle] Board ready, SDK ready. Reporting 'ready' to platform in 200ms.");
@@ -457,22 +450,22 @@ export function GameController() {
   if (!mounted || state.grid.length === 0) return null
 
   return (
-    <div className="flex flex-col landscape:flex-row lg:flex-row items-stretch w-full h-full max-w-full p-0 landscape:p-2 lg:p-4 gap-1 landscape:gap-2 lg:gap-4 overflow-hidden min-h-0">
-      <div className="w-full landscape:w-[180px] lg:w-[240px] xl:w-[280px] flex flex-col shrink-0 min-h-0 overflow-y-auto landscape:overflow-y-auto lg:overflow-visible relative z-40 bg-background/50 backdrop-blur-sm landscape:bg-transparent">
+    <div className="flex flex-col landscape:flex-row lg:flex-row items-stretch w-full h-full max-w-full p-0 landscape:p-1 lg:p-4 gap-0.5 landscape:gap-1 lg:gap-4 overflow-hidden min-h-0">
+      <div className="w-full landscape:w-[140px] md:landscape:w-[160px] lg:w-[240px] xl:w-[280px] flex flex-col shrink-0 min-h-0 overflow-y-auto landscape:overflow-y-auto lg:overflow-visible relative z-40 bg-background/50 backdrop-blur-sm landscape:bg-transparent">
         <div className="w-full flex justify-between items-center px-2 py-1 lg:py-0 lg:mb-4 shrink-0">
           <div className="flex items-center gap-1">
             <LeaderboardModal open={isLeaderboardOpen} onOpenChange={setIsLeaderboardOpen} />
           </div>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-0.5 md:gap-1">
             <Button 
               variant="ghost" 
               size="icon" 
               onClick={handleManualSave}
               disabled={isProcessing || state.gameOver}
               title={t.saveGame}
-              className="rounded-full w-8 h-8 lg:w-10 lg:h-10 hover:bg-white/20"
+              className="rounded-full w-7 h-7 md:w-8 md:h-8 lg:w-10 lg:h-10 hover:bg-white/20"
             >
-              <Save className="w-4 h-4 lg:w-5 lg:h-5" />
+              <Save className="w-3.5 h-3.5 lg:w-5 lg:h-5" />
             </Button>
             <Button 
               variant="ghost" 
@@ -480,9 +473,9 @@ export function GameController() {
               onClick={() => handleRotate('ccw')}
               disabled={isAnimatingRotation || isProcessing}
               title={t.rotateLeft}
-              className="rounded-full w-8 h-8 lg:w-10 lg:h-10 hover:bg-white/20"
+              className="rounded-full w-7 h-7 md:w-8 md:h-8 lg:w-10 lg:h-10 hover:bg-white/20"
             >
-              <RotateCcw className="w-4 h-4 lg:w-5 lg:h-5" />
+              <RotateCcw className="w-3.5 h-3.5 lg:w-5 lg:h-5" />
             </Button>
             <Button 
               variant="ghost" 
@@ -490,9 +483,9 @@ export function GameController() {
               onClick={() => handleRotate('cw')}
               disabled={isAnimatingRotation || isProcessing}
               title={t.rotateRight}
-              className="rounded-full w-8 h-8 lg:w-10 lg:h-10 hover:bg-white/20"
+              className="rounded-full w-7 h-7 md:w-8 md:h-8 lg:w-10 lg:h-10 hover:bg-white/20"
             >
-              <RotateCw className="w-4 h-4 lg:w-5 lg:h-5" />
+              <RotateCw className="w-3.5 h-3.5 lg:w-5 lg:h-5" />
             </Button>
             <Button 
               variant="ghost" 
@@ -502,17 +495,17 @@ export function GameController() {
                 startNewGame();
               }} 
               title={t.resetSession}
-              className="rounded-full h-8 lg:h-10 px-3 lg:px-4 hover:bg-white/20"
+              className="rounded-full h-7 md:h-8 lg:h-10 px-2 md:px-3 lg:px-4 hover:bg-white/20"
             >
-              <RefreshCw className="w-4 h-4 lg:w-5 lg:h-5" />
+              <RefreshCw className="w-3.5 h-3.5 lg:w-5 lg:h-5" />
             </Button>
             <Button 
               variant="ghost" 
               size="icon" 
               onClick={() => setSoundEnabled(!soundEnabled)}
-              className="rounded-full w-8 h-8 lg:w-10 lg:h-10 hover:bg-white/20"
+              className="rounded-full w-7 h-7 md:w-8 md:h-8 lg:w-10 lg:h-10 hover:bg-white/20"
             >
-              {soundEnabled ? <Volume2 className="w-4 h-4 lg:w-5 lg:h-5" /> : <VolumeX className="w-4 h-4 lg:w-5 lg:h-5" />}
+              {soundEnabled ? <Volume2 className="w-3.5 h-3.5 lg:w-5 lg:h-5" /> : <VolumeX className="w-3.5 h-3.5 lg:w-5 lg:h-5" />}
             </Button>
           </div>
         </div>
@@ -528,10 +521,10 @@ export function GameController() {
         />
       </div>
 
-      <div className="relative flex-grow w-full h-full flex items-center justify-center min-h-0 overflow-hidden px-1 landscape:px-0 lg:px-2 pb-1 lg:pb-0">
+      <div className="relative flex-grow w-full h-full flex items-center justify-center min-h-0 overflow-hidden px-0.5 landscape:px-0 lg:px-2 pb-0.5 lg:pb-0">
         <div 
           className={cn(
-            "grid gap-0.5 p-1 lg:p-2 rounded-xl lg:rounded-2xl bg-white/20 shadow-2xl border border-white/40 backdrop-blur-xl relative overflow-hidden",
+            "grid gap-0.5 p-0.5 md:p-1 lg:p-2 rounded-lg md:rounded-xl lg:rounded-2xl bg-white/20 shadow-2xl border border-white/40 backdrop-blur-xl relative overflow-hidden",
             isAnimatingRotation && !suppressTransitions && "board-transition"
           )}
           style={{ 
