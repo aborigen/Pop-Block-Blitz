@@ -457,8 +457,8 @@ export function GameController() {
   if (!mounted || state.grid.length === 0) return null
 
   return (
-    <div className="flex flex-col lg:flex-row items-stretch w-full h-full max-w-full p-0 lg:p-4 lg:pb-6 gap-1 lg:gap-8 overflow-hidden min-h-0">
-      <div className="w-full lg:w-[260px] xl:w-[320px] flex flex-col shrink-0 min-h-0 overflow-y-auto lg:overflow-visible relative z-40">
+    <div className="flex flex-col landscape:flex-row lg:flex-row items-stretch w-full h-full max-w-full p-0 landscape:p-4 lg:p-4 lg:pb-6 gap-1 landscape:gap-4 lg:gap-8 overflow-hidden min-h-0">
+      <div className="w-full landscape:w-[220px] lg:w-[260px] xl:w-[320px] flex flex-col shrink-0 min-h-0 overflow-y-auto landscape:overflow-y-auto lg:overflow-visible relative z-40 bg-background/50 backdrop-blur-sm landscape:bg-transparent">
         <div className="w-full flex justify-between items-center px-3 py-1.5 lg:py-0 lg:mb-4 shrink-0">
           <div className="flex items-center gap-2">
             <LeaderboardModal open={isLeaderboardOpen} onOpenChange={setIsLeaderboardOpen} />
@@ -528,7 +528,7 @@ export function GameController() {
         />
       </div>
 
-      <div className="relative flex-grow w-full h-full flex items-center justify-center min-h-0 overflow-hidden px-1 lg:px-4 pb-2 lg:pb-0">
+      <div className="relative flex-grow w-full h-full flex items-center justify-center min-h-0 overflow-hidden px-1 landscape:px-0 lg:px-4 pb-2 lg:pb-0">
         <div 
           className={cn(
             "grid gap-0.5 p-1 lg:p-2.5 rounded-xl lg:rounded-2xl bg-white/20 shadow-2xl border border-white/40 backdrop-blur-xl relative overflow-hidden",
@@ -538,8 +538,8 @@ export function GameController() {
             gridTemplateColumns: `repeat(${state.config.width}, 1fr)`,
             gridTemplateRows: `repeat(${state.config.height}, 1fr)`,
             aspectRatio: `${state.config.width} / ${state.config.height}`,
-            width: '100%',
-            height: '100%',
+            width: 'auto',
+            height: 'auto',
             maxWidth: '100%',
             maxHeight: '100%',
             transform: `rotate(${visualRotation}deg) scale(${isAnimatingRotation ? 0.95 : 1})`,

@@ -31,8 +31,8 @@ export function GameStats({ score, highScore, moves, difficulty, aiFeedback, las
   }, [score]);
 
   return (
-    <div className="w-full space-y-1 lg:space-y-4 px-2 lg:px-1 shrink-0">
-      <div className="grid grid-cols-4 lg:grid-cols-2 gap-1.5 lg:gap-3">
+    <div className="w-full space-y-1 landscape:space-y-2 lg:space-y-4 px-2 lg:px-1 shrink-0">
+      <div className="grid grid-cols-4 landscape:grid-cols-2 lg:grid-cols-2 gap-1.5 lg:gap-3">
         <div className="relative">
           <StatCard 
             label={t.score} 
@@ -63,7 +63,7 @@ export function GameStats({ score, highScore, moves, difficulty, aiFeedback, las
         />
       </div>
 
-      <Card className="p-1 lg:p-3 bg-white/10 backdrop-blur-md border-white/10 shadow-sm">
+      <Card className="p-1 landscape:p-2 lg:p-3 bg-white/10 backdrop-blur-md border-white/10 shadow-sm">
         <div className="flex items-center gap-1.5 mb-1 lg:mb-2 px-1">
           <Layers className="text-muted-foreground w-2.5 h-2.5 lg:w-3.5 lg:h-3.5" />
           <span className="text-[8px] lg:text-[10px] uppercase font-black text-muted-foreground tracking-widest leading-none">{t.remainingBlocks || "Remaining"}</span>
@@ -84,7 +84,7 @@ export function GameStats({ score, highScore, moves, difficulty, aiFeedback, las
       {aiFeedback && (
         <div className="bg-primary/10 border border-primary/20 rounded-lg p-1 lg:p-2.5 text-[8px] md:text-[10px] text-primary font-semibold flex items-start gap-1.5 animate-in fade-in slide-in-from-top-1">
           <Sparkles className="shrink-0 w-2 h-2 md:w-3.5 md:h-3.5 mt-0.5" />
-          <span className="leading-tight">{aiFeedback}</span>
+          <span className="leading-tight line-clamp-2 landscape:line-clamp-none">{aiFeedback}</span>
         </div>
       )}
 
@@ -100,7 +100,7 @@ export function GameStats({ score, highScore, moves, difficulty, aiFeedback, las
 
 function StatCard({ label, value, icon, className }: { label: string, value: string, icon: React.ReactNode, className?: string }) {
   return (
-    <Card className={cn("p-1 lg:p-2.5 flex flex-col items-center justify-center bg-white/10 backdrop-blur-md border-white/10 shadow-md transition-all duration-300 min-h-[36px] md:min-h-[58px]", className)}>
+    <Card className={cn("p-1 landscape:p-1.5 lg:p-2.5 flex flex-col items-center justify-center bg-white/10 backdrop-blur-md border-white/10 shadow-md transition-all duration-300 min-h-[36px] landscape:min-h-[44px] md:min-h-[58px]", className)}>
       <div className="flex items-center gap-1 mb-0.5">
         {icon}
         <span className="text-[7px] md:text-[9px] uppercase font-black text-muted-foreground tracking-widest leading-none">{label}</span>
