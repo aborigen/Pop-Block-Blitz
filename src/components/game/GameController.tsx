@@ -488,16 +488,16 @@ export function GameController() {
             </Button>
             <Button 
               variant="ghost" 
+              size="icon"
               disabled={isProcessing}
               onClick={() => {
                 soundManager.playClick();
                 startNewGame();
               }} 
               title={t.resetSession}
-              className="rounded-full h-8 md:h-10 px-2 md:px-5 hover:bg-white/10 font-bold"
+              className="rounded-full w-8 h-8 md:w-10 md:h-10 hover:bg-white/10"
             >
-              <RefreshCw className="w-4 h-4 md:w-5 md:h-5 mr-1" />
-              <span className="hidden sm:inline">{t.resetSession}</span>
+              <RefreshCw className="w-4 h-4 md:w-5 md:h-5" />
             </Button>
             <Button 
               variant="ghost" 

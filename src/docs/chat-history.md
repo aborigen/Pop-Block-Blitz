@@ -5,6 +5,13 @@ This document provides a summary of the key features, refinements, and bug fixes
 
 ## Development Milestones
 
+### 🛠 UI Streamlining (v0.9.2)
+- **Icon-Only Reset**: Removed the text label from the Reset Session button to match the minimalist icon-based header aesthetic.
+
+### 🛠 Visual Refinement & Scaling (v0.9.0 - v0.9.1)
+- **Responsive Overhaul**: Refactored the entire game UI to optimize screen real estate. The board now dynamically scales to the maximum available area in both orientations.
+- **Compact Stats**: Statistics in portrait mode were condensed into a space-efficient horizontal bar.
+
 ### 🛠 Gameplay Onboarding (v0.8.9)
 - **Tutorial Integration**: Introduced a "Very Easy" starting level with a 6x6 grid and 3 colors for optimized first-time user experience.
 - **Dynamic Scaling**: Hardened the difficulty adjustment algorithm to support the 6x6 "Tutorial" bounds for struggling players.
@@ -23,11 +30,6 @@ This document provides a summary of the key features, refinements, and bug fixes
 - **Multi-Move Onboarding**: Expanded the hint system to identify the top 3 largest possible moves rather than just one.
 - **Sequential Cycling**: Refined the visual guidance to cycle through these 3 moves sequentially (every 2 seconds) with a finger animation, reducing UI clutter while maintaining helpfulness.
 - **Auto-Dismissal**: Added logic to automatically hide hints after 3 full cycles, ensuring the interface remains clean for experienced players.
-
-### 📱 Viewport & UI Optimization (v0.7.1 - v0.8.7)
-- **Dynamic Scaling**: Optimized the board to fill the maximum available screen space using `aspect-ratio` and `max-height: 100%`.
-- **Landscape Improvements**: Refined the desktop header and board constraints to ensure perfect fitting in landscape orientation.
-- **Button Styling (v0.8.7)**: Increased horizontal padding for the "Reset Session" button to improve tap targets and visual distinction.
 
 ### 🚀 Yandex Games SDK Integration (v0.7.6 - v0.8.8)
 - **Game Ready Lifecycle**: Refined the `reportReady` trigger. The call to `LoadingAPI.ready()` is precisely timed to occur 200ms after the game is mounted and the interactive grid is rendered, ensuring no platform loading screens block gameplay.
