@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback, useRef, useMemo } from "react"
 import { 
   generateGrid, 
   getConnectedBlocks, 
-  processClear, 
   calculateMoveScore, 
   checkGameOver,
   isGridEmpty,
@@ -82,6 +81,7 @@ export function GameController() {
     isInitialized.current = true;
     setMounted(true);
     
+    // Pure Local Persistence - No SDK bridge dependencies
     const savedHighScore = localStorage.getItem('pop-block-high-score');
     if (savedHighScore) {
       setState(prev => ({ ...prev, highScore: parseInt(savedHighScore, 10) }));
@@ -233,7 +233,6 @@ export function GameController() {
     setVisualRotation(0);
     setIsAnimatingRotation(false);
     setSuppressTransitions(false);
-    setIsPerfectClear(false);
     
     localStorage.removeItem('pop-block-session');
   }, [performanceHistory, getHeuristicDifficulty, state.config, state.difficulty]);
