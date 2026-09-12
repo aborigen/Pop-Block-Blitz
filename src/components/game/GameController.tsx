@@ -12,7 +12,6 @@ import {
   rotateGridRaw,
   applyGravityAndConsolidate,
   getBlockCounts,
-  setColors,
   type Grid,
   type GameState,
   type DifficultyLevel 
@@ -23,7 +22,6 @@ import { Button } from "@/components/ui/button"
 import { RefreshCw, PlayCircle, Volume2, VolumeX, RotateCcw, RotateCw, Sparkles, Save } from "lucide-react"
 import { useTranslation } from "@/lib/i18n/context"
 import { soundManager } from "@/lib/sound-effects"
-import { initYandexSDK, reportScore, reportReady, getLanguage, getRemoteConfig } from "@/lib/yandex-games"
 import { LeaderboardModal } from "./LeaderboardModal"
 import { GameOverParticles } from "./GameOverParticles"
 import { cn } from "@/lib/utils"
@@ -39,14 +37,10 @@ interface FloatingScore {
 const DIFFICULTY_ORDER: DifficultyLevel[] = ['very_easy', 'easy', 'medium', 'hard', 'expert', 'insane'];
 
 export function GameController() {
-  const { t, setLocale } = useTranslation();
+  const { t } = useTranslation();
   const { toast } = useToast();
   const [mounted, setMounted] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
-  const [sdkReady, setSdkReady] = useState(false);
-  const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(false);
-  const [isPerfectClear, setIsPerfectClear] = useState(false);
-  const [isProcessing, setIsProcessing] = useState(false);
   
   const [state, setState] = useState<GameState>({
     grid: [],
@@ -76,11 +70,9 @@ export function GameController() {
   const [visualRotation, setVisualRotation] = useState(0)
   const [isAnimatingRotation, setIsAnimatingRotation] = useState(false)
   const [suppressTransitions, setSuppressTransitions] = useState(false)
-  const [paletteVersion, setPaletteVersion] = useState(0)
   
   const scoreCounter = useRef(0)
   const incrementTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const isReadyReported = useRef(false)
   const isInitialized = useRef(false)
 
   const blockCounts = useMemo(() => getBlockCounts(state.grid), [state.grid]);
@@ -111,28 +103,7 @@ export function GameController() {
         console.warn("Failed to restore session", e);
       }
     }
-
-    initYandexSDK().then(async (sdk) => {
-      if (sdk) {
-        setSdkReady(true);
-        const sdkLang = getLanguage();
-        if (sdkLang) setLocale(sdkLang); 
-
-        try {
-          const config = await getRemoteConfig();
-          if (config && config.color_palette) {
-            const palette = config.color_palette.split(',').map((c: string) => c.trim()).filter((c: string) => c.startsWith('#'));
-            if (palette.length >= 3) {
-              setColors(palette);
-              setPaletteVersion(v => v + 1);
-            }
-          }
-        } catch (e) {
-          console.error("Failed to load remote config", e);
-        }
-      }
-    });
-  }, [setLocale])
+  }, [])
 
   useEffect(() => {
     if (mounted && state.grid.length > 0 && !state.gameOver) {
@@ -147,12 +118,6 @@ export function GameController() {
       localStorage.setItem('pop-block-high-score', state.highScore.toString());
     }
   }, [state.grid, state.score, state.moves, state.highScore, state.difficulty, state.config, state.gameOver, mounted]);
-
-  useEffect(() => {
-    if (sdkReady && state.highScore > 0) {
-      reportScore('leaders', state.highScore);
-    }
-  }, [state.highScore, sdkReady]);
 
   const handleManualSave = () => {
     if (state.gameOver) return;
@@ -268,9 +233,7 @@ export function GameController() {
     setVisualRotation(0);
     setIsAnimatingRotation(false);
     setSuppressTransitions(false);
-    setIsLeaderboardOpen(false);
     setIsPerfectClear(false);
-    setIsProcessing(false);
     
     localStorage.removeItem('pop-block-session');
   }, [performanceHistory, getHeuristicDifficulty, state.config, state.difficulty]);
@@ -281,18 +244,8 @@ export function GameController() {
     }
   }, [mounted, state.grid.length, startNewGame]);
 
-  useEffect(() => {
-    if (mounted && state.grid.length > 0 && sdkReady && !isReadyReported.current) {
-      const timer = setTimeout(() => {
-        reportReady();
-        isReadyReported.current = true;
-      }, 200);
-      return () => clearTimeout(timer);
-    }
-  }, [mounted, state.grid.length, sdkReady]);
-
   const handleBlockClick = (x: number, y: number) => {
-    if (state.gameOver || isAnimatingRotation || isProcessing) return
+    if (state.gameOver || isAnimatingRotation) return
     if (hintGroups.length > 0) {
       setHintGroups([]);
       setHintCycleCount(0);
@@ -308,7 +261,6 @@ export function GameController() {
     const targetKey = targetedGroup.map(p => `${p[0]},${p[1]}`).sort().join('|')
     
     if (groupKey === targetKey) {
-      setIsProcessing(true);
       setPoppingGroup(group);
       soundManager.playPop(group.length);
       const points = calculateMoveScore(group.length)
@@ -324,7 +276,6 @@ export function GameController() {
         setFloatingScores(prev => prev.filter(s => s.id !== newFloatingScore.id));
       }, 800);
 
-      // Delay actual grid removal for the dissolve animation
       setTimeout(() => {
         const gridWithHoles = state.grid.map(row => [...row]);
         for (const [gx, gy] of group) {
@@ -353,13 +304,11 @@ export function GameController() {
             let finalScore = prev.score;
             if (isPerfect) {
               finalScore *= 5;
-              setIsPerfectClear(true);
             }
 
             if (isGameOver) {
               soundManager.playGameOver();
               localStorage.removeItem('pop-block-session');
-              setIsLeaderboardOpen(true);
             }
 
             return {
@@ -376,10 +325,8 @@ export function GameController() {
             lastMaxCombo: Math.max(prev.lastMaxCombo, group.length),
             lastAvgClear: ((prev.lastAvgClear * state.moves) + group.length) / (state.moves + 1)
           }))
-
-          setIsProcessing(false);
-        }, 300); // Cascading delay
-      }, 300); // Dissolve animation duration
+        }, 300);
+      }, 300);
 
     } else {
       soundManager.playClick();
@@ -388,7 +335,7 @@ export function GameController() {
   }
 
   const handleRotate = (direction: 'cw' | 'ccw') => {
-    if (state.gameOver || isAnimatingRotation || isProcessing) return;
+    if (state.gameOver || isAnimatingRotation) return;
     soundManager.playClick();
     
     setIsAnimatingRotation(true);
@@ -411,27 +358,18 @@ export function GameController() {
         setSuppressTransitions(false);
         const finalGrid = applyGravityAndConsolidate(rawRotated);
         const isGameOver = checkGameOver(finalGrid);
-        const isPerfect = isGameOver && isGridEmpty(finalGrid);
         
         setState(prev => {
-          let newScore = prev.score;
-          if (isPerfect) {
-            newScore *= 5;
-            setIsPerfectClear(true);
-          }
-
           if (isGameOver) {
             soundManager.playGameOver();
             localStorage.removeItem('pop-block-session');
-            setIsLeaderboardOpen(true);
           }
 
           return {
             ...prev,
             grid: finalGrid,
-            score: newScore,
             gameOver: isGameOver,
-            highScore: Math.max(prev.highScore, newScore)
+            highScore: Math.max(prev.highScore, prev.score)
           }
         });
         
@@ -455,18 +393,17 @@ export function GameController() {
 
   return (
     <div className="flex flex-col landscape:flex-row w-full h-full p-1 md:p-4 gap-1 md:gap-4 overflow-hidden items-stretch justify-center relative z-10">
-      {/* Sidebar/Top Panel */}
       <div className="flex flex-col shrink-0 w-full landscape:w-[200px] lg:landscape:w-[240px] gap-1 md:gap-4 z-20">
         <div className="flex items-center justify-between px-1 landscape:px-0">
           <div className="flex items-center gap-1">
-            <LeaderboardModal open={isLeaderboardOpen} onOpenChange={setIsLeaderboardOpen} />
+            <LeaderboardModal />
           </div>
           <div className="flex items-center gap-1">
             <Button 
               variant="ghost" 
               size="icon" 
               onClick={handleManualSave}
-              disabled={isProcessing || state.gameOver}
+              disabled={state.gameOver}
               title={t.saveGame}
               className="rounded-full w-8 h-8 md:w-10 md:h-10 hover:bg-white/10"
             >
@@ -476,7 +413,7 @@ export function GameController() {
               variant="ghost" 
               size="icon" 
               onClick={() => handleRotate('ccw')}
-              disabled={isAnimatingRotation || isProcessing}
+              disabled={isAnimatingRotation}
               title={t.rotateLeft}
               className="rounded-full w-8 h-8 md:w-10 md:h-10 hover:bg-white/10"
             >
@@ -486,7 +423,7 @@ export function GameController() {
               variant="ghost" 
               size="icon" 
               onClick={() => handleRotate('cw')}
-              disabled={isAnimatingRotation || isProcessing}
+              disabled={isAnimatingRotation}
               title={t.rotateRight}
               className="rounded-full w-8 h-8 md:w-10 md:h-10 hover:bg-white/10"
             >
@@ -495,7 +432,6 @@ export function GameController() {
             <Button 
               variant="ghost" 
               size="icon"
-              disabled={isProcessing}
               onClick={() => {
                 soundManager.playClick();
                 startNewGame();
@@ -527,7 +463,6 @@ export function GameController() {
         />
       </div>
 
-      {/* Main Board Area - Optimized for maximum scale */}
       <div className="flex-grow flex items-center justify-center relative min-h-0 w-full h-full p-1 md:p-2 overflow-hidden">
         <div 
           className={cn(
@@ -582,10 +517,10 @@ export function GameController() {
             </div>
           ))}
 
-          {state.gameOver && !isProcessing && (
+          {state.gameOver && (
             <div className="absolute inset-0 z-40 flex flex-col items-center justify-center bg-background/95 backdrop-blur-xl rounded-xl animate-in fade-in duration-300 p-4 md:p-8 text-center">
               <GameOverParticles />
-              {isPerfectClear && (
+              {isGridEmpty(state.grid) && (
                 <div className="mb-4 md:mb-6 animate-bounce bg-accent text-accent-foreground px-4 md:px-6 py-2 md:py-3 rounded-full font-black text-xl md:text-4xl flex items-center gap-2 md:gap-3 shadow-2xl">
                   <Sparkles className="w-5 h-5 md:w-10 md:h-10" />
                   {t.perfectClear}

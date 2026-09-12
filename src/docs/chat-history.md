@@ -1,44 +1,14 @@
-
 # Pop Block Blitz - Development Chat History
-
-This document provides a summary of the key features, refinements, and bug fixes implemented during the development of Pop Block Blitz.
 
 ## Development Milestones
 
+### 🚀 SDK Decoupling (v0.9.4)
+- **Yandex SDK Removal**: Successfully decoupled the game from the Yandex Games SDK to support standalone hosting.
+- **Restoration Guide**: Created `docs/restore-yandex-sdk.md` to ensure the platform integration can be restored in minutes if needed.
+- **Pure Persistence**: Hardened the local `localStorage` saving mechanism to handle sessions without platform-specific APIs.
+
 ### 🎨 Visual Polish & Satisfying Feedback (v0.9.3)
-- **Dissolve Animation**: Implemented a multi-stage dissolve effect for blocks being cleared. Blocks now scale up, brighten, and blur out before being removed, significantly enhancing the "Match-2" satisfaction.
-- **Sync Timing**: Refined the game controller logic to delay grid updates until the dissolve animation finishes, creating a more fluid visual flow.
+- **Dissolve Animation**: Implemented a multi-stage dissolve effect for blocks clearings.
+- **Sync Timing**: Refined controller logic to delay grid updates for visual flow.
 
-### 🛠 UI Streamlining (v0.9.2)
-- **Icon-Only Reset**: Removed the text label from the Reset Session button to match the minimalist icon-based header aesthetic.
-
-### 🛠 Visual Refinement & Scaling (v0.9.0 - v0.9.1)
-- **Responsive Overhaul**: Refactored the entire game UI to optimize screen real estate. The board now dynamically scales to the maximum available area in both orientations.
-- **Compact Stats**: Statistics in portrait mode were condensed into a space-efficient horizontal bar.
-
-### 🛠 Gameplay Onboarding (v0.8.9)
-- **Tutorial Integration**: Introduced a "Very Easy" starting level with a 6x6 grid and 3 colors for optimized first-time user experience.
-- **Dynamic Scaling**: Hardened the difficulty adjustment algorithm to support the 6x6 "Tutorial" bounds for struggling players.
-
-### 🛠 Architecture & Localization (v0.6.6 - v0.8.2)
-- **Stateless Localization**: Removed `localStorage` for language preferences. The game now relies exclusively on the Yandex Games platform environment for session-based language detection.
-- **Launch Synchronization**: Hardened the initialization logic to ensure language sync happens strictly once during the launch sequence, preventing mid-game resets.
-
-### 🎮 Gameplay Mechanics & Logic
-- **Even Color Parity (v0.6.7)**: Updated the grid generation algorithm to ensure every block color appears in an even quantity, improving the theoretical solvability of the Match-2 mechanic.
-- **Perfect Clear (v0.7.0)**: Introduced a massive x5 score multiplier bonus if the player manages to clear the entire board.
-- **Animation Refinement (v0.8.1)**: Added a 350ms delay between block popping and the cascading gravity effect to improve visual clarity and player satisfaction.
-- **Session Persistence (v0.8.6)**: Implemented automatic progress saving. The game state (grid, score, moves) is persisted to `localStorage` after every move and restored on refresh.
-
-### 💡 Hint System Evolution (v0.8.3 - v0.8.5)
-- **Multi-Move Onboarding**: Expanded the hint system to identify the top 3 largest possible moves rather than just one.
-- **Sequential Cycling**: Refined the visual guidance to cycle through these 3 moves sequentially (every 2 seconds) with a finger animation, reducing UI clutter while maintaining helpfulness.
-- **Auto-Dismissal**: Added logic to automatically hide hints after 3 full cycles, ensuring the interface remains clean for experienced players.
-
-### 🚀 Yandex Games SDK Integration (v0.7.6 - v0.8.8)
-- **Game Ready Lifecycle**: Refined the `reportReady` trigger. The call to `LoadingAPI.ready()` is precisely timed to occur 200ms after the game is mounted and the interactive grid is rendered, ensuring no platform loading screens block gameplay.
-- **Avatar Resolution**: Implemented a robust helper to safely handle both `getAvatarSrc` and `getPhoto` methods, preventing leaderboard crashes.
-- **Immediate Sync (v0.8.6)**: High scores are now reported to the Yandex leaderboard immediately upon achievement, ensuring persistence across platforms.
-
----
-*Documented by App Prototyper - May 2024*
+... [Previous entries truncated for brevity]

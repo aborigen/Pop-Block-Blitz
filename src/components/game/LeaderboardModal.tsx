@@ -1,7 +1,5 @@
-
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
 import {
   Dialog,
   DialogContent,
@@ -10,102 +8,14 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { Trophy, Users, LogIn } from "lucide-react"
+import { Trophy, Users } from "lucide-react"
 import { useTranslation } from "@/lib/i18n/context"
-import { getLeaderboardEntries, isPlayerAuthorized, authorizePlayer } from "@/lib/yandex-games"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
-interface LeaderboardEntry {
-  rank: number
-  score: number
-  player: {
-    publicName: string
-    // Methods might be missing on anonymous or plain objects
-    getAvatarSrc?: (size: string) => string
-    getPhoto?: (size: string) => string
-    avatarSrc?: string
-    photo?: string
-  }
-}
-
-interface LeaderboardModalProps {
-  open?: boolean
-  onOpenChange?: (open: boolean) => void
-}
-
-export function LeaderboardModal({ open: externalOpen, onOpenChange: onExternalOpenChange }: LeaderboardModalProps) {
+export function LeaderboardModal() {
   const { t } = useTranslation()
-  const [entries, setEntries] = useState<LeaderboardEntry[]>([])
-  const [loading, setLoading] = useState(false)
-  const [internalOpen, setInternalOpen] = useState(false)
-  const [isAuthorized, setIsAuthorized] = useState<boolean>(false)
-
-  const isOpen = externalOpen !== undefined ? externalOpen : internalOpen
-  const setIsOpen = (open: boolean) => {
-    if (onExternalOpenChange) {
-      onExternalOpenChange(open)
-    } else {
-      setInternalOpen(open)
-    }
-  }
-
-  const loadLeaderboard = useCallback(async () => {
-    setLoading(true)
-    try {
-      const data = await getLeaderboardEntries('leaders')
-      if (data && data.entries) {
-        setEntries(data.entries)
-      }
-    } catch (e) {
-      console.error("Failed to load leaderboard", e)
-    } finally {
-      setLoading(false)
-    }
-  }, [])
-
-  const checkAuthAndLoad = useCallback(async () => {
-    const authStatus = await isPlayerAuthorized()
-    setIsAuthorized(authStatus)
-    loadLeaderboard()
-  }, [loadLeaderboard])
-
-  useEffect(() => {
-    if (isOpen) {
-      checkAuthAndLoad()
-    }
-  }, [isOpen, checkAuthAndLoad])
-
-  const handleAuthorize = async () => {
-    const success = await authorizePlayer()
-    if (success) {
-      checkAuthAndLoad()
-    }
-  }
-
-  /**
-   * Safely resolves the avatar URL from the Yandex Player object.
-   * Handles SDK inconsistencies between getAvatarSrc and getPhoto.
-   */
-  const getAvatarUrl = (player: LeaderboardEntry['player']) => {
-    if (!player) return undefined;
-    
-    try {
-      if (typeof player.getAvatarSrc === 'function') {
-        return player.getAvatarSrc('small');
-      }
-      if (typeof player.getPhoto === 'function') {
-        return player.getPhoto('small');
-      }
-    } catch (e) {
-      console.warn('Failed to call avatar method on player object', e);
-    }
-
-    return player.avatarSrc || player.photo;
-  };
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog>
       <DialogTrigger asChild>
         <Button 
           variant="ghost" 
@@ -125,57 +35,12 @@ export function LeaderboardModal({ open: externalOpen, onOpenChange: onExternalO
           </DialogTitle>
         </DialogHeader>
 
-        <div className="py-2">
-          {!isAuthorized && (
-            <div className="mb-4 p-3 rounded-lg bg-primary/10 border border-primary/20 flex flex-col items-center gap-2 text-center">
-              <p className="text-xs font-medium text-primary leading-tight">
-                {t.loginToSeeRank}
-              </p>
-              <Button size="sm" onClick={handleAuthorize} className="h-8 rounded-full bg-primary hover:bg-primary/90">
-                <LogIn size={14} className="mr-2" />
-                {t.login}
-              </Button>
-            </div>
-          )}
-
-          {loading ? (
-            <div className="flex flex-col items-center justify-center py-10 gap-3">
-              <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
-              <p className="text-sm text-muted-foreground">{t.loading}</p>
-            </div>
-          ) : entries.length > 0 ? (
-            <ScrollArea className="h-[350px] pr-4">
-              <div className="space-y-2">
-                {entries.map((entry, idx) => (
-                  <div 
-                    key={`${entry.rank}-${idx}`} 
-                    className="flex items-center justify-between p-3 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-colors"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 flex justify-center font-black text-primary italic">
-                        #{entry.rank}
-                      </div>
-                      <Avatar className="w-8 h-8 border border-white/20">
-                        <AvatarImage src={getAvatarUrl(entry.player)} alt={entry.player.publicName} />
-                        <AvatarFallback><Users size={14} /></AvatarFallback>
-                      </Avatar>
-                      <span className="font-bold text-sm truncate max-w-[120px]">
-                        {entry.player.publicName || "Anonymous"}
-                      </span>
-                    </div>
-                    <div className="font-black text-accent-foreground">
-                      {entry.score.toLocaleString()}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </ScrollArea>
-          ) : (
-            <div className="text-center py-10">
-              <Users className="mx-auto w-12 h-12 text-muted-foreground opacity-20 mb-3" />
-              <p className="text-sm text-muted-foreground">{t.noData}</p>
-            </div>
-          )}
+        <div className="py-10 text-center">
+          <Users className="mx-auto w-12 h-12 text-muted-foreground opacity-20 mb-3" />
+          <p className="text-sm text-muted-foreground">
+            Online leaderboards are currently unavailable. 
+            Your high score is saved locally!
+          </p>
         </div>
       </DialogContent>
     </Dialog>
