@@ -1,3 +1,4 @@
+
 # Pop Block Blitz
 
 A satisfying, hyper-casual block popping game built with Next.js, featuring AI-driven dynamic difficulty adjustment and a modern, playful UI.
@@ -9,6 +10,11 @@ A satisfying, hyper-casual block popping game built with Next.js, featuring AI-d
 - **Visual Feedback**: High-impact animations, including floating scores, pulsing UI elements, and "pop-in" block effects.
 - **Static Export Ready**: Configured for `next export`, making it easy to host on any static web provider.
 - **Persistence**: Automatic progress and high score saving via local storage.
+
+## Compatibility
+- **macOS Support**: Optimized for macOS 10.15 (Catalina) and above.
+- **Node.js**: Requires Node.js 18.18.0 or later (compatible with macOS 10.15).
+- **Browsers**: Supports Safari 13+, Chrome 80+, and Firefox 75+.
 
 ## Game Logic
 

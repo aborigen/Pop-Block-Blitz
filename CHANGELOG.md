@@ -1,6 +1,12 @@
+
 # Changelog
 
 All notable changes to the **Pop Block Blitz** project will be documented in this file.
+
+## [0.9.6] - 2024-05-25
+### Added
+- **OS Compatibility**: Added CSS fallbacks for `dvh` and `aspect-ratio` to ensure the game board displays correctly on macOS 10.15 (Safari 13/14).
+- **Legacy Browser Support**: Integrated `-webkit-` prefixes for key animations and transitions to support older WebKit engines.
 
 ## [0.9.5] - 2024-05-25
 ### Fixed

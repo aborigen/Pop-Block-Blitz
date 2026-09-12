@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useEffect, useCallback, useRef, useMemo } from "react"
@@ -81,7 +82,6 @@ export function GameController() {
     isInitialized.current = true;
     setMounted(true);
     
-    // Pure Local Persistence - No SDK bridge dependencies
     const savedHighScore = localStorage.getItem('pop-block-high-score');
     if (savedHighScore) {
       setState(prev => ({ ...prev, highScore: parseInt(savedHighScore, 10) }));
@@ -471,10 +471,11 @@ export function GameController() {
           style={{ 
             gridTemplateColumns: `repeat(${state.config.width}, 1fr)`,
             gridTemplateRows: `repeat(${state.config.height}, 1fr)`,
+            // Fallback for browsers that don't support aspect-ratio (Safari < 15)
             aspectRatio: `${state.config.width} / ${state.config.height}`,
             width: '100%',
             height: '100%',
-            maxWidth: '100%',
+            maxWidth: `${(state.config.width / state.config.height) * 100}vh`,
             maxHeight: '100%',
             transform: `rotate(${visualRotation}deg) scale(${isAnimatingRotation ? 0.96 : 1})`,
             margin: 'auto',

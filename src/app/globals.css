@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -120,6 +121,7 @@
 }
 
 .animate-bump {
+  -webkit-animation: bump 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
   animation: bump 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
@@ -129,6 +131,7 @@
 }
 
 .animate-float-up-fade {
+  -webkit-animation: float-up-fade 0.8s ease-out forwards;
   animation: float-up-fade 0.8s ease-out forwards;
 }
 
@@ -138,6 +141,7 @@
 }
 
 .animate-hint-pulse {
+  -webkit-animation: hint-pulse 1.5s ease-in-out infinite;
   animation: hint-pulse 1.5s ease-in-out infinite;
 }
 
@@ -150,6 +154,7 @@
 }
 
 .animate-finger-tap {
+  -webkit-animation: finger-tap 2s ease-in-out infinite;
   animation: finger-tap 2s ease-in-out infinite;
 }
 
@@ -159,6 +164,7 @@
 }
 
 .animate-particle {
+  -webkit-animation: particle-explode var(--particle-duration) ease-out forwards;
   animation: particle-explode var(--particle-duration) ease-out forwards;
 }
 
@@ -169,9 +175,11 @@
 }
 
 .animate-dissolve {
+  -webkit-animation: dissolve 0.3s ease-out forwards;
   animation: dissolve 0.3s ease-out forwards;
 }
 
 .board-transition {
   transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+  -webkit-transition: -webkit-transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
