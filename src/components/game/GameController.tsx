@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState, useEffect, useCallback, useRef, useMemo } from "react"
@@ -68,6 +67,7 @@ export function GameController() {
 
   const [aiFeedback, setAiFeedback] = useState<string>("")
   const [targetedGroup, setTargetedGroup] = useState<[number, number][]>([])
+  const [poppingGroup, setPoppingGroup] = useState<[number, number][]>([])
   const [hintGroups, setHintGroups] = useState<[number, number][][]>([])
   const [activeHintIndex, setActiveHintIndex] = useState(0)
   const [hintCycleCount, setHintCycleCount] = useState(0)
@@ -259,6 +259,7 @@ export function GameController() {
     }));
 
     setTargetedGroup([]);
+    setPoppingGroup([]);
     setHintGroups(performanceHistory.totalGames < 2 ? topMoves : []);
     setActiveHintIndex(0);
     setHintCycleCount(0);
@@ -308,17 +309,11 @@ export function GameController() {
     
     if (groupKey === targetKey) {
       setIsProcessing(true);
+      setPoppingGroup(group);
       soundManager.playPop(group.length);
       const points = calculateMoveScore(group.length)
       
-      const gridWithHoles = state.grid.map(row => [...row]);
-      for (const [gx, gy] of group) {
-        gridWithHoles[gy][gx] = null;
-      }
-      
-      const newScoreBeforeGravity = state.score + points;
       const newFloatingScore = { id: ++scoreCounter.current, x, y, points };
-      
       setFloatingScores(prev => [...prev, newFloatingScore]);
       setLastIncrement(points);
       
@@ -329,51 +324,62 @@ export function GameController() {
         setFloatingScores(prev => prev.filter(s => s.id !== newFloatingScore.id));
       }, 800);
 
-      setState(prev => ({
-        ...prev,
-        grid: gridWithHoles,
-        score: newScoreBeforeGravity,
-        moves: prev.moves + 1,
-        highScore: Math.max(prev.highScore, newScoreBeforeGravity)
-      }));
-      
-      setTargetedGroup([]);
-
+      // Delay actual grid removal for the dissolve animation
       setTimeout(() => {
-        const finalGrid = applyGravityAndConsolidate(gridWithHoles);
-        const isGameOver = checkGameOver(finalGrid);
-        const isPerfect = isGameOver && isGridEmpty(finalGrid);
+        const gridWithHoles = state.grid.map(row => [...row]);
+        for (const [gx, gy] of group) {
+          gridWithHoles[gy][gx] = null;
+        }
         
-        setState(prev => {
-          let finalScore = prev.score;
-          if (isPerfect) {
-            finalScore *= 5;
-            setIsPerfectClear(true);
-          }
-
-          if (isGameOver) {
-            soundManager.playGameOver();
-            localStorage.removeItem('pop-block-session');
-            setIsLeaderboardOpen(true);
-          }
-
-          return {
-            ...prev,
-            grid: finalGrid,
-            score: finalScore,
-            gameOver: isGameOver,
-            highScore: Math.max(prev.highScore, finalScore)
-          }
-        });
-
-        setPerformanceHistory(prev => ({
+        const newScoreBeforeGravity = state.score + points;
+        
+        setState(prev => ({
           ...prev,
-          lastMaxCombo: Math.max(prev.lastMaxCombo, group.length),
-          lastAvgClear: ((prev.lastAvgClear * state.moves) + group.length) / (state.moves + 1)
-        }))
+          grid: gridWithHoles,
+          score: newScoreBeforeGravity,
+          moves: prev.moves + 1,
+          highScore: Math.max(prev.highScore, newScoreBeforeGravity)
+        }));
+        
+        setPoppingGroup([]);
+        setTargetedGroup([]);
 
-        setIsProcessing(false);
-      }, 350);
+        setTimeout(() => {
+          const finalGrid = applyGravityAndConsolidate(gridWithHoles);
+          const isGameOver = checkGameOver(finalGrid);
+          const isPerfect = isGameOver && isGridEmpty(finalGrid);
+          
+          setState(prev => {
+            let finalScore = prev.score;
+            if (isPerfect) {
+              finalScore *= 5;
+              setIsPerfectClear(true);
+            }
+
+            if (isGameOver) {
+              soundManager.playGameOver();
+              localStorage.removeItem('pop-block-session');
+              setIsLeaderboardOpen(true);
+            }
+
+            return {
+              ...prev,
+              grid: finalGrid,
+              score: finalScore,
+              gameOver: isGameOver,
+              highScore: Math.max(prev.highScore, finalScore)
+            }
+          });
+
+          setPerformanceHistory(prev => ({
+            ...prev,
+            lastMaxCombo: Math.max(prev.lastMaxCombo, group.length),
+            lastAvgClear: ((prev.lastAvgClear * state.moves) + group.length) / (state.moves + 1)
+          }))
+
+          setIsProcessing(false);
+        }, 300); // Cascading delay
+      }, 300); // Dissolve animation duration
 
     } else {
       soundManager.playClick();
@@ -552,6 +558,7 @@ export function GameController() {
                   key={`${x}-${y}`} 
                   colorIndex={colorIndex} 
                   isTargeted={targetedGroup.some(p => p[0] === x && p[1] === y)}
+                  isPopping={poppingGroup.some(p => p[0] === x && p[1] === y)}
                   isHinted={isInHint}
                   showFinger={isFingerHead}
                   onClick={() => handleBlockClick(x, y)} 

@@ -5,6 +5,10 @@ This document provides a summary of the key features, refinements, and bug fixes
 
 ## Development Milestones
 
+### 🎨 Visual Polish & Satisfying Feedback (v0.9.3)
+- **Dissolve Animation**: Implemented a multi-stage dissolve effect for blocks being cleared. Blocks now scale up, brighten, and blur out before being removed, significantly enhancing the "Match-2" satisfaction.
+- **Sync Timing**: Refined the game controller logic to delay grid updates until the dissolve animation finishes, creating a more fluid visual flow.
+
 ### 🛠 UI Streamlining (v0.9.2)
 - **Icon-Only Reset**: Removed the text label from the Reset Session button to match the minimalist icon-based header aesthetic.
 

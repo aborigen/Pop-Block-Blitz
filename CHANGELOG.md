@@ -3,6 +3,10 @@
 
 All notable changes to the **Pop Block Blitz** project will be documented in this file.
 
+## [0.9.3] - 2024-05-25
+### Added
+- **Dissolve Effect**: Blocks now disappear with a custom "dissolve" animation featuring scaling, brightness boost, and blurring for a more satisfying tactile feel.
+
 ## [0.9.2] - 2024-05-25
 ### Improved
 - **Header UI**: Removed text label from the "Reset Session" button, converting it to a clean icon-only button for consistency and better space utilization.

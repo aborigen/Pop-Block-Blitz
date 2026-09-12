@@ -10,9 +10,10 @@ interface BlockProps {
   isTargeted: boolean
   isHinted?: boolean
   showFinger?: boolean
+  isPopping?: boolean
 }
 
-export function Block({ colorIndex, onClick, isTargeted, isHinted, showFinger }: BlockProps) {
+export function Block({ colorIndex, onClick, isTargeted, isHinted, showFinger, isPopping }: BlockProps) {
   if (colorIndex === null) {
     return <div className="w-full h-full" />
   }
@@ -25,7 +26,8 @@ export function Block({ colorIndex, onClick, isTargeted, isHinted, showFinger }:
       onClick={onClick}
       className={cn(
         "w-full h-full rounded-[6px] md:rounded-lg flex items-center justify-center transition-all duration-200 animate-pop-in popit-tile-base relative group p-[10%]",
-        isTargeted ? "brightness-110 scale-[1.03] z-10" : "hover:brightness-105"
+        isTargeted ? "brightness-110 scale-[1.03] z-10" : "hover:brightness-105",
+        isPopping && "animate-dissolve pointer-events-none z-20"
       )}
       style={{ backgroundColor: color }}
     >
@@ -33,7 +35,7 @@ export function Block({ colorIndex, onClick, isTargeted, isHinted, showFinger }:
       <div 
         className={cn(
           "w-full h-full rounded-full flex items-center justify-center transition-all duration-150 popit-bubble overflow-hidden",
-          isTargeted && "popit-bubble-active"
+          isTargeted && !isPopping && "popit-bubble-active"
         )}
         style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)' }}
       >
@@ -42,11 +44,11 @@ export function Block({ colorIndex, onClick, isTargeted, isHinted, showFinger }:
         </div>
       </div>
       
-      {isHinted && !isTargeted && (
+      {isHinted && !isTargeted && !isPopping && (
         <div className="absolute inset-0 rounded-[6px] md:rounded-lg border-2 border-white/50 bg-white/10 animate-hint-pulse pointer-events-none z-10" />
       )}
 
-      {showFinger && !isTargeted && (
+      {showFinger && !isTargeted && !isPopping && (
         <div className="absolute -bottom-2 -right-2 z-50 pointer-events-none animate-finger-tap text-white filter drop-shadow-md">
           <Hand size={32} fill="white" className="rotate-[-20deg]" />
         </div>
