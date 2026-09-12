@@ -1,4 +1,3 @@
-
 # Pop Block Blitz
 
 A satisfying, hyper-casual block popping game built with Next.js, featuring AI-driven dynamic difficulty adjustment and a modern, playful UI.
@@ -15,6 +14,14 @@ A satisfying, hyper-casual block popping game built with Next.js, featuring AI-d
 - **macOS Support**: Optimized for macOS 10.15 (Catalina) and above.
 - **Node.js**: Requires Node.js 18.18.0 or later (compatible with macOS 10.15).
 - **Browsers**: Supports Safari 13+, Chrome 80+, and Firefox 75+.
+
+## Troubleshooting macOS 10.15 Errors
+If you encounter `dyld: Symbol not found: _SecTrustCopyCertificateChain` during installation or development:
+1. **Cause**: The `esbuild` binary provided by npm is compiled for macOS 11+.
+2. **Solution**: Force npm to use the WebAssembly version of esbuild which has no system dependencies.
+   - Run: `npm install esbuild-wasm`
+   - Set the environment variable: `export ESBUILD_BINARY_PATH=$(node -e "console.log(require.resolve('esbuild-wasm/esbuild.wasm'))")`
+   - Alternatively, use an older esbuild version: `npm install esbuild@0.19.0 --save-exact`
 
 ## Game Logic
 
