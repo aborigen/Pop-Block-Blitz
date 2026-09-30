@@ -19,7 +19,7 @@ import {
 import { Block } from "./Block"
 import { GameStats } from "./GameStats"
 import { Button } from "@/components/ui/button"
-import { RefreshCw, PlayCircle, Volume2, VolumeX, RotateCcw, RotateCw, Sparkles, Save } from "lucide-react"
+import { RefreshCw, PlayCircle, Volume2, VolumeX, RotateCcw, RotateCw, Sparkles, Save, Lightbulb } from "lucide-react"
 import { useTranslation } from "@/lib/i18n/context"
 import { soundManager } from "@/lib/sound-effects"
 import { LeaderboardModal } from "./LeaderboardModal"
@@ -163,6 +163,19 @@ export function GameController() {
       setHintCycleCount(0);
     }
   }, [hintCycleCount]);
+
+  const triggerHint = () => {
+    if (state.gameOver || isAnimatingRotation) return;
+    soundManager.playClick();
+    const topMoves = findTopMoves(state.grid, 3);
+    if (topMoves.length > 0) {
+      setHintGroups(topMoves);
+      setActiveHintIndex(0);
+      setHintCycleCount(0);
+    } else {
+      toast({ description: t.noData, duration: 2000 });
+    }
+  }
 
   const getHeuristicDifficulty = useCallback((performance: any, currentConfig: any, currentDifficulty: DifficultyLevel) => {
     const avgScore = performance.cumulativeScore / (performance.totalGames || 1);
@@ -394,60 +407,78 @@ export function GameController() {
     <div className="flex flex-col landscape:flex-row w-full h-full p-1 md:p-4 gap-1 md:gap-4 overflow-hidden items-stretch justify-center relative z-10">
       <div className="flex flex-col shrink-0 w-full landscape:w-[200px] lg:landscape:w-[240px] gap-1 md:gap-4 z-20">
         <div className="flex items-center justify-between px-1 landscape:px-0">
-          <div className="flex items-center gap-1">
+          {/* Main Actions Group */}
+          <div className="flex items-center gap-1.5 md:gap-2">
             <LeaderboardModal />
+            <Button 
+              variant="secondary" 
+              size="icon" 
+              onClick={triggerHint}
+              disabled={state.gameOver || isAnimatingRotation}
+              title={t.hint}
+              className="rounded-full w-8 h-8 md:w-10 md:h-10 popit-control-btn bg-accent text-accent-foreground border-accent-foreground/20"
+            >
+              <Lightbulb className="w-4 h-4 md:w-5 md:h-5" />
+            </Button>
           </div>
+
+          {/* System/Aux Group */}
           <div className="flex items-center gap-1">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              onClick={handleManualSave}
-              disabled={state.gameOver}
-              title={t.saveGame}
-              className="rounded-full w-8 h-8 md:w-10 md:h-10 hover:bg-white/10"
-            >
-              <Save className="w-4 h-4 md:w-5 md:h-5" />
-            </Button>
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              onClick={() => handleRotate('ccw')}
-              disabled={isAnimatingRotation}
-              title={t.rotateLeft}
-              className="rounded-full w-8 h-8 md:w-10 md:h-10 hover:bg-white/10"
-            >
-              <RotateCcw className="w-4 h-4 md:w-5 md:h-5" />
-            </Button>
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              onClick={() => handleRotate('cw')}
-              disabled={isAnimatingRotation}
-              title={t.rotateRight}
-              className="rounded-full w-8 h-8 md:w-10 md:h-10 hover:bg-white/10"
-            >
-              <RotateCw className="w-4 h-4 md:w-5 md:h-5" />
-            </Button>
-            <Button 
-              variant="ghost" 
-              size="icon"
-              onClick={() => {
-                soundManager.playClick();
-                startNewGame();
-              }} 
-              title={t.resetSession}
-              className="rounded-full w-8 h-8 md:w-10 md:h-10 hover:bg-white/10"
-            >
-              <RefreshCw className="w-4 h-4 md:w-5 md:h-5" />
-            </Button>
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              onClick={() => setSoundEnabled(!soundEnabled)}
-              className="rounded-full w-8 h-8 md:w-10 md:h-10 hover:bg-white/10"
-            >
-              {soundEnabled ? <Volume2 className="w-4 h-4 md:w-5 md:h-5" /> : <VolumeX className="w-4 h-4 md:w-5 md:h-5" />}
-            </Button>
+            <div className="flex items-center bg-white/5 p-1 rounded-full border border-white/10 gap-0.5">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={() => handleRotate('ccw')}
+                disabled={isAnimatingRotation || state.gameOver}
+                title={t.rotateLeft}
+                className="rounded-full w-7 h-7 md:w-9 md:h-9 hover:bg-white/10"
+              >
+                <RotateCcw className="w-4 h-4 md:w-5 md:h-5" />
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={() => handleRotate('cw')}
+                disabled={isAnimatingRotation || state.gameOver}
+                title={t.rotateRight}
+                className="rounded-full w-7 h-7 md:w-9 md:h-9 hover:bg-white/10"
+              >
+                <RotateCw className="w-4 h-4 md:w-5 md:h-5" />
+              </Button>
+            </div>
+
+            <div className="flex items-center bg-white/5 p-1 rounded-full border border-white/10 ml-1">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={handleManualSave}
+                disabled={state.gameOver}
+                title={t.saveGame}
+                className="rounded-full w-7 h-7 md:w-9 md:h-9 hover:bg-white/10 text-primary"
+              >
+                <Save className="w-4 h-4 md:w-5 md:h-5" />
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={() => setSoundEnabled(!soundEnabled)}
+                className="rounded-full w-7 h-7 md:w-9 md:h-9 hover:bg-white/10"
+              >
+                {soundEnabled ? <Volume2 className="w-4 h-4 md:w-5 md:h-5 text-accent" /> : <VolumeX className="w-4 h-4 md:w-5 md:h-5 text-muted-foreground" />}
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="icon"
+                onClick={() => {
+                  soundManager.playClick();
+                  startNewGame();
+                }} 
+                title={t.resetSession}
+                className="rounded-full w-7 h-7 md:w-9 md:h-9 hover:bg-white/10 text-destructive"
+              >
+                <RefreshCw className="w-4 h-4 md:w-5 md:h-5" />
+              </Button>
+            </div>
           </div>
         </div>
 
@@ -471,7 +502,6 @@ export function GameController() {
           style={{ 
             gridTemplateColumns: `repeat(${state.config.width}, 1fr)`,
             gridTemplateRows: `repeat(${state.config.height}, 1fr)`,
-            // Fallback for browsers that don't support aspect-ratio (Safari < 15)
             aspectRatio: `${state.config.width} / ${state.config.height}`,
             width: '100%',
             height: '100%',
