@@ -1,6 +1,12 @@
+
 # Changelog
 
 All notable changes to the **Pop Block Blitz** project will be documented in this file.
+
+## [0.9.8] - 2024-05-25
+### Added
+- **Visual Polish**: Refined block graphics with 3D depth, gloss overlays, and tactile "pressed" animations for a physical "Popit" toy aesthetic.
+- **UI Refinement**: Optimized shape icons for better visibility and contrast.
 
 ## [0.9.7] - 2024-05-25
 ### Fixed

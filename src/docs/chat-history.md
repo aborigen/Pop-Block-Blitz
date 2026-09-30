@@ -1,6 +1,11 @@
+
 # Pop Block Blitz - Development Chat History
 
 ## Development Milestones
+
+### 🎨 Visual Polish (v0.9.8)
+- **Graphic Design**: Refined block aesthetics to feel more like tactile "Popit" toys with 3D depth and gloss effects.
+- **Animation**: Improved the "pressed" state feedback for targeted block groups.
 
 ### 🛠️ Legacy OS Compatibility (v0.9.7)
 - **Troubleshooting**: Addressed `esbuild` dyld errors (`_SecTrustCopyCertificateChain`) found on macOS 10.15 Catalina.

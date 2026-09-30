@@ -65,8 +65,8 @@
 @layer base {
   * {
     @apply border-border;
-    -webkit-touch-callout: none; /* Prevent context menu on long press in iOS */
-    -webkit-user-select: none;   /* Prevent text selection */
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
     user-select: none;
   }
   
@@ -79,7 +79,7 @@
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
     overflow: hidden;
-    touch-action: none; /* Disable browser gestures for smooth gameplay */
+    touch-action: none;
   }
 }
 
@@ -91,33 +91,43 @@
   }
 }
 
-/* Popit Aesthetics */
+/* Enhanced Popit Aesthetics */
 .popit-tile-base {
   box-shadow: 
-    inset 1px 1px 2px rgba(255, 255, 255, 0.4),
-    inset -1px -1px 2px rgba(0, 0, 0, 0.3),
-    0 2px 4px rgba(0, 0, 0, 0.2);
+    0 4px 0 rgba(0, 0, 0, 0.25), /* Bottom depth */
+    inset 1px 1px 1px rgba(255, 255, 255, 0.4), /* Top highlight */
+    inset -1px -1px 1px rgba(0, 0, 0, 0.2); /* Bottom inner shadow */
+}
+
+.popit-tile-active {
+  transform: translateY(2px) scale(0.98);
+  box-shadow: 
+    0 2px 0 rgba(0, 0, 0, 0.2),
+    inset 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .popit-bubble {
-  background: radial-gradient(circle at 35% 35%, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0) 60%);
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 70%);
   box-shadow: 
-    inset -3px -3px 6px rgba(0,0,0,0.25),
-    inset 3px 3px 6px rgba(255,255,255,0.4),
-    0 2px 6px rgba(0,0,0,0.3);
+    inset -2px -2px 4px rgba(0,0,0,0.2),
+    inset 2px 2px 4px rgba(255,255,255,0.3);
 }
 
 .popit-bubble-active {
-  transform: scale(0.92);
-  box-shadow: 
-    inset 3px 3px 6px rgba(0,0,0,0.4),
-    inset -1px -1px 2px rgba(255,255,255,0.2);
   background: radial-gradient(circle at 50% 50%, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0) 80%);
+  box-shadow: 
+    inset 2px 2px 4px rgba(0,0,0,0.3),
+    inset -1px -1px 2px rgba(255,255,255,0.1);
+}
+
+.popit-shine {
+  background: linear-gradient(135deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 50%);
+  pointer-events: none;
 }
 
 @keyframes bump {
   0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.1); }
+  50% { transform: scale(1.05); }
 }
 
 .animate-bump {
@@ -137,7 +147,7 @@
 
 @keyframes hint-pulse {
   0%, 100% { transform: scale(1); opacity: 0.6; box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
-  50% { transform: scale(1.05); opacity: 1; box-shadow: 0 0 15px 2px rgba(255, 255, 255, 0.5); }
+  50% { transform: scale(1.02); opacity: 1; box-shadow: 0 0 10px 2px rgba(255, 255, 255, 0.4); }
 }
 
 .animate-hint-pulse {

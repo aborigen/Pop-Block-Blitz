@@ -1,3 +1,4 @@
+
 "use client"
 
 import { COLORS, SHAPES } from "@/lib/game-logic"
@@ -25,31 +26,33 @@ export function Block({ colorIndex, onClick, isTargeted, isHinted, showFinger, i
     <button
       onClick={onClick}
       className={cn(
-        "w-full h-full rounded-[6px] md:rounded-lg flex items-center justify-center transition-all duration-200 animate-pop-in popit-tile-base relative group p-[10%]",
-        isTargeted ? "brightness-110 scale-[1.03] z-10" : "hover:brightness-105",
+        "w-full h-full rounded-[8px] md:rounded-xl flex items-center justify-center transition-all duration-200 animate-pop-in popit-tile-base relative group p-[8%]",
+        isTargeted ? "popit-tile-active z-10 brightness-110" : "hover:brightness-105",
         isPopping && "animate-dissolve pointer-events-none z-20"
       )}
       style={{ backgroundColor: color }}
     >
+      {/* Gloss layer */}
+      <div className="absolute inset-0 rounded-[8px] md:rounded-xl popit-shine overflow-hidden" />
+      
       {/* The "Bubble" part of the Popit */}
       <div 
         className={cn(
-          "w-full h-full rounded-full flex items-center justify-center transition-all duration-150 popit-bubble overflow-hidden",
+          "w-full h-full rounded-full flex items-center justify-center transition-all duration-150 popit-bubble overflow-hidden relative",
           isTargeted && !isPopping && "popit-bubble-active"
         )}
-        style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)' }}
       >
-        <div className="text-white/40 w-[60%] h-[60%] flex items-center justify-center">
-          <ShapeIcon className="w-full h-full drop-shadow-sm" strokeWidth={3} />
+        <div className="text-white/30 w-[65%] h-[65%] flex items-center justify-center">
+          <ShapeIcon className="w-full h-full drop-shadow-md" strokeWidth={3.5} />
         </div>
       </div>
       
       {isHinted && !isTargeted && !isPopping && (
-        <div className="absolute inset-0 rounded-[6px] md:rounded-lg border-2 border-white/50 bg-white/10 animate-hint-pulse pointer-events-none z-10" />
+        <div className="absolute inset-0 rounded-[8px] md:rounded-xl border-2 border-white/40 bg-white/10 animate-hint-pulse pointer-events-none z-10" />
       )}
 
       {showFinger && !isTargeted && !isPopping && (
-        <div className="absolute -bottom-2 -right-2 z-50 pointer-events-none animate-finger-tap text-white filter drop-shadow-md">
+        <div className="absolute -bottom-2 -right-2 z-50 pointer-events-none animate-finger-tap text-white filter drop-shadow-lg">
           <Hand size={32} fill="white" className="rotate-[-20deg]" />
         </div>
       )}
