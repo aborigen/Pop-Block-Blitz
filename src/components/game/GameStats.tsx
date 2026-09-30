@@ -1,10 +1,9 @@
-
 "use client"
 
 import { Card } from "@/components/ui/card"
 import { Trophy, Target, Sparkles, Activity, Layers, Info } from "lucide-react"
 import { useTranslation } from "@/lib/i18n/context"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useMemo } from "react"
 import { cn } from "@/lib/utils"
 import { type DifficultyLevel, COLORS } from "@/lib/game-logic"
 
@@ -18,14 +17,37 @@ interface GameStatsProps {
   blockCounts: Record<number, number>
 }
 
+interface Particle {
+  id: number;
+  tx: number;
+  ty: number;
+  color: string;
+}
+
 export function GameStats({ score, highScore, moves, difficulty, aiFeedback, lastIncrement, blockCounts }: GameStatsProps) {
   const { t } = useTranslation();
   const [pulseScore, setPulseScore] = useState(false);
+  const [particles, setParticles] = useState<Particle[]>([]);
 
   useEffect(() => {
     if (score > 0) {
       setPulseScore(true);
-      const timer = setTimeout(() => setPulseScore(false), 300);
+      
+      // Generate impact particles
+      const newParticles = Array.from({ length: 12 }).map((_, i) => ({
+        id: Date.now() + i,
+        tx: (Math.random() - 0.5) * 160,
+        ty: (Math.random() - 0.5) * 160,
+        color: COLORS[Math.floor(Math.random() * COLORS.length)]
+      }));
+      
+      setParticles(newParticles);
+      
+      const timer = setTimeout(() => {
+        setPulseScore(false);
+        setParticles([]);
+      }, 600);
+      
       return () => clearTimeout(timer);
     }
   }, [score]);
@@ -34,13 +56,27 @@ export function GameStats({ score, highScore, moves, difficulty, aiFeedback, las
     <div className="flex flex-col gap-1 md:gap-4 w-full">
       {/* Primary Stats - Responsive Layout */}
       <div className="flex flex-row landscape:flex-col landscape:lg:grid landscape:lg:grid-cols-2 gap-1 md:gap-2">
-        <div className="relative flex-1">
+        <div className="relative flex-1 group">
           <StatItem 
             label={t.score} 
             value={score.toLocaleString()} 
             icon={<Target className="text-primary w-3 h-3 md:w-4 md:h-4" />} 
-            className={cn(pulseScore && "animate-bump ring-1 ring-primary border-primary bg-primary/10")}
+            className={cn(pulseScore && "animate-score-hit ring-2 ring-primary border-primary bg-primary/20 z-20 shadow-2xl shadow-primary/20")}
           />
+          
+          {/* Particle Burst Overlay */}
+          {particles.map(p => (
+            <div 
+              key={p.id}
+              className="absolute left-1/2 top-1/2 w-1.5 h-1.5 md:w-2 md:h-2 rounded-full pointer-events-none z-30 animate-score-particle"
+              style={{ 
+                backgroundColor: p.color,
+                '--tx': `${p.tx}px`,
+                '--ty': `${p.ty}px`
+              } as React.CSSProperties}
+            />
+          ))}
+
           {lastIncrement !== null && lastIncrement !== undefined && (
             <div className="absolute -top-1 -right-1 z-10 bg-primary text-white text-[8px] md:text-xs font-black px-1.5 py-0.5 rounded-full shadow-lg animate-in fade-in zoom-in slide-in-from-bottom-1">
               +{lastIncrement}
@@ -98,15 +134,15 @@ export function GameStats({ score, highScore, moves, difficulty, aiFeedback, las
 function StatItem({ label, value, icon, className, isLevel }: { label: string, value: string, icon: React.ReactNode, className?: string, isLevel?: boolean }) {
   return (
     <div className={cn(
-      "flex flex-col items-center justify-center bg-white/5 border border-white/10 rounded-lg p-1 md:p-3 transition-all duration-300 min-h-[40px] md:min-h-[60px] flex-1",
+      "flex flex-col items-center justify-center bg-white/5 border border-white/10 rounded-lg p-1 md:p-3 transition-all duration-300 min-h-[40px] md:min-h-[60px] flex-1 overflow-hidden relative",
       className
     )}>
-      <div className="flex items-center gap-1 mb-0.5 opacity-70">
+      <div className="flex items-center gap-1 mb-0.5 opacity-70 relative z-10">
         {icon}
         <span className="text-[7px] md:text-[9px] uppercase font-black text-muted-foreground tracking-tighter md:tracking-widest leading-none hidden xs:inline">{label}</span>
       </div>
       <div className={cn(
-        "font-black text-foreground font-headline leading-none tracking-tight",
+        "font-black text-foreground font-headline leading-none tracking-tight relative z-10",
         isLevel ? "text-[8px] md:text-sm" : "text-[10px] md:text-lg"
       )}>
         {value}

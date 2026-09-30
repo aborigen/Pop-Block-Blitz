@@ -1,7 +1,17 @@
-
 # Changelog
 
 All notable changes to the **Pop Block Blitz** project will be documented in this file.
+
+## [1.0.0] - 2024-05-25
+### Added
+- **Score Visual Effects**: Implemented explosive score updates with particle bursts and impact flashes.
+- **HUD Polish**: Refined the statistics panel with tactile hit animations.
+- **Milestone**: Full release of the core hypercasual game framework.
+
+## [0.9.9] - 2024-05-25
+### Added
+- **Refined Controls**: Reorganized control bar with tactile physical depth for buttons.
+- **Manual Hint**: Integrated a manual lightbulb icon to trigger AI hints on demand.
 
 ## [0.9.8] - 2024-05-25
 ### Added
@@ -22,4 +32,3 @@ All notable changes to the **Pop Block Blitz** project will be documented in thi
 ### Fixed
 - **Platform Bridge Resolution**: Eliminated `setViewVisible` runtime error by purging all residual platform-specific bridge calls.
 - **Initialization Logic**: Hardened the component mounting sequence to ensure stable performance in standalone web environments.
-...
