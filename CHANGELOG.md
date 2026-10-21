@@ -2,6 +2,11 @@
 
 All notable changes to the **Pop Block Blitz** project will be documented in this file.
 
+## [1.1.0] - 2024-05-25
+### Added
+- **Distribution Scripts**: Added specialized build commands to generate ZIP archives for Yandex Games, VK Games, and Sber Devices.
+- **Archival Utility**: Created `scripts/build-archives.js` to automate high-compression packaging.
+
 ## [1.0.0] - 2024-05-25
 ### Added
 - **Score Visual Effects**: Implemented explosive score updates with particle bursts and impact flashes.
