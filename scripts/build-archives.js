@@ -1,5 +1,6 @@
 /**
  * @fileOverview Script to generate platform-specific web archives for distribution.
+ * It dynamically injects the correct SDK script tag for each platform.
  * Usage: node scripts/build-archives.js [yandex|vk|sber|all]
  */
 
@@ -25,20 +26,23 @@ if (!fs.existsSync(archivesDir)) {
 const platforms = {
   yandex: {
     filename: 'pop-block-blitz-yandex.zip',
-    label: 'Yandex Games'
+    label: 'Yandex Games',
+    sdk: '<script src="https://yandex.ru/games/sdk/v2"></script>'
   },
   vk: {
     filename: 'pop-block-blitz-vk.zip',
-    label: 'VK Games'
+    label: 'VK Games',
+    sdk: '<script src="https://unpkg.com/@vkontakte/vk-bridge/dist/browser.min.js"></script>'
   },
   sber: {
     filename: 'pop-block-blitz-sber.zip',
-    label: 'Sber Devices'
+    label: 'Sber Devices',
+    sdk: '<script src="https://assistant.sberdevices.ru/sdks/canvas-app-sdk/v1/dist/index.js"></script>'
   }
 };
 
 /**
- * Creates a ZIP archive of the static export.
+ * Creates a ZIP archive of the static export with injected SDK.
  * @param {string} key Platform key
  */
 async function createArchive(key) {
@@ -62,20 +66,42 @@ async function createArchive(key) {
 
     archive.pipe(output);
     
-    // Add all files from Next.js export folder to the root of the ZIP
-    archive.directory(outDir, false);
+    // 1. Handle index.html with SDK injection
+    const indexPath = path.join(outDir, 'index.html');
+    if (fs.existsSync(indexPath)) {
+      let html = fs.readFileSync(indexPath, 'utf8');
+      
+      // Inject SDK before </head>
+      if (html.includes('</head>')) {
+        html = html.replace('</head>', `  ${config.sdk}\n</head>`);
+      } else {
+        // Fallback if </head> is missing (unlikely in Next.js)
+        html = config.sdk + html;
+      }
+      
+      archive.append(html, { name: 'index.html' });
+    }
+
+    // 2. Add all other files from Next.js export folder
+    // We ignore the original index.html since we appended our modified version
+    archive.glob('**/*', {
+      cwd: outDir,
+      ignore: ['index.html']
+    });
     
     archive.finalize();
   });
 }
 
 async function run() {
-  console.log('🚀 Starting platform archival process...');
+  console.log('🚀 Starting platform-aware archival process...');
   
   try {
     if (platformArg === 'all') {
-      const tasks = Object.keys(platforms).map(key => createArchive(key));
-      await Promise.all(tasks);
+      const keys = Object.keys(platforms);
+      for (const key of keys) {
+        await createArchive(key);
+      }
     } else if (platforms[platformArg]) {
       await createArchive(platformArg);
     } else {
@@ -84,7 +110,7 @@ async function run() {
     }
     console.log('✅ Archival process completed successfully.');
   } catch (error) {
-    console.error('❌ Archival process failed.');
+    console.error('❌ Archival process failed:', error);
     process.exit(1);
   }
 }
