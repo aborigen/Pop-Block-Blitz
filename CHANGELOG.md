@@ -2,6 +2,10 @@
 
 All notable changes to the **Pop Block Blitz** project will be documented in this file.
 
+## [1.2.1] - 2024-05-25
+### Added
+- **Documentation**: Created `src/docs/genkit-overview.md` to explain the AI integration and tech stack for the Adaptive Game Master.
+
 ## [1.2.0] - 2024-05-25
 ### Added
 - **Dynamic SDK Injection**: Refactored `scripts/build-archives.js` to automatically inject platform-specific SDK scripts (Yandex SDK, VK Bridge, Sber Canvas SDK) into `index.html` during the zipping process.
