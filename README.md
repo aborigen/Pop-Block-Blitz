@@ -26,22 +26,14 @@ Generate optimized ZIP files for specific platforms (located in the `archives/` 
 - **Sber Devices**: `npm run build:sber`
 - **All Platforms**: `npm run build:platforms`
 
-## Compatibility
-- **macOS Support**: Optimized for macOS 10.15 (Catalina) and above.
-- **Node.js**: Requires Node.js 18.18.0 or later.
-- **Browsers**: Supports Safari 13+, Chrome 80+, and Firefox 75+.
+## macOS 10.15 (Catalina) Compatibility
+This project is configured to work on macOS 10.15:
+1. **Node.js**: Requires Node.js 18.18.0 or later (Node 18 is the recommended version for Catalina).
+2. **esbuild Fix**: We use `overrides` in `package.json` to force `esbuild@0.19.0`. This bypasses the `dyld` error (`_SecTrustCopyCertificateChain`) common on macOS 10.15.
+3. **Browsers**: Optimized for Safari 13+ with CSS fallbacks for modern units and properties.
 
-## Troubleshooting macOS 10.15 Errors
-If you encounter `dyld: Symbol not found: _SecTrustCopyCertificateChain` during installation or development:
-1. **Cause**: The `esbuild` binary provided by npm is compiled for macOS 11+.
-2. **Solution**: Force npm to use an older esbuild version: `npm install esbuild@0.19.0 --save-exact`
-
-## Game Logic
-The game uses a "Match-2" or "Collapse" mechanic. 
-- Click groups of 2 or more adjacent blocks of the same color to pop them.
-- Gravity pulls blocks down to fill empty spaces.
-- Empty columns are shifted left to consolidate the board.
-- **Scoring**: `Score = n * (n - 1) * 2`
+## Troubleshooting
+If you still encounter `dyld` errors after clearing your `node_modules`, ensure you are using an `npm` version that supports `overrides` (npm 7+).
 
 ---
 © 2024 Pop Block Blitz Studios

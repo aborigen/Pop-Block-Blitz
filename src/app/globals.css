@@ -4,37 +4,25 @@
 
 @layer base {
   :root {
-    /* Deep Dark Background for maximum block contrast: #0F172A */
     --background: 222 47% 11%;
     --foreground: 210 40% 98%;
-    
     --card: 222 47% 13%;
     --card-foreground: 210 40% 98%;
-    
     --popover: 222 47% 13%;
     --popover-foreground: 210 40% 98%;
-    
-    /* Vibrant Aqua: #4DCCE6 */
     --primary: 190 75% 60%;
     --primary-foreground: 0 0% 100%;
-    
     --secondary: 222 47% 18%;
     --secondary-foreground: 190 75% 80%;
-    
     --muted: 222 47% 15%;
     --muted-foreground: 215 20% 65%;
-    
-    /* Bright Lime Green: #C8F471 */
     --accent: 79 85% 70%;
     --accent-foreground: 79 85% 20%;
-    
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    
     --border: 222 47% 20%;
     --input: 222 47% 20%;
     --ring: 190 75% 60%;
-    
     --radius: 1rem;
   }
 
@@ -79,6 +67,9 @@
     font-feature-settings: "rlig" 1, "calt" 1;
     overflow: hidden;
     touch-action: none;
+    /* Safari 13 Fallback */
+    height: 100vh;
+    height: 100dvh;
   }
 }
 
@@ -90,16 +81,20 @@
   }
 }
 
-/* Enhanced Popit Aesthetics */
 .popit-tile-base {
   box-shadow: 
-    0 4px 0 rgba(0, 0, 0, 0.25), /* Bottom depth */
-    inset 1px 1px 1px rgba(255, 255, 255, 0.4), /* Top highlight */
-    inset -1px -1px 1px rgba(0, 0, 0, 0.2); /* Bottom inner shadow */
+    0 4px 0 rgba(0, 0, 0, 0.25),
+    inset 1px 1px 1px rgba(255, 255, 255, 0.4),
+    inset -1px -1px 1px rgba(0, 0, 0, 0.2);
+  -webkit-box-shadow: 
+    0 4px 0 rgba(0, 0, 0, 0.25),
+    inset 1px 1px 1px rgba(255, 255, 255, 0.4),
+    inset -1px -1px 1px rgba(0, 0, 0, 0.2);
 }
 
 .popit-tile-active {
   transform: translateY(2px) scale(0.98);
+  -webkit-transform: translateY(2px) scale(0.98);
   box-shadow: 
     0 2px 0 rgba(0, 0, 0, 0.2),
     inset 2px 2px 4px rgba(0, 0, 0, 0.3);
@@ -134,6 +129,11 @@
   pointer-events: none;
 }
 
+@-webkit-keyframes bump {
+  0%, 100% { -webkit-transform: scale(1); transform: scale(1); }
+  50% { -webkit-transform: scale(1.05); transform: scale(1.05); }
+}
+
 @keyframes bump {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.05); }
@@ -142,6 +142,13 @@
 .animate-bump {
   -webkit-animation: bump 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
   animation: bump 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@-webkit-keyframes score-hit {
+  0% { -webkit-transform: scale(1); filter: brightness(1); }
+  15% { -webkit-transform: scale(1.15) translateY(-4px); filter: brightness(2); }
+  30% { -webkit-transform: scale(0.95) translateY(2px); }
+  100% { -webkit-transform: scale(1); filter: brightness(1); }
 }
 
 @keyframes score-hit {
@@ -164,6 +171,11 @@
 .animate-score-particle {
   -webkit-animation: score-particle-fade 0.6s ease-out forwards;
   animation: score-particle-fade 0.6s ease-out forwards;
+}
+
+@-webkit-keyframes float-up-fade {
+  0% { -webkit-transform: translateY(0); opacity: 1; }
+  100% { -webkit-transform: translateY(-60px); opacity: 0; }
 }
 
 @keyframes float-up-fade {
@@ -207,6 +219,12 @@
 .animate-particle {
   -webkit-animation: particle-explode var(--particle-duration) ease-out forwards;
   animation: particle-explode var(--particle-duration) ease-out forwards;
+}
+
+@-webkit-keyframes dissolve {
+  0% { -webkit-transform: scale(1); opacity: 1; filter: brightness(1) blur(0px); }
+  50% { -webkit-transform: scale(1.2); opacity: 0.7; filter: brightness(1.5) blur(2px); }
+  100% { -webkit-transform: scale(1.4); opacity: 0; filter: brightness(2) blur(10px); }
 }
 
 @keyframes dissolve {
