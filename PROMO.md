@@ -1,6 +1,6 @@
 # Pop Block Blitz - Promotional Materials
 
-Use these materials for publishing the game on platforms like Poki and Yandex Games.
+Use these materials for publishing the game on platforms like Poki, Yandex Games, VK, and Sber.
 
 ---
 
@@ -29,21 +29,18 @@ What makes Pop Block Blitz unique is its **Adaptive AI Game Master**. The game a
 - **Procedural Sound:** Dynamic "pop" and "click" sounds via Web Audio API.
 - **Localized UI:** Full support for English and Russian.
 - **Mobile First:** Perfected for portrait orientation and touch controls.
-- **Leaderboards:** Compete for the top spot (Yandex Games integration).
+- **Leaderboards:** Compete for the top spot.
 
-## 🖼️ Brand Assets
-- **Main Icon:** Located at `public/assets/icon.svg`. Use this for app icons and store listings.
-- **Cover Image:** Located at `public/assets/game-cover.svg`. This is a vibrant 800x470 SVG asset.
-- **Promo Screenshot:** Located at `public/assets/game-screenshot.svg`. High-quality 1280x720 landscape gameplay preview.
+## 🖼️ Brand Assets (Promo Folder)
+- **Main Icon:** `promo/icon.svg`. High-impact tactile design.
+- **Yandex Games Cover:** `promo/yandex-cover.svg` (800x470). Optimized for store listings.
+- **VK Games Banner:** `promo/vk-cover.svg` (1590x400). Wide format for social play.
+- **Sber Devices Hero:** `promo/sber-cover.svg` (1920x1080). High-definition TV/Canvas asset.
 
 ## 🏷️ Categories & Tags
 - **Primary:** Puzzle, Hypercasual
 - **Secondary:** Match 3, Logic, Single Player
 - **Tags:** Blocks, Colorful, Addictive, AI-Powered, Zen
-
-## 📸 Suggested Image Metadata (for Alt Text/Search)
-- *Keywords:* Colorful blocks, puzzle board, neon interface, adaptive game.
-- *Description:* A vibrant game board filled with geometric blocks (circles, stars, squares) being cleared in a satisfying blast of particles.
 
 ---
 © 2024 Pop Block Blitz Studios

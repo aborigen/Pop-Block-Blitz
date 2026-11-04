@@ -1,0 +1,27 @@
+<svg width="1590" height="400" viewBox="0 0 1590 400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="vk-bg" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#0a0f1d;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1a2b56;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="1590" height="400" fill="url(#vk-bg)" />
+  
+  <!-- Left Cluster -->
+  <g transform="translate(100, 100)">
+    <rect x="0" y="0" width="80" height="80" rx="12" fill="#4DCCE6" />
+    <rect x="90" y="0" width="80" height="80" rx="12" fill="#F471B3" />
+    <rect x="0" y="90" width="80" height="80" rx="12" fill="#C8F471" />
+    <rect x="90" y="90" width="80" height="80" rx="12" fill="#FFD93D" />
+  </g>
+  
+  <!-- Text -->
+  <text x="795" y="190" text-anchor="middle" font-family="Arial, sans-serif" font-weight="900" font-size="96" fill="white" style="letter-spacing: -2px;">POP BLOCK <tspan fill="#4DCCE6">BLITZ</tspan></text>
+  <text x="795" y="260" text-anchor="middle" font-family="Arial, sans-serif" font-weight="700" font-size="32" fill="#C8F471" opacity="0.8">ADAPTIVE AI PUZZLE CHALLENGE</text>
+  
+  <!-- Right Cluster (Abstract) -->
+  <g transform="translate(1300, 100) rotate(15)">
+    <circle cx="40" cy="40" r="40" fill="#F4A261" opacity="0.6" />
+    <path d="M 100 0 L 140 80 L 60 80 Z" fill="#A29BFE" opacity="0.5" />
+  </g>
+</svg>

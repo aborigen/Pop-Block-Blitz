@@ -1,0 +1,32 @@
+<svg width="1920" height="1080" viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1920" height="1080" fill="#0a0f1d" />
+  
+  <!-- Large Central Glow -->
+  <defs>
+    <radialGradient id="sber-glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#4DCCE6;stop-opacity:0.15" />
+      <stop offset="100%" style="stop-color:#0a0f1d;stop-opacity:0" />
+    </radialGradient>
+  </defs>
+  <circle cx="960" cy="540" r="800" fill="url(#sber-glow)" />
+  
+  <!-- Stylized Game Board in Center -->
+  <g transform="translate(760, 340)">
+    <rect x="0" y="0" width="400" height="400" rx="40" fill="white" opacity="0.05" stroke="white" stroke-width="2" />
+    <!-- Small Blocks -->
+    <rect x="40" y="40" width="140" height="140" rx="20" fill="#4DCCE6" />
+    <circle cx="310" cy="110" r="70" fill="#F471B3" />
+    <rect x="40" y="220" width="140" height="140" rx="20" fill="#C8F471" />
+    <path d="M 240 360 L 310 220 L 380 360 Z" fill="#FFD93D" />
+  </g>
+  
+  <!-- Hero Text -->
+  <text x="960" y="850" text-anchor="middle" font-family="Arial, sans-serif" font-weight="900" font-size="120" fill="white">POP BLOCK BLITZ</text>
+  <text x="960" y="940" text-anchor="middle" font-family="Arial, sans-serif" font-weight="700" font-size="48" fill="#4DCCE6" opacity="0.9">NOW ON SBER DEVICES</text>
+  
+  <!-- Particle Effects -->
+  <circle cx="200" cy="200" r="10" fill="#C8F471" />
+  <circle cx="1700" cy="150" r="15" fill="#F471B3" />
+  <circle cx="300" cy="900" r="8" fill="#4DCCE6" />
+  <circle cx="1600" cy="850" r="12" fill="#FFD93D" />
+</svg>
