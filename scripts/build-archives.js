@@ -1,12 +1,17 @@
 /**
  * @fileOverview Script to generate platform-specific web archives for distribution.
- * It dynamically injects the correct SDK script tag for each platform.
+ * It dynamically injects the correct SDK script tag for each platform and 
+ * includes the project version in the filename.
  * Usage: node scripts/build-archives.js [yandex|vk|sber|all]
  */
 
 const fs = require('fs');
 const path = require('path');
 const archiver = require('archiver');
+
+// Get version from package.json
+const pkg = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../package.json'), 'utf8'));
+const version = pkg.version;
 
 const platformArg = process.argv[2] || 'all';
 const outDir = path.resolve(__dirname, '../out');
@@ -25,17 +30,17 @@ if (!fs.existsSync(archivesDir)) {
 
 const platforms = {
   yandex: {
-    filename: 'pop-block-blitz-yandex.zip',
+    filename: `pop-block-blitz-yandex-v${version}.zip`,
     label: 'Yandex Games',
     sdk: '<script src="https://yandex.ru/games/sdk/v2"></script>'
   },
   vk: {
-    filename: 'pop-block-blitz-vk.zip',
+    filename: `pop-block-blitz-vk-v${version}.zip`,
     label: 'VK Games',
     sdk: '<script src="https://unpkg.com/@vkontakte/vk-bridge/dist/browser.min.js"></script>'
   },
   sber: {
-    filename: 'pop-block-blitz-sber.zip',
+    filename: `pop-block-blitz-sber-v${version}.zip`,
     label: 'Sber Devices',
     sdk: '<script src="https://assistant.sberdevices.ru/sdks/canvas-app-sdk/v1/dist/index.js"></script>'
   }
@@ -71,19 +76,20 @@ async function createArchive(key) {
     if (fs.existsSync(indexPath)) {
       let html = fs.readFileSync(indexPath, 'utf8');
       
-      // Inject SDK before </head>
+      // Inject version meta tag and SDK before </head>
+      const meta = `  <meta name="game-version" content="${version}">\n`;
+      const injection = meta + `  ${config.sdk}\n`;
+
       if (html.includes('</head>')) {
-        html = html.replace('</head>', `  ${config.sdk}\n</head>`);
+        html = html.replace('</head>', `${injection}</head>`);
       } else {
-        // Fallback if </head> is missing (unlikely in Next.js)
-        html = config.sdk + html;
+        html = injection + html;
       }
       
       archive.append(html, { name: 'index.html' });
     }
 
     // 2. Add all other files from Next.js export folder
-    // We ignore the original index.html since we appended our modified version
     archive.glob('**/*', {
       cwd: outDir,
       ignore: ['index.html']
@@ -94,7 +100,7 @@ async function createArchive(key) {
 }
 
 async function run() {
-  console.log('🚀 Starting platform-aware archival process...');
+  console.log(`🚀 Starting platform-aware archival process for v${version}...`);
   
   try {
     if (platformArg === 'all') {
