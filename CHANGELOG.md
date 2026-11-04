@@ -2,6 +2,11 @@
 
 All notable changes to the **Pop Block Blitz** project will be documented in this file.
 
+## [1.2.3] - 2024-05-25
+### Added
+- **VK Deployment**: Added `npm run deploy:vk` script and `src/docs/vk-deployment.md` guide.
+- **Improved Workflow**: Integrated versioned ZIP creation into the deployment command output.
+
 ## [1.2.2] - 2024-05-25
 ### Fixed
 - **OS Compatibility**: Automated the `esbuild` fix for macOS 10.15 by adding an `overrides` field in `package.json` to force version `0.19.0`.

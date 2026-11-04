@@ -26,7 +26,12 @@ Generate optimized, versioned ZIP files for specific platforms (located in the `
 - **Sber Devices**: `npm run build:sber`
 - **All Platforms**: `npm run build:platforms`
 
-The generated files will be named like `pop-block-blitz-[platform]-v1.2.2.zip`. To update the version, simply change the `version` field in `package.json`.
+### Deployment (VK Games)
+To specifically prepare a build for VK Games:
+```bash
+npm run deploy:vk
+```
+This builds the VK version and points you to the developer portal for upload. See `src/docs/vk-deployment.md` for a full guide.
 
 ## macOS 10.15 (Catalina) Compatibility
 This project is configured to work on macOS 10.15:
