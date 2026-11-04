@@ -33,6 +33,7 @@ What makes Pop Block Blitz unique is its **Adaptive AI Game Master**. The game a
 
 ## 🖼️ Brand Assets (Promo Folder)
 - **Main Icon:** `promo/icon.svg`. High-impact tactile design.
+- **VK Games Icon:** `promo/vk-icon.svg` (576x576). High-resolution platform asset.
 - **Yandex Games Cover:** `promo/yandex-cover.svg` (800x470). Optimized for store listings.
 - **VK Games Banner:** `promo/vk-cover.svg` (1590x400). Wide format for social play.
 - **Sber Devices Hero:** `promo/sber-cover.svg` (1920x1080). High-definition TV/Canvas asset.
