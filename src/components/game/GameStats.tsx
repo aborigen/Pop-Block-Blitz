@@ -22,6 +22,7 @@ interface Particle {
   tx: number;
   ty: number;
   color: string;
+  delay: number;
 }
 
 export function GameStats({ score, highScore, moves, difficulty, aiFeedback, lastIncrement, blockCounts }: GameStatsProps) {
@@ -33,12 +34,16 @@ export function GameStats({ score, highScore, moves, difficulty, aiFeedback, las
     if (score > 0) {
       setPulseScore(true);
       
-      // Generate impact particles
-      const newParticles = Array.from({ length: 12 }).map((_, i) => ({
+      // Generate a stream of "falling coins"
+      const newParticles = Array.from({ length: 20 }).map((_, i) => ({
         id: Date.now() + i,
-        tx: (Math.random() - 0.5) * 160,
-        ty: (Math.random() - 0.5) * 160,
-        color: COLORS[Math.floor(Math.random() * COLORS.length)]
+        // Range for horizontal drift
+        tx: (Math.random() - 0.5) * 80,
+        // Y translation handled by CSS coin-stream
+        ty: 0,
+        // Golden/Yellow coin colors
+        color: i % 2 === 0 ? '#FFD93D' : '#F4A261',
+        delay: Math.random() * 0.4
       }));
       
       setParticles(newParticles);
@@ -46,7 +51,7 @@ export function GameStats({ score, highScore, moves, difficulty, aiFeedback, las
       const timer = setTimeout(() => {
         setPulseScore(false);
         setParticles([]);
-      }, 600);
+      }, 1000);
       
       return () => clearTimeout(timer);
     }
@@ -64,18 +69,23 @@ export function GameStats({ score, highScore, moves, difficulty, aiFeedback, las
             className={cn(pulseScore && "animate-score-hit ring-2 ring-primary border-primary bg-primary/20 z-20 shadow-2xl shadow-primary/20")}
           />
           
-          {/* Particle Burst Overlay */}
-          {particles.map(p => (
-            <div 
-              key={p.id}
-              className="absolute left-1/2 top-1/2 w-1.5 h-1.5 md:w-2 md:h-2 rounded-full pointer-events-none z-30 animate-score-particle"
-              style={{ 
-                backgroundColor: p.color,
-                '--tx': `${p.tx}px`,
-                '--ty': `${p.ty}px`
-              } as React.CSSProperties}
-            />
-          ))}
+          {/* Coin Stream Overlay */}
+          <div className="absolute inset-0 pointer-events-none z-30 overflow-visible">
+            {particles.map(p => (
+              <div 
+                key={p.id}
+                className="absolute left-1/2 top-0 w-2 h-2 md:w-3 md:h-3 rounded-full border border-black/10 shadow-sm animate-coin-stream"
+                style={{ 
+                  backgroundColor: p.color,
+                  '--tx': `${p.tx}px`,
+                  animationDelay: `${p.delay}s`
+                } as React.CSSProperties}
+              >
+                {/* Coin reflection shine */}
+                <div className="absolute top-[10%] left-[10%] w-[40%] h-[40%] bg-white/40 rounded-full" />
+              </div>
+            ))}
+          </div>
 
           {lastIncrement !== null && lastIncrement !== undefined && (
             <div className="absolute -top-1 -right-1 z-10 bg-primary text-white text-[8px] md:text-xs font-black px-1.5 py-0.5 rounded-full shadow-lg animate-in fade-in zoom-in slide-in-from-bottom-1">

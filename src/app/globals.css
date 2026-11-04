@@ -163,14 +163,24 @@
   animation: score-hit 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
-@keyframes score-particle-fade {
-  0% { transform: translate(0, 0) scale(1); opacity: 1; }
-  100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+@keyframes coin-stream {
+  0% { 
+    transform: translateY(-50px) translateX(var(--tx)) rotate(0deg) scale(0);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+    transform: translateY(-25px) translateX(var(--tx)) rotate(90deg) scale(1.2);
+  }
+  100% { 
+    transform: translateY(15px) translateX(var(--tx)) rotate(360deg) scale(0.5);
+    opacity: 0;
+  }
 }
 
-.animate-score-particle {
-  -webkit-animation: score-particle-fade 0.6s ease-out forwards;
-  animation: score-particle-fade 0.6s ease-out forwards;
+.animate-coin-stream {
+  -webkit-animation: coin-stream 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  animation: coin-stream 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
 }
 
 @-webkit-keyframes float-up-fade {
