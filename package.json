@@ -11,7 +11,7 @@
     "build:vk": "npm run build && node scripts/build-archives.js vk",
     "build:sber": "npm run build && node scripts/build-archives.js sber",
     "build:platforms": "npm run build && node scripts/build-archives.js all",
-    "deploy:vk": "npm run build:vk && echo '\n🚀 VK Games build complete!\n📂 Archive: ./archives/pop-block-blitz-vk-v1.2.3.zip\n🔗 Upload here: https://vk.com/apps?act=manage\n'",
+    "deploy": "vk-miniapps-deploy",
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit"

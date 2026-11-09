@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState, useEffect, useCallback, useRef, useMemo } from "react"
@@ -14,10 +13,12 @@ import {
   getBlockCounts,
   type Grid,
   type GameState,
-  type DifficultyLevel 
+  type DifficultyLevel,
+  type TileStyle 
 } from "@/lib/game-logic"
 import { Block } from "./Block"
 import { GameStats } from "./GameStats"
+import { SettingsModal } from "./SettingsModal"
 import { Button } from "@/components/ui/button"
 import { RefreshCw, PlayCircle, Volume2, VolumeX, RotateCcw, RotateCw, Sparkles, Save, Lightbulb } from "lucide-react"
 import { useTranslation } from "@/lib/i18n/context"
@@ -49,6 +50,7 @@ export function GameController() {
     gameOver: false,
     moves: 0,
     difficulty: 'very_easy',
+    tileStyle: 'popit',
     config: { width: 6, height: 6, numColors: 3 }
   })
   
@@ -97,6 +99,7 @@ export function GameController() {
           score: session.score,
           moves: session.moves,
           difficulty: session.difficulty,
+          tileStyle: session.tileStyle || 'popit',
           config: session.config
         }));
       } catch (e) {
@@ -112,12 +115,13 @@ export function GameController() {
         score: state.score,
         moves: state.moves,
         difficulty: state.difficulty,
+        tileStyle: state.tileStyle,
         config: state.config
       };
       localStorage.setItem('pop-block-session', JSON.stringify(session));
       localStorage.setItem('pop-block-high-score', state.highScore.toString());
     }
-  }, [state.grid, state.score, state.moves, state.highScore, state.difficulty, state.config, state.gameOver, mounted]);
+  }, [state.grid, state.score, state.moves, state.highScore, state.difficulty, state.tileStyle, state.config, state.gameOver, mounted]);
 
   const handleManualSave = () => {
     if (state.gameOver) return;
@@ -127,6 +131,7 @@ export function GameController() {
       score: state.score,
       moves: state.moves,
       difficulty: state.difficulty,
+      tileStyle: state.tileStyle,
       config: state.config
     };
     localStorage.setItem('pop-block-session', JSON.stringify(session));
@@ -401,13 +406,17 @@ export function GameController() {
     startNewGame(true)
   }
 
+  const setTileStyle = (style: TileStyle) => {
+    setState(prev => ({ ...prev, tileStyle: style }));
+    toast({ description: t.gameSaved, duration: 1500 });
+  }
+
   if (!mounted || state.grid.length === 0) return null
 
   return (
     <div className="flex flex-col landscape:flex-row w-full h-full p-1 md:p-4 gap-1 md:gap-4 overflow-hidden items-stretch justify-center relative z-10">
       <div className="flex flex-col shrink-0 w-full landscape:w-[200px] lg:landscape:w-[240px] gap-1 md:gap-4 z-20">
         <div className="flex items-center justify-between px-1 landscape:px-0">
-          {/* Main Actions Group */}
           <div className="flex items-center gap-1.5 md:gap-2">
             <LeaderboardModal />
             <Button 
@@ -420,9 +429,12 @@ export function GameController() {
             >
               <Lightbulb className="w-4 h-4 md:w-5 md:h-5" />
             </Button>
+            <SettingsModal 
+              currentStyle={state.tileStyle} 
+              onStyleChange={setTileStyle} 
+            />
           </div>
 
-          {/* System/Aux Group */}
           <div className="flex items-center gap-1">
             <div className="flex items-center bg-white/5 p-1 rounded-full border border-white/10 gap-0.5">
               <Button 
@@ -526,6 +538,7 @@ export function GameController() {
                   isPopping={poppingGroup.some(p => p[0] === x && p[1] === y)}
                   isHinted={isInHint}
                   showFinger={isFingerHead}
+                  style={state.tileStyle}
                   onClick={() => handleBlockClick(x, y)} 
                 />
               );

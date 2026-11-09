@@ -1,7 +1,6 @@
-
 "use client"
 
-import { COLORS, SHAPES } from "@/lib/game-logic"
+import { COLORS, SHAPES, type TileStyle } from "@/lib/game-logic"
 import { cn } from "@/lib/utils"
 import { Square, Circle, Star, Triangle, Pentagon, Hand } from "lucide-react"
 
@@ -12,9 +11,10 @@ interface BlockProps {
   isHinted?: boolean
   showFinger?: boolean
   isPopping?: boolean
+  style?: TileStyle
 }
 
-export function Block({ colorIndex, onClick, isTargeted, isHinted, showFinger, isPopping }: BlockProps) {
+export function Block({ colorIndex, onClick, isTargeted, isHinted, showFinger, isPopping, style = 'popit' }: BlockProps) {
   if (colorIndex === null) {
     return <div className="w-full h-full" />
   }
@@ -26,29 +26,41 @@ export function Block({ colorIndex, onClick, isTargeted, isHinted, showFinger, i
     <button
       onClick={onClick}
       className={cn(
-        "w-full h-full rounded-[8px] md:rounded-xl flex items-center justify-center transition-all duration-200 animate-pop-in popit-tile-base relative group p-[8%]",
+        "w-full h-full flex items-center justify-center transition-all duration-200 animate-pop-in relative group p-[8%]",
+        style === 'popit' && "tile-popit",
+        style === 'classic' && "tile-classic",
+        style === 'glass' && "tile-glass",
         isTargeted ? "popit-tile-active z-10 brightness-110" : "hover:brightness-105",
         isPopping && "animate-dissolve pointer-events-none z-20"
       )}
-      style={{ backgroundColor: color }}
+      style={{ 
+        backgroundColor: style === 'glass' ? `${color}99` : color,
+      }}
     >
-      {/* Gloss layer */}
-      <div className="absolute inset-0 rounded-[8px] md:rounded-xl popit-shine overflow-hidden" />
+      {/* Gloss layer (Popit and Glass only) */}
+      {(style === 'popit' || style === 'glass') && (
+        <div className="absolute inset-0 rounded-[inherit] popit-shine overflow-hidden" />
+      )}
       
-      {/* The "Bubble" part of the Popit */}
+      {/* Inner design */}
       <div 
         className={cn(
-          "w-full h-full rounded-full flex items-center justify-center transition-all duration-150 popit-bubble overflow-hidden relative",
-          isTargeted && !isPopping && "popit-bubble-active"
+          "w-full h-full flex items-center justify-center transition-all duration-150 overflow-hidden relative",
+          style === 'popit' && cn("rounded-full popit-bubble", isTargeted && !isPopping && "popit-bubble-active"),
+          style === 'glass' && "rounded-lg",
+          style === 'classic' && "rounded-sm"
         )}
       >
-        <div className="text-white/30 w-[65%] h-[65%] flex items-center justify-center">
-          <ShapeIcon className="w-full h-full drop-shadow-md" strokeWidth={3.5} />
+        <div className={cn(
+          "flex items-center justify-center",
+          style === 'popit' ? "text-white/30 w-[65%] h-[65%]" : "text-white/50 w-[80%] h-[80%]"
+        )}>
+          <ShapeIcon className="w-full h-full drop-shadow-md" strokeWidth={style === 'popit' ? 3.5 : 2} />
         </div>
       </div>
       
       {isHinted && !isTargeted && !isPopping && (
-        <div className="absolute inset-0 rounded-[8px] md:rounded-xl border-2 border-white/40 bg-white/10 animate-hint-pulse pointer-events-none z-10" />
+        <div className="absolute inset-0 rounded-[inherit] border-2 border-white/40 bg-white/10 animate-hint-pulse pointer-events-none z-10" />
       )}
 
       {showFinger && !isTargeted && !isPopping && (

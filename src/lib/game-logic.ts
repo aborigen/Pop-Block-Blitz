@@ -26,6 +26,7 @@ export const SHAPES = [
 ];
 
 export type DifficultyLevel = 'very_easy' | 'easy' | 'medium' | 'hard' | 'expert' | 'insane';
+export type TileStyle = 'popit' | 'classic' | 'glass';
 
 export interface GameState {
   grid: Grid;
@@ -34,6 +35,7 @@ export interface GameState {
   gameOver: boolean;
   moves: number;
   difficulty: DifficultyLevel;
+  tileStyle: TileStyle;
   config: {
     width: number;
     height: number;

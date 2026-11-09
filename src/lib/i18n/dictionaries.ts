@@ -1,4 +1,3 @@
-
 export const dictionaries = {
   en: {
     title: "POP BLOCK",
@@ -30,6 +29,11 @@ export const dictionaries = {
     perfectClear: "PERFECT CLEAR! x5 SCORE",
     saveGame: "Save Game",
     gameSaved: "Progress Saved!",
+    settings: "Settings",
+    tileStyle: "Tile Style",
+    stylePopit: "Popit",
+    styleClassic: "Classic",
+    styleGlass: "Glass",
     difficulty: {
       very_easy: "Very Easy",
       easy: "Easy",
@@ -69,6 +73,11 @@ export const dictionaries = {
     perfectClear: "ПОЛНАЯ ОЧИСТКА! СЧЕТ x5",
     saveGame: "Сохранить",
     gameSaved: "Прогресс сохранен!",
+    settings: "Настройки",
+    tileStyle: "Стиль плиток",
+    stylePopit: "Попит",
+    styleClassic: "Классик",
+    styleGlass: "Стекло",
     difficulty: {
       very_easy: "Очень Легко",
       easy: "Легко",
