@@ -84,6 +84,11 @@ export function GameController() {
     isInitialized.current = true;
     setMounted(true);
     
+    // Initialize VK Bridge if available
+    if (typeof window !== 'undefined' && (window as any).vkBridge) {
+      (window as any).vkBridge.send('VKWebAppInit');
+    }
+
     const savedHighScore = localStorage.getItem('pop-block-high-score');
     if (savedHighScore) {
       setState(prev => ({ ...prev, highScore: parseInt(savedHighScore, 10) }));
