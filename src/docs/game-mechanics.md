@@ -1,3 +1,4 @@
+
 # Pop Block Blitz - Game Mechanics Guide
 
 Welcome to the internal guide for **Pop Block Blitz**. This document explains the core systems that make the game satisfying, strategic, and balanced.
@@ -24,10 +25,13 @@ If you manage to clear every single block from the board by the time the game en
 - **Reward**: Your total score for that round is multiplied by **5**.
 - **Strategy**: Aiming for a Perfect Clear is the ultimate high-risk, high-reward strategy.
 
-## 4. Board Rotation Strategy
+## 4. Board Rotation & Gestures
 Unique to Pop Block Blitz is the ability to rotate the board 90 degrees.
 - **Mechanic**: Rotating shifts the physical position of all blocks.
 - **Gravity Re-application**: After rotation, gravity is reapplied to the new "down" direction.
+- **Controls**: 
+  - **Buttons**: Use the CCW and CW icons in the HUD.
+  - **Swipe (Touch)**: Swipe **Left** to rotate counter-clockwise or **Right** to rotate clockwise.
 - **Tactical Use**: Use rotation to bring blocks of the same color together that were previously separated by different columns.
 
 ## 5. Adaptive AI Game Master

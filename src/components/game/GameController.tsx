@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useEffect, useCallback, useRef, useMemo } from "react"
@@ -36,6 +37,7 @@ interface FloatingScore {
 }
 
 const DIFFICULTY_ORDER: DifficultyLevel[] = ['very_easy', 'easy', 'medium', 'hard', 'expert', 'insane'];
+const SWIPE_THRESHOLD = 50;
 
 export function GameController() {
   const { t } = useTranslation();
@@ -76,6 +78,7 @@ export function GameController() {
   const scoreCounter = useRef(0)
   const incrementTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const isInitialized = useRef(false)
+  const touchStartRef = useRef<{ x: number, y: number } | null>(null)
 
   const blockCounts = useMemo(() => getBlockCounts(state.grid), [state.grid]);
 
@@ -400,6 +403,30 @@ export function GameController() {
     }, 450);
   }
 
+  const handleTouchStart = (e: React.TouchEvent) => {
+    const touch = e.touches[0];
+    touchStartRef.current = { x: touch.clientX, y: touch.clientY };
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (!touchStartRef.current || state.gameOver || isAnimatingRotation) return;
+
+    const touch = e.changedTouches[0];
+    const deltaX = touch.clientX - touchStartRef.current.x;
+    const deltaY = touch.clientY - touchStartRef.current.y;
+
+    // Detect horizontal swipe
+    if (Math.abs(deltaX) > SWIPE_THRESHOLD && Math.abs(deltaX) > Math.abs(deltaY)) {
+      if (deltaX > 0) {
+        handleRotate('cw');
+      } else {
+        handleRotate('ccw');
+      }
+    }
+    
+    touchStartRef.current = null;
+  };
+
   const finalizeGame = () => {
     soundManager.playClick();
     setPerformanceHistory(prev => ({
@@ -512,8 +539,10 @@ export function GameController() {
 
       <div className="flex-grow flex items-center justify-center relative min-h-0 w-full h-full p-1 md:p-2 overflow-hidden">
         <div 
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
           className={cn(
-            "grid gap-1 p-1 md:p-2 rounded-xl bg-white/10 shadow-2xl border border-white/20 backdrop-blur-md relative overflow-hidden",
+            "grid gap-1 p-1 md:p-2 rounded-xl bg-white/10 shadow-2xl border border-white/20 backdrop-blur-md relative overflow-hidden touch-none",
             isAnimatingRotation && !suppressTransitions && "board-transition"
           )}
           style={{ 

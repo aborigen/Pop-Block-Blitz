@@ -1,6 +1,12 @@
+
 # Changelog
 
 All notable changes to the **Pop Block Blitz** project will be documented in this file.
+
+## [1.2.4] - 2024-05-25
+### Added
+- **Swipe Gestures**: Implemented touch-screen swipe gestures for board rotation (Left for CCW, Right for CW).
+- **Responsive Handling**: Optimized touch interaction on the main game board with a displacement threshold to prevent accidental rotations.
 
 ## [1.2.3] - 2024-05-25
 ### Added
