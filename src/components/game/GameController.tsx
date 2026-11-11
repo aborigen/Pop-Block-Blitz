@@ -78,7 +78,7 @@ export function GameController() {
   const scoreCounter = useRef(0)
   const incrementTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const isInitialized = useRef(false)
-  const touchStartRef = useRef<{ x: number, y: number } | null>(null)
+  const interactionStartRef = useRef<{ x: number, y: number } | null>(null)
 
   const blockCounts = useMemo(() => getBlockCounts(state.grid), [state.grid]);
 
@@ -140,7 +140,7 @@ export function GameController() {
       moves: state.moves,
       difficulty: state.difficulty,
       tileStyle: state.tileStyle,
-      config: state.config
+      config: session.config
     };
     localStorage.setItem('pop-block-session', JSON.stringify(session));
     localStorage.setItem('pop-block-high-score', state.highScore.toString());
@@ -403,19 +403,17 @@ export function GameController() {
     }, 450);
   }
 
-  const handleTouchStart = (e: React.TouchEvent) => {
-    const touch = e.touches[0];
-    touchStartRef.current = { x: touch.clientX, y: touch.clientY };
+  const handleInteractionStart = (x: number, y: number) => {
+    interactionStartRef.current = { x, y };
   };
 
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    if (!touchStartRef.current || state.gameOver || isAnimatingRotation) return;
+  const handleInteractionEnd = (x: number, y: number) => {
+    if (!interactionStartRef.current || state.gameOver || isAnimatingRotation) return;
 
-    const touch = e.changedTouches[0];
-    const deltaX = touch.clientX - touchStartRef.current.x;
-    const deltaY = touch.clientY - touchStartRef.current.y;
+    const deltaX = x - interactionStartRef.current.x;
+    const deltaY = y - interactionStartRef.current.y;
 
-    // Detect horizontal swipe
+    // Detect horizontal swipe/drag
     if (Math.abs(deltaX) > SWIPE_THRESHOLD && Math.abs(deltaX) > Math.abs(deltaY)) {
       if (deltaX > 0) {
         handleRotate('cw');
@@ -424,7 +422,7 @@ export function GameController() {
       }
     }
     
-    touchStartRef.current = null;
+    interactionStartRef.current = null;
   };
 
   const finalizeGame = () => {
@@ -539,8 +537,10 @@ export function GameController() {
 
       <div className="flex-grow flex items-center justify-center relative min-h-0 w-full h-full p-1 md:p-2 overflow-hidden">
         <div 
-          onTouchStart={handleTouchStart}
-          onTouchEnd={handleTouchEnd}
+          onTouchStart={(e) => handleInteractionStart(e.touches[0].clientX, e.touches[0].clientY)}
+          onTouchEnd={(e) => handleInteractionEnd(e.changedTouches[0].clientX, e.changedTouches[0].clientY)}
+          onMouseDown={(e) => handleInteractionStart(e.clientX, e.clientY)}
+          onMouseUp={(e) => handleInteractionEnd(e.clientX, e.clientY)}
           className={cn(
             "grid gap-1 p-1 md:p-2 rounded-xl bg-white/10 shadow-2xl border border-white/20 backdrop-blur-md relative overflow-hidden touch-none",
             isAnimatingRotation && !suppressTransitions && "board-transition"
