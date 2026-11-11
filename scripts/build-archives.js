@@ -1,3 +1,4 @@
+
 /**
  * @fileOverview Script to generate platform-specific web archives for distribution.
  * It dynamically injects the correct SDK script tag for each platform and 
@@ -7,11 +8,18 @@
 
 const fs = require('fs');
 const path = require('path');
-const archiver = require('archiver');
 
-// Get version from package.json
-const pkg = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../package.json'), 'utf8'));
-const version = pkg.version;
+// Move package reading into a more robust location
+let version = '1.0.0';
+try {
+  const pkgPath = path.resolve(__dirname, '../package.json');
+  if (fs.existsSync(pkgPath)) {
+    const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
+    version = pkg.version;
+  }
+} catch (e) {
+  console.warn('Could not read version from package.json, defaulting to 1.0.0');
+}
 
 const platformArg = process.argv[2] || 'all';
 const outDir = path.resolve(__dirname, '../out');
@@ -51,6 +59,16 @@ const platforms = {
  * @param {string} key Platform key
  */
 async function createArchive(key) {
+  // Requirement check inside the function to avoid top-level module not found errors
+  // which can be harder to debug in some build environments.
+  let archiver;
+  try {
+    archiver = require('archiver');
+  } catch (err) {
+    console.error('CRITICAL: The "archiver" module is missing. Run "npm install" or check package.json.');
+    process.exit(1);
+  }
+
   const config = platforms[key];
   const zipPath = path.join(archivesDir, config.filename);
   const output = fs.createWriteStream(zipPath);
