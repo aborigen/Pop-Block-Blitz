@@ -1,6 +1,7 @@
+
 {
   "static_path": "out",
-  "app_id": 51664657,
+  "app_id": 123456,
   "endpoints": {
     "mobile": "index.html",
     "web": "index.html",

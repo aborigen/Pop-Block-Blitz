@@ -1,3 +1,4 @@
+
 # Dependencies
 node_modules
 /.pnp
@@ -6,7 +7,7 @@ node_modules
 # Testing
 /coverage
 
-# Next.js build output
+# Next.js
 /.next/
 /out/
 
@@ -24,13 +25,11 @@ yarn-error.log*
 
 # Local env files
 .env*.local
+.env
 
 # Vercel
 .vercel
 
-# TypeScript
-*.tsbuildinfo
-next-env.d.ts
-
-# Project Specific
+# Project specific
 archives/
+promo/*.zip
