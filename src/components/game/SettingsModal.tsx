@@ -8,7 +8,9 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { Settings, Check } from "lucide-react"
+import { Switch } from "@/components/ui/switch"
+import { Label } from "@/components/ui/label"
+import { Settings, Check, Volume2, VolumeX } from "lucide-react"
 import { useTranslation } from "@/lib/i18n/context"
 import { type TileStyle } from "@/lib/game-logic"
 import { cn } from "@/lib/utils"
@@ -17,9 +19,11 @@ import { soundManager } from "@/lib/sound-effects"
 interface SettingsModalProps {
   currentStyle: TileStyle
   onStyleChange: (style: TileStyle) => void
+  soundEnabled: boolean
+  onSoundToggle: (enabled: boolean) => void
 }
 
-export function SettingsModal({ currentStyle, onStyleChange }: SettingsModalProps) {
+export function SettingsModal({ currentStyle, onStyleChange, soundEnabled, onSoundToggle }: SettingsModalProps) {
   const { t } = useTranslation()
 
   const styles: { id: TileStyle; label: string; previewClass: string }[] = [
@@ -31,6 +35,14 @@ export function SettingsModal({ currentStyle, onStyleChange }: SettingsModalProp
   const handleStyleSelect = (id: TileStyle) => {
     soundManager.playClick()
     onStyleChange(id)
+  }
+
+  const handleSoundToggle = (checked: boolean) => {
+    onSoundToggle(checked)
+    if (checked) {
+      // Play a small click only if turning it ON
+      setTimeout(() => soundManager.playClick(), 50);
+    }
   }
 
   return (
@@ -53,9 +65,35 @@ export function SettingsModal({ currentStyle, onStyleChange }: SettingsModalProp
           </DialogTitle>
         </DialogHeader>
 
-        <div className="py-6 space-y-6">
-          <div className="space-y-3">
-            <h3 className="text-sm font-black text-muted-foreground uppercase tracking-widest px-1">
+        <div className="py-6 space-y-8">
+          {/* Audio Section */}
+          <div className="space-y-4">
+            <h3 className="text-xs font-black text-muted-foreground uppercase tracking-widest px-1">
+              Audio
+            </h3>
+            <div className="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/5">
+              <div className="flex items-center gap-3">
+                <div className={cn(
+                  "p-2 rounded-full transition-colors",
+                  soundEnabled ? "bg-accent/20 text-accent" : "bg-muted/20 text-muted-foreground"
+                )}>
+                  {soundEnabled ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
+                </div>
+                <Label htmlFor="sound-toggle" className="font-bold cursor-pointer">
+                  {t.soundEffects}
+                </Label>
+              </div>
+              <Switch 
+                id="sound-toggle" 
+                checked={soundEnabled} 
+                onCheckedChange={handleSoundToggle}
+              />
+            </div>
+          </div>
+
+          {/* Tile Style Section */}
+          <div className="space-y-4">
+            <h3 className="text-xs font-black text-muted-foreground uppercase tracking-widest px-1">
               {t.tileStyle}
             </h3>
             <div className="grid grid-cols-3 gap-3">

@@ -34,6 +34,7 @@ export const dictionaries = {
     stylePopit: "Popit",
     styleClassic: "Classic",
     styleGlass: "Glass",
+    soundEffects: "Sound Effects",
     difficulty: {
       very_easy: "Very Easy",
       easy: "Easy",
@@ -78,6 +79,7 @@ export const dictionaries = {
     stylePopit: "Попит",
     styleClassic: "Классик",
     styleGlass: "Стекло",
+    soundEffects: "Звуковые эффекты",
     difficulty: {
       very_easy: "Очень Легко",
       easy: "Легко",

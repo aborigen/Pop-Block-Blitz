@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState, useEffect, useCallback, useRef, useMemo } from "react"
@@ -87,7 +86,6 @@ export function GameController() {
     isInitialized.current = true;
     setMounted(true);
     
-    // Initialize VK Bridge if available
     if (typeof window !== 'undefined' && (window as any).vkBridge) {
       (window as any).vkBridge.send('VKWebAppInit');
     }
@@ -110,6 +108,9 @@ export function GameController() {
           tileStyle: session.tileStyle || 'popit',
           config: session.config
         }));
+        if (session.soundEnabled !== undefined) {
+          setSoundEnabled(session.soundEnabled);
+        }
       } catch (e) {
         console.warn("Failed to restore session", e);
       }
@@ -124,12 +125,13 @@ export function GameController() {
         moves: state.moves,
         difficulty: state.difficulty,
         tileStyle: state.tileStyle,
-        config: state.config
+        config: state.config,
+        soundEnabled: soundEnabled
       };
       localStorage.setItem('pop-block-session', JSON.stringify(session));
       localStorage.setItem('pop-block-high-score', state.highScore.toString());
     }
-  }, [state.grid, state.score, state.moves, state.highScore, state.difficulty, state.tileStyle, state.config, state.gameOver, mounted]);
+  }, [state.grid, state.score, state.moves, state.highScore, state.difficulty, state.tileStyle, state.config, state.gameOver, soundEnabled, mounted]);
 
   const handleManualSave = () => {
     if (state.gameOver) return;
@@ -140,7 +142,8 @@ export function GameController() {
       moves: state.moves,
       difficulty: state.difficulty,
       tileStyle: state.tileStyle,
-      config: session.config
+      config: state.config,
+      soundEnabled: soundEnabled
     };
     localStorage.setItem('pop-block-session', JSON.stringify(session));
     localStorage.setItem('pop-block-high-score', state.highScore.toString());
@@ -413,7 +416,6 @@ export function GameController() {
     const deltaX = x - interactionStartRef.current.x;
     const deltaY = y - interactionStartRef.current.y;
 
-    // Detect horizontal swipe/drag
     if (Math.abs(deltaX) > SWIPE_THRESHOLD && Math.abs(deltaX) > Math.abs(deltaY)) {
       if (deltaX > 0) {
         handleRotate('cw');
@@ -462,6 +464,8 @@ export function GameController() {
             <SettingsModal 
               currentStyle={state.tileStyle} 
               onStyleChange={setTileStyle} 
+              soundEnabled={soundEnabled}
+              onSoundToggle={setSoundEnabled}
             />
           </div>
 
@@ -499,14 +503,6 @@ export function GameController() {
                 className="rounded-full w-7 h-7 md:w-9 md:h-9 hover:bg-white/10 text-primary"
               >
                 <Save className="w-4 h-4 md:w-5 md:h-5" />
-              </Button>
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                onClick={() => setSoundEnabled(!soundEnabled)}
-                className="rounded-full w-7 h-7 md:w-9 md:h-9 hover:bg-white/10"
-              >
-                {soundEnabled ? <Volume2 className="w-4 h-4 md:w-5 md:h-5 text-accent" /> : <VolumeX className="w-4 h-4 md:w-5 md:h-5 text-muted-foreground" />}
               </Button>
               <Button 
                 variant="ghost" 
