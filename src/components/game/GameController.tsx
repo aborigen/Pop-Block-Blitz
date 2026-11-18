@@ -20,7 +20,22 @@ import { Block } from "./Block"
 import { GameStats } from "./GameStats"
 import { SettingsModal } from "./SettingsModal"
 import { Button } from "@/components/ui/button"
-import { RefreshCw, PlayCircle, Volume2, VolumeX, RotateCcw, RotateCw, Sparkles, Save, Lightbulb } from "lucide-react"
+import { 
+  RefreshCw, 
+  PlayCircle, 
+  RotateCcw, 
+  RotateCw, 
+  Sparkles, 
+  Save, 
+  Lightbulb 
+} from "lucide-react"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { useTranslation } from "@/lib/i18n/context"
 import { soundManager } from "@/lib/sound-effects"
 import { LeaderboardModal } from "./LeaderboardModal"
@@ -37,6 +52,15 @@ interface FloatingScore {
 
 const DIFFICULTY_ORDER: DifficultyLevel[] = ['very_easy', 'easy', 'medium', 'hard', 'expert', 'insane'];
 const SWIPE_THRESHOLD = 50;
+
+const DIFFICULTY_CONFIGS: Record<DifficultyLevel, { width: number, height: number, numColors: number }> = {
+  very_easy: { width: 6, height: 6, numColors: 3 },
+  easy: { width: 8, height: 8, numColors: 3 },
+  medium: { width: 10, height: 10, numColors: 4 },
+  hard: { width: 12, height: 12, numColors: 5 },
+  expert: { width: 14, height: 15, numColors: 6 },
+  insane: { width: 16, height: 18, numColors: 7 }
+};
 
 export function GameController() {
   const { t } = useTranslation();
@@ -73,6 +97,8 @@ export function GameController() {
   const [visualRotation, setVisualRotation] = useState(0)
   const [isAnimatingRotation, setIsAnimatingRotation] = useState(false)
   const [suppressTransitions, setSuppressTransitions] = useState(false)
+  
+  const [gameoverDifficulty, setGameoverDifficulty] = useState<DifficultyLevel>('very_easy')
   
   const scoreCounter = useRef(0)
   const incrementTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -133,13 +159,20 @@ export function GameController() {
     }
   }, [state.grid, state.score, state.moves, state.highScore, state.difficulty, state.tileStyle, state.config, state.gameOver, soundEnabled, mounted]);
 
+  useEffect(() => {
+    if (state.gameOver) {
+      const result = getHeuristicDifficulty(performanceHistory, state.config, state.difficulty);
+      setGameoverDifficulty(result.recommendedDifficultyLevel);
+    }
+  }, [state.gameOver, performanceHistory, state.config, state.difficulty]);
+
   const handleManualSave = () => {
     if (state.gameOver) return;
     soundManager.playClick();
     const session = {
       grid: state.grid,
       score: state.score,
-      moves: state.moves,
+      moves: session.moves,
       difficulty: state.difficulty,
       tileStyle: state.tileStyle,
       config: state.config,
@@ -224,11 +257,15 @@ export function GameController() {
     };
   }, [t.aiPowered]);
 
-  const startNewGame = useCallback((isAiAdjustment = false) => {
+  const startNewGame = useCallback((isAiAdjustment = false, manualDifficulty?: DifficultyLevel) => {
     let nextConfig = { ...state.config };
     let nextDifficulty = state.difficulty;
 
-    if (isAiAdjustment && performanceHistory.totalGames > 0) {
+    if (manualDifficulty) {
+      nextDifficulty = manualDifficulty;
+      nextConfig = DIFFICULTY_CONFIGS[manualDifficulty];
+      setAiFeedback(t.aiPowered);
+    } else if (isAiAdjustment && performanceHistory.totalGames > 0) {
       const result = getHeuristicDifficulty(performanceHistory, state.config, state.difficulty);
       nextConfig = {
         width: result.recommendedBoardWidth,
@@ -264,7 +301,7 @@ export function GameController() {
     setSuppressTransitions(false);
     
     localStorage.removeItem('pop-block-session');
-  }, [performanceHistory, getHeuristicDifficulty, state.config, state.difficulty]);
+  }, [performanceHistory, getHeuristicDifficulty, state.config, state.difficulty, t.aiPowered]);
 
   useEffect(() => {
     if (mounted && state.grid.length === 0) {
@@ -435,7 +472,7 @@ export function GameController() {
       cumulativeScore: prev.cumulativeScore + state.score,
       lastGameScore: state.score
     }))
-    startNewGame(true)
+    startNewGame(false, gameoverDifficulty)
   }
 
   const setTileStyle = (style: TileStyle) => {
@@ -606,6 +643,29 @@ export function GameController() {
               <p className="text-lg md:text-3xl text-muted-foreground mb-4 md:mb-8 font-bold">
                 {t.finalScore}: <span className="text-primary">{state.score}</span>
               </p>
+
+              <div className="mb-8 w-full max-w-[240px] md:max-w-[320px] text-left animate-in fade-in slide-in-from-bottom-2 duration-500 delay-200">
+                <label className="text-[10px] md:text-xs font-black text-muted-foreground uppercase tracking-widest mb-2 block px-1">
+                   {t.level}
+                </label>
+                <Select value={gameoverDifficulty} onValueChange={(v) => setGameoverDifficulty(v as DifficultyLevel)}>
+                  <SelectTrigger className="w-full bg-white/5 border-white/10 h-12 md:h-14 rounded-xl font-black text-sm md:text-lg uppercase">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="bg-background/95 backdrop-blur-xl border-white/20">
+                    {DIFFICULTY_ORDER.map((level) => (
+                      <SelectItem 
+                        key={level} 
+                        value={level}
+                        className="font-bold uppercase tracking-tight"
+                      >
+                        {t.difficulty[level]}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
               <Button 
                 size="lg" 
                 onClick={finalizeGame} 
