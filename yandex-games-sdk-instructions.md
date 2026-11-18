@@ -50,3 +50,5 @@ The SDK uses `window.parent` to communicate. When testing locally:
 - **"YaGames is not defined"**: Ensure the script in `layout.tsx` is loading correctly.
 - **Game stuck on loader**: Check if `reportReady()` is being called. Ensure `sdkReady` and `state.grid` are properly populated in `GameController`.
 - **Ad not showing**: Yandex limits how often ads can be shown (usually once every 60-120 seconds per user). Check the browser console for `wasShown: false`.
+
+See `docs/restore-yandex-sdk.md` for restoration instructions.

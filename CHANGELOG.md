@@ -10,7 +10,7 @@ All notable changes to the **Pop Block Blitz** project will be documented in thi
 
 ## [1.2.3] - 2024-05-25
 ### Added
-- **VK Deployment**: Added `npm run deploy:vk` script and `src/docs/vk-deployment.md` guide.
+- **VK Deployment**: Added `npm run deploy:vk` script and `docs/vk-deployment.md` guide.
 - **Improved Workflow**: Integrated versioned ZIP creation into the deployment command output.
 
 ## [1.2.2] - 2024-05-25
@@ -20,7 +20,7 @@ All notable changes to the **Pop Block Blitz** project will be documented in thi
 
 ## [1.2.1] - 2024-05-25
 ### Added
-- **Documentation**: Created `src/docs/genkit-overview.md` to explain the AI integration and tech stack for the Adaptive Game Master.
+- **Documentation**: Created `docs/genkit-overview.md` to explain the AI integration and tech stack for the Adaptive Game Master.
 
 ## [1.2.0] - 2024-05-25
 ### Added
